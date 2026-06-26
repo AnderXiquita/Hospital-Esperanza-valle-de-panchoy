@@ -9,7 +9,7 @@ import {
   getReportePacientes,
 } from './reportes.controller';
 
-const router = Router();
+const router: Router = Router();
 
 // Todos los endpoints solo accesibles por admin
 router.get('/resumen',   authenticate, authorize('admin'), getResumen);
