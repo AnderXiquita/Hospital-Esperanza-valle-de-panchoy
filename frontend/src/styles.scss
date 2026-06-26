@@ -152,6 +152,12 @@ app-root {
 }
 
 
+// Previene que el window haga scroll → la barra del navegador mobile no cambia nunca
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: var(--font-primary);
   font-size: var(--text-base);
@@ -159,6 +165,15 @@ body {
   color: var(--color-text-primary);
   background-color: var(--color-bg-app);
   margin: 0;
+  height: 100%;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+// Evita el "rubber band" / overscroll bounce en todos los drawers:
+// sin esto, al llegar al límite del scroll el navegador mobile empuja
+// el contenido brevemente y se ve como si el diseño se rompiera.
+.drawer__body {
+  overscroll-behavior: none;
 }
 

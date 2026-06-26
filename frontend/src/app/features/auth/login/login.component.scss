@@ -530,15 +530,15 @@
     }
   }
 
-  // Tips empujados al fondo del card, lejos del idioma
+  // Tips con separación clara del selector de idioma
   .mobile-tip-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 4px;
-    padding: var(--space-3) 0 var(--space-5);
-    margin-top: auto;
+    padding: var(--space-2) 0 var(--space-5);
+    margin-top: var(--space-6);
   }
 
   .mobile-tip__badge {
