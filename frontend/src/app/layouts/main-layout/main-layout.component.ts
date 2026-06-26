@@ -271,6 +271,7 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     clearTimeout(this.sidebarHideTimer);
     clearTimeout(this.drawerHideTimer);
     this.drawerObserver?.disconnect();
+    if (this.dragRAF !== null) cancelAnimationFrame(this.dragRAF);
     if (this.scrollListenerEl && this.boundScrollHandler) {
       this.scrollListenerEl.removeEventListener('scroll', this.boundScrollHandler);
     }
@@ -354,6 +355,18 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private boundDragMove!: (e: TouchEvent) => void;
   private boundDragEnd!: (e: TouchEvent) => void;
   private dragSnapTimer?: ReturnType<typeof setTimeout>;
+  private dragRAF: number | null = null;
+
+  // Devuelve true si el elemento (o algún ancestro) tiene scroll horizontal activo
+  private isInsideHScrollable(target: EventTarget | null): boolean {
+    let node = target as HTMLElement | null;
+    while (node && node !== document.body) {
+      const ox = window.getComputedStyle(node).overflowX;
+      if ((ox === 'auto' || ox === 'scroll') && node.scrollWidth > node.clientWidth) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
 
   private handleDragStart(e: TouchEvent): void {
     if (window.innerWidth > 600) return;
@@ -369,7 +382,8 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dragSidebarW = Math.min(360, window.innerWidth * 0.85);
 
     if (!this.mobileOpen()) {
-      this.dragIntent = 'open';
+      // No interceptar si el dedo empezó dentro de un elemento con scroll horizontal
+      if (!this.isInsideHScrollable(e.target)) this.dragIntent = 'open';
     } else {
       this.dragIntent = 'close';
       this.dragMobileOverlayEl = (this.elRef.nativeElement as HTMLElement).querySelector<HTMLElement>('.mobile-overlay');
@@ -391,7 +405,11 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.dragIntent === 'close' && dx > 0) { this.dragIntent = null; return; }
       this.dragActive = true;
       clearTimeout(this.dragSnapTimer);
-      if (this.dragSidebarEl) this.dragSidebarEl.style.transition = 'none';
+      if (this.dragSidebarEl) {
+        this.dragSidebarEl.style.transition = 'none';
+        this.dragSidebarEl.style.willChange = 'transform';
+        this.dragSidebarEl.classList.add('is-dragging');
+      }
       if (this.dragMobileOverlayEl) this.dragMobileOverlayEl.style.transition = 'none';
     }
 
@@ -405,18 +423,27 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       : Math.min(0, Math.max(-sw, dx));
     const progress = 1 - Math.abs(tx) / sw; // 0=cerrado, 1=abierto
 
-    if (this.dragSidebarEl) this.dragSidebarEl.style.transform = `translateX(${tx}px)`;
-
-    // Dimming proporcional al progreso
-    if (this.dragIntent === 'open' && this.dragOverlayEl) {
-      this.dragOverlayEl.style.opacity = String(progress * 0.42);
-      this.dragOverlayEl.style.pointerEvents = progress > 0.05 ? 'auto' : 'none';
-    } else if (this.dragIntent === 'close' && this.dragMobileOverlayEl) {
-      this.dragMobileOverlayEl.style.opacity = String(progress);
-    }
+    // Batching en rAF — sincroniza las mutaciones de estilo con el ciclo de render
+    if (this.dragRAF !== null) cancelAnimationFrame(this.dragRAF);
+    const intent = this.dragIntent;
+    const overlayEl = this.dragOverlayEl;
+    const mobileOverlayEl = this.dragMobileOverlayEl;
+    const sidebarEl = this.dragSidebarEl;
+    this.dragRAF = requestAnimationFrame(() => {
+      this.dragRAF = null;
+      if (sidebarEl) sidebarEl.style.transform = `translate3d(${tx}px, 0, 0)`;
+      if (intent === 'open' && overlayEl) {
+        overlayEl.style.opacity = String(progress * 0.42);
+        overlayEl.style.pointerEvents = progress > 0.05 ? 'auto' : 'none';
+      } else if (intent === 'close' && mobileOverlayEl) {
+        mobileOverlayEl.style.opacity = String(progress);
+      }
+    });
   }
 
   private handleDragEnd(): void {
+    if (this.dragRAF !== null) { cancelAnimationFrame(this.dragRAF); this.dragRAF = null; }
+
     if (!this.dragActive || !this.dragIntent) {
       this.dragActive = false;
       this.dragIntent = null;
@@ -431,10 +458,16 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     const willBeOpen = this.dragIntent === 'open' ? shouldComplete : !shouldComplete;
     const finalTx = willBeOpen ? 0 : -this.dragSidebarW;
 
+    // Restaurar blur antes de la animación de snap (ya en su capa GPU)
+    if (this.dragSidebarEl) {
+      this.dragSidebarEl.classList.remove('is-dragging');
+      this.dragSidebarEl.style.willChange = '';
+    }
+
     // Animar sidebar al destino con spring
     if (this.dragSidebarEl) {
-      this.dragSidebarEl.style.transition = 'transform 260ms cubic-bezier(0.22, 1, 0.36, 1)';
-      this.dragSidebarEl.style.transform = `translateX(${finalTx}px)`;
+      this.dragSidebarEl.style.transition = 'transform 280ms cubic-bezier(0.22, 1, 0.36, 1)';
+      this.dragSidebarEl.style.transform = `translate3d(${finalTx}px, 0, 0)`;
     }
 
     // Limpiar overlays
