@@ -689,14 +689,6 @@
     backdrop-filter: blur(24px) !important;
     -webkit-backdrop-filter: blur(24px) !important;
 
-    // Durante el arrastre se desactiva el blur — es demasiado pesado para recalcular
-    // en cada frame; se restaura al soltar el dedo junto con la animación de snap
-    &.is-dragging {
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      background: rgba(221, 228, 236, 0.82) !important;
-    }
-
     .mobile-open & {
       transform: translateX(0);
     }

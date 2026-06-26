@@ -515,18 +515,30 @@
   .panel-footer__sep { color: var(--color-text-tertiary); }
 
   .lang-switcher__btn {
-    color: var(--color-text-secondary);
-    &.is-active { color: var(--color-primary-600); font-weight: var(--font-semibold); }
+    color: rgba(15, 17, 23, 0.5);
+    border-radius: var(--radius-sm);
+
+    &:hover {
+      background: rgba(15, 17, 23, 0.06);
+      color: rgba(15, 17, 23, 0.75);
+    }
+
+    &.is-active {
+      color: #0f1117;
+      font-weight: var(--font-semibold);
+      background: rgba(15, 17, 23, 0.08);
+    }
   }
 
-  // Tips pegados al fondo, sin espacio arriba
+  // Tips empujados al fondo del card, lejos del idioma
   .mobile-tip-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 2px;
-    padding: 0 0 var(--space-3);
+    gap: 4px;
+    padding: var(--space-3) 0 var(--space-5);
+    margin-top: auto;
   }
 
   .mobile-tip__badge {
@@ -571,17 +583,13 @@
     position: static;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-3);
-    margin-top: var(--space-4);
+    gap: var(--space-4);
+    margin-top: var(--space-6);
     padding-top: var(--space-5);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid rgba(15, 17, 23, 0.08);
   }
 
   .panel-footer { justify-content: center; }
-
-  .lang-switcher__btn {
-    color: var(--color-text-secondary);
-  }
 }
 
 // El logo blanco solo es visible en mobile (se oculta en desktop)

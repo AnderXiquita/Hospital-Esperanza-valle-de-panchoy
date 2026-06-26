@@ -408,7 +408,6 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.dragSidebarEl) {
         this.dragSidebarEl.style.transition = 'none';
         this.dragSidebarEl.style.willChange = 'transform';
-        this.dragSidebarEl.classList.add('is-dragging');
       }
       if (this.dragMobileOverlayEl) this.dragMobileOverlayEl.style.transition = 'none';
     }
@@ -458,11 +457,7 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     const willBeOpen = this.dragIntent === 'open' ? shouldComplete : !shouldComplete;
     const finalTx = willBeOpen ? 0 : -this.dragSidebarW;
 
-    // Restaurar blur antes de la animación de snap (ya en su capa GPU)
-    if (this.dragSidebarEl) {
-      this.dragSidebarEl.classList.remove('is-dragging');
-      this.dragSidebarEl.style.willChange = '';
-    }
+    if (this.dragSidebarEl) this.dragSidebarEl.style.willChange = '';
 
     // Animar sidebar al destino con spring
     if (this.dragSidebarEl) {
