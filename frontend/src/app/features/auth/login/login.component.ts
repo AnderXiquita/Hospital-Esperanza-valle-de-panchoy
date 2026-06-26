@@ -54,6 +54,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   get passwordCtrl() { return this.form.get('password'); }
 
   ngOnInit(): void {
+    document.body.style.overflow = 'hidden';
+
     this.slideInterval = setInterval(() => {
       this.currentSlide.update(i => (i + 1) % this.slides.length);
     }, 20000);
@@ -62,6 +64,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    document.body.style.overflow = '';
     clearInterval(this.slideInterval);
     clearInterval(this.tipInterval);
   }

@@ -436,6 +436,8 @@
 @media (max-width: 1023px) {
   .login-layout {
     flex-direction: column;
+    height: 100dvh;
+    min-height: unset;
   }
 
   // Imagen fija cubriendo toda la pantalla — así el blur funciona en todo el card
@@ -449,17 +451,17 @@
     flex-shrink: 0;
   }
 
-  // Logo centrado en la zona de imagen (encima del card)
+  // Logo centrado verticalmente en el área visible de imagen (0 → 44vh)
   .panel-left__branding {
     bottom: auto;
     left: 50%;
-    top: var(--space-8);
-    transform: translateX(-50%);
+    top: 22vh;
+    transform: translate(-50%, -50%);
     z-index: 2;
   }
 
   .panel-left__logo-img {
-    width: 148px;
+    width: 210px;
   }
 
   .panel-left__dots { display: none; }
