@@ -237,10 +237,12 @@
 
 <!-- Drawers -->
 <app-editar-perfil-drawer
+  appBodyPortal
   [open]="perfilDrawerOpen()"
   (closed)="perfilDrawerOpen.set(false)"
 />
 <app-cambiar-password-drawer
+  appBodyPortal
   [open]="drawerOpen()"
   (closed)="drawerOpen.set(false)"
 />

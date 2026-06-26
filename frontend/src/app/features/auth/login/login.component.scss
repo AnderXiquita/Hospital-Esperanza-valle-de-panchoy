@@ -455,7 +455,7 @@
   .panel-left__branding {
     bottom: auto;
     left: 50%;
-    top: 22vh;
+    top: 19vh;
     transform: translate(-50%, -50%);
     z-index: 2;
   }
@@ -470,8 +470,8 @@
   .panel-right {
     position: relative;
     z-index: 10;
-    margin-top: 44vh;
-    min-height: 56vh;
+    margin-top: 38vh;
+    min-height: 62vh;
     border-radius: 24px 24px 0 0;
     justify-content: flex-start;
     padding: var(--space-8) var(--space-6) var(--space-6);

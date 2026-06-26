@@ -22,6 +22,7 @@ build/
 .idea/
 CLAUDE.md
 skills/
+backend/prisma/migrate-to-prod.ts
 
 # Prisma
 prisma/migrations/dev/

@@ -1,10 +1,10 @@
-$teal: #154C56;
+﻿$teal: #154C56;
 $ink:  #0f1117;
 
 :host { position: fixed; inset: 0; z-index: 1000; display: block; }
 
 .backdrop {
-  position: absolute; inset: 0; background: rgba(15, 17, 23, 0.5); animation: fade 220ms ease;
+  position: absolute; inset: 0; background: rgba(15, 17, 23, 0.5); animation: fade 60ms ease backwards;
   &.is-closing { animation: fadeOut 240ms ease forwards; }
 }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -14,7 +14,7 @@ $ink:  #0f1117;
   position: absolute; top: 0; right: 0; height: 100%; width: 480px; max-width: 100%;
   background: var(--color-bg-surface); box-shadow: -12px 0 32px rgba(15, 17, 23, 0.12);
   display: flex; flex-direction: column;
-  animation: slideIn 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: slideIn 320ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   &.is-closing { animation: slideOut 260ms cubic-bezier(0.4, 0, 1, 1) forwards; }
   @media (max-width: 520px) { width: 100%; }
 }

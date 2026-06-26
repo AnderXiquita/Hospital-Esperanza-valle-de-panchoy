@@ -12,6 +12,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotificacionesService } from '../../core/services/notificaciones.service';
 import { CambiarPasswordDrawerComponent } from './cambiar-password-drawer/cambiar-password-drawer.component';
 import { EditarPerfilDrawerComponent } from './editar-perfil-drawer/editar-perfil-drawer.component';
+import { BodyPortalDirective } from '../../shared/body-portal.directive';
 import { environment } from '../../../environments/environment';
 
 const SYS_KEY = 'hospital_system_config';
@@ -50,7 +51,7 @@ function loadSys(): SystemConfig {
   standalone: true,
   imports: [
     FormsModule, NgComponentOutlet, TranslatePipe,
-    CambiarPasswordDrawerComponent, EditarPerfilDrawerComponent, DropdownComponent,
+    CambiarPasswordDrawerComponent, EditarPerfilDrawerComponent, DropdownComponent, BodyPortalDirective,
     LucideUser, LucideShield, LucideBell, LucideGlobe,
     LucideBuilding2, LucideCalendarDays, LucideMapPin, LucideCamera,
   ],

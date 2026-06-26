@@ -1,4 +1,4 @@
-$teal: #154C56;
+﻿$teal: #154C56;
 $ink:  #0f1117;
 
 :host { position: fixed; inset: 0; z-index: 1000; display: block; }
@@ -7,7 +7,7 @@ $ink:  #0f1117;
   position: absolute;
   inset: 0;
   background: rgba(15, 17, 23, 0.5);
-  animation: fade 220ms ease;
+  animation: fade 60ms ease backwards;
   &.is-closing { animation: fadeOut 240ms ease forwards; }
 }
 
@@ -25,7 +25,7 @@ $ink:  #0f1117;
   box-shadow: -12px 0 32px rgba(15, 17, 23, 0.12);
   display: flex;
   flex-direction: column;
-  animation: slideIn 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: slideIn 320ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   &.is-closing { animation: slideOut 260ms cubic-bezier(0.4, 0, 1, 1) forwards; }
 
   @media (max-width: 660px) { width: 100%; }
