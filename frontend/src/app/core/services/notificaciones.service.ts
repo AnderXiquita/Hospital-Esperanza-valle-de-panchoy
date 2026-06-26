@@ -32,13 +32,14 @@ export class NotificacionesService implements OnDestroy {
   readonly exitingIds  = signal<Set<number>>(new Set());
 
   startPolling(): void {
-    // Resetear estado de sesión anterior para no mostrar toasts de notificaciones viejas
+    this.stopPolling();
     this.initialized = false;
     this.shownIds    = new Set<number>();
     this.unreadCount.set(0);
     this.toasts.set([]);
 
-    this.pollOnce();
+    // Small delay so the access token is guaranteed to be in memory before first poll
+    setTimeout(() => this.pollOnce(), 800);
     this.pollTimer = setInterval(() => this.pollOnce(), 30_000);
   }
 
