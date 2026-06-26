@@ -630,9 +630,9 @@ $col-no-pres:      #D47A2A;
   &:nth-child(7n) { border-right: none; }
   &:hover { background: rgba(15, 17, 23, 0.03); }
 
-  &.out-of-month .cal__m-day-num {
-    color: var(--color-text-tertiary);
-    opacity: 0.32;
+  &.out-of-month {
+    visibility: hidden;
+    pointer-events: none;
   }
 }
 
@@ -697,7 +697,6 @@ $col-no-pres:      #D47A2A;
   padding-left: 2px;
 }
 
-.out-of-month .cal__m-evt { opacity: 0.45; }
 
 .ebar--agendada      { background: $col-agendada; }
 .ebar--confirmada    { background: $col-confirmada; }

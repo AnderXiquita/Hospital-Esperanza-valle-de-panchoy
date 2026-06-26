@@ -119,7 +119,7 @@
   </div>
 
   <!-- Bottom nav mobile — solo visible en <600px -->
-  <nav class="bottom-nav" [class.bottom-nav--hidden]="bottomNavHidden()">
+  <nav class="bottom-nav" [class.bottom-nav--hidden]="bottomNavShouldHide()">
     @for (item of bottomNavItems(); track item.route) {
       <a
         class="bottom-nav__item"

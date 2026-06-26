@@ -176,7 +176,9 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     const gridStart = this.addDays(primerDia, -dow);
     const hoyIso = isoLocal(new Date());
     const mesActual = mes.getMonth();
-    return Array.from({ length: 42 }, (_, i) => {
+    const daysInMonth = new Date(mes.getFullYear(), mes.getMonth() + 1, 0).getDate();
+    const totalCells = Math.ceil((dow + daysInMonth) / 7) * 7;
+    return Array.from({ length: totalCells }, (_, i) => {
       const date = this.addDays(gridStart, i);
       const iso = isoLocal(date);
       return {
@@ -346,7 +348,7 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
       if (this.isMobile()) {
         const grid = this.diasMesGrid();
         desde = grid[0].iso;
-        hasta = grid[41].iso;
+        hasta = grid[grid.length - 1].iso;
       } else {
         const d = this.dias();
         desde = d[0].iso;

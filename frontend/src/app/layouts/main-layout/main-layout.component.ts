@@ -116,6 +116,19 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly bottomNavIconInputs = { size: 22, strokeWidth: 1 };
 
   bottomNavHidden = signal(false);
+  private bottomNavForceHidden = signal(false);
+  readonly bottomNavShouldHide = computed(() => this.bottomNavHidden() || this.bottomNavForceHidden());
+
+  private sidebarWantsHide = false;
+  private drawerWantsHide  = false;
+  private sidebarHideTimer?: ReturnType<typeof setTimeout>;
+  private drawerHideTimer?:  ReturnType<typeof setTimeout>;
+  private drawerObserver?:   MutationObserver;
+
+  private updateForceHide(): void {
+    this.bottomNavForceHidden.set(this.sidebarWantsHide || this.drawerWantsHide);
+  }
+
   private scrollListenerEl: HTMLElement | null = null;
   private boundScrollHandler: (() => void) | null = null;
   private scrollRAF: number | null = null;
@@ -233,6 +246,20 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     shell.addEventListener('touchmove',  this.boundDragMove,  { passive: false });
     shell.addEventListener('touchend',   this.boundDragEnd,   { passive: true });
     shell.addEventListener('touchcancel',this.boundDragEnd,   { passive: true });
+
+    // Ocultar bottom nav 500ms después de que se abra cualquier drawer
+    this.drawerObserver = new MutationObserver(() => {
+      const hasDrawer = !!document.body.querySelector('.backdrop');
+      if (hasDrawer && !this.drawerWantsHide) {
+        clearTimeout(this.drawerHideTimer);
+        this.drawerHideTimer = setTimeout(() => { this.drawerWantsHide = true; this.updateForceHide(); }, 500);
+      } else if (!hasDrawer && this.drawerWantsHide) {
+        clearTimeout(this.drawerHideTimer);
+        this.drawerWantsHide = false;
+        this.updateForceHide();
+      }
+    });
+    this.drawerObserver.observe(document.body, { childList: true });
   }
 
   ngOnDestroy(): void {
@@ -241,6 +268,9 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     clearTimeout(this.holdTimer);
     clearTimeout(this.cleanupTimer);
     clearTimeout(this.dragSnapTimer);
+    clearTimeout(this.sidebarHideTimer);
+    clearTimeout(this.drawerHideTimer);
+    this.drawerObserver?.disconnect();
     if (this.scrollListenerEl && this.boundScrollHandler) {
       this.scrollListenerEl.removeEventListener('scroll', this.boundScrollHandler);
     }
@@ -287,11 +317,22 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleMobileMenu(): void {
+    const opening = !this.mobileOpen();
     this.mobileOpen.update(v => !v);
+    clearTimeout(this.sidebarHideTimer);
+    if (opening) {
+      this.sidebarHideTimer = setTimeout(() => { this.sidebarWantsHide = true;  this.updateForceHide(); }, 500);
+    } else {
+      this.sidebarWantsHide = false;
+      this.updateForceHide();
+    }
   }
 
   closeMobileMenu(): void {
     this.mobileOpen.set(false);
+    clearTimeout(this.sidebarHideTimer);
+    this.sidebarWantsHide = false;
+    this.updateForceHide();
   }
 
   // ── Drag-to-open / drag-to-close sidebar ─────────────────────────────────────
@@ -325,11 +366,11 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dragActive = false;
     this.dragIntent = null;
     this.dragMobileOverlayEl = null;
-    this.dragSidebarW = Math.min(280, window.innerWidth * 0.82);
+    this.dragSidebarW = Math.min(360, window.innerWidth * 0.85);
 
-    if (!this.mobileOpen() && t.clientX <= this.DRAG_EDGE_W) {
+    if (!this.mobileOpen()) {
       this.dragIntent = 'open';
-    } else if (this.mobileOpen()) {
+    } else {
       this.dragIntent = 'close';
       this.dragMobileOverlayEl = (this.elRef.nativeElement as HTMLElement).querySelector<HTMLElement>('.mobile-overlay');
     }
@@ -409,6 +450,15 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Actualizar estado Angular
     this.mobileOpen.set(willBeOpen);
+
+    // Ocultar/mostrar bottom nav igual que al pulsar el botón hamburguesa
+    clearTimeout(this.sidebarHideTimer);
+    if (willBeOpen) {
+      this.sidebarHideTimer = setTimeout(() => { this.sidebarWantsHide = true;  this.updateForceHide(); }, 500);
+    } else {
+      this.sidebarWantsHide = false;
+      this.updateForceHide();
+    }
 
     // Tras la animación, quitar estilos inline para ceder control al CSS
     this.dragSnapTimer = setTimeout(() => {
