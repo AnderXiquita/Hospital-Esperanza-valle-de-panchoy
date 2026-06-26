@@ -1,0 +1,189 @@
+<div class="hist">
+
+  <!-- Header -->
+  <div class="hist__header">
+    <div class="hist__heading">
+      <p class="hist__eyebrow">{{ 'historial.eyebrow' | translate }}</p>
+      <h1 class="hist__title">{{ 'historial.title' | translate }}</h1>
+      <p class="hist__subtitle">
+        {{ pacientes().length }} {{ 'historial.pacientes_label' | translate }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Métricas -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container [ngComponentOutlet]="icons['users']" [ngComponentOutletInputs]="iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ pacientes().length }}</span>
+        <span class="metric__label">{{ 'historial.metric_pacientes' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container [ngComponentOutlet]="icons['board']" [ngComponentOutletInputs]="iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ totalConsultas() }}</span>
+        <span class="metric__label">{{ 'historial.metric_consultas' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <ng-container [ngComponentOutlet]="icons['search']" [ngComponentOutletInputs]="iconSm" />
+      <input type="text" autocomplete="off"
+        [placeholder]="'historial.buscar_ph' | translate"
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)" />
+    </div>
+
+    <div class="segmented">
+      <button class="segmented__opt" [class.active]="filtroEstado() === 'activos'"
+        (click)="setFiltro('activos')">{{ 'historial.filter_active' | translate }}</button>
+      <button class="segmented__opt" [class.active]="filtroEstado() === 'inactivos'"
+        (click)="setFiltro('inactivos')">{{ 'historial.filter_inactive' | translate }}</button>
+      <button class="segmented__opt" [class.active]="filtroEstado() === 'todos'"
+        (click)="setFiltro('todos')">{{ 'historial.filter_all' | translate }}</button>
+    </div>
+
+    <div class="viewtoggle">
+      <button class="viewtoggle__opt" [class.active]="vista() === 'tabla'"
+        (click)="setVista('tabla')" [title]="'historial.view_list' | translate">
+        <ng-container [ngComponentOutlet]="icons['list']" [ngComponentOutletInputs]="iconSm" />
+      </button>
+      <button class="viewtoggle__opt" [class.active]="vista() === 'tarjetas'"
+        (click)="setVista('tarjetas')" [title]="'historial.view_cards' | translate">
+        <ng-container [ngComponentOutlet]="icons['grid']" [ngComponentOutletInputs]="iconSm" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Estados -->
+  @if (cargando()) {
+    <div class="panel">
+      <div class="state"><span class="spinner"></span><span>{{ 'historial.cargando' | translate }}</span></div>
+    </div>
+  } @else if (filtrados().length === 0) {
+    <div class="empty-state">
+      <div class="empty-state__icon">
+        <ng-container [ngComponentOutlet]="icons['board']" [ngComponentOutletInputs]="{ size: 32, strokeWidth: 1.25 }" />
+      </div>
+      @if (busqueda()) {
+        <p class="empty-state__title">{{ 'historial.no_results_title' | translate }}</p>
+        <p class="empty-state__hint">{{ 'historial.no_results' | translate }} <strong>{{ busqueda() }}</strong></p>
+        <button class="empty-state__action" (click)="busqueda.set('')">{{ 'historial.limpiar_busqueda' | translate }}</button>
+      } @else if (filtroEstado() === 'inactivos') {
+        <p class="empty-state__title">{{ 'historial.empty_inactivos_title' | translate }}</p>
+        <p class="empty-state__hint">{{ 'historial.empty_inactivos' | translate }}</p>
+      } @else {
+        <p class="empty-state__title">{{ 'historial.empty_title' | translate }}</p>
+        <p class="empty-state__hint">{{ 'historial.empty' | translate }}</p>
+      }
+    </div>
+  } @else {
+
+    <!-- Vista TABLA -->
+    @if (vista() === 'tabla') {
+      <div class="panel">
+        <div class="table-scroll-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ 'historial.col_paciente' | translate }}</th>
+                <th>{{ 'historial.col_edad' | translate }}</th>
+                <th>{{ 'historial.col_sangre' | translate }}</th>
+                <th>{{ 'historial.col_consultas' | translate }}</th>
+                <th>{{ 'historial.col_ultima' | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of filtrados(); track p.id) {
+                <tr (click)="irDetalle(p.id)">
+                  <td>
+                    <div class="cell-patient">
+                      <div class="avatar">{{ initiales(p) }}</div>
+                      <div class="cell-patient__info">
+                        <span class="cell-patient__name">{{ p.apellido }}, {{ p.nombre }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="td-secondary">
+                    @if (calcEdad(p.fecha_nacimiento); as edad) { {{ edad }} {{ 'historial.anos' | translate }} }
+                  </td>
+                  <td class="td-secondary">{{ p.tipo_sangre ?? '—' }}</td>
+                  <td>
+                    <span class="notas-badge">
+                      <ng-container [ngComponentOutlet]="icons['file']" [ngComponentOutletInputs]="iconXs" />
+                      {{ p.total_notas }}
+                    </span>
+                  </td>
+                  <td class="td-secondary">
+                    @if (p.ultima_consulta) { {{ formatFecha(p.ultima_consulta) }} } @else { — }
+                  </td>
+                  <td class="td-actions">
+                    <ng-container [ngComponentOutlet]="icons['chevron']" [ngComponentOutletInputs]="iconSm" />
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- Vista TARJETAS -->
+    @if (vista() === 'tarjetas') {
+      <div class="cards">
+        @for (p of filtrados(); track p.id) {
+          <div class="pcard" (click)="irDetalle(p.id)">
+            <div class="pcard__top">
+              <div class="avatar avatar--lg">{{ initiales(p) }}</div>
+              <div class="pcard__top-right">
+                <span class="status" [class.status--active]="p.activo">
+                  {{ (p.activo ? 'historial.activo' : 'historial.inactivo') | translate }}
+                </span>
+              </div>
+            </div>
+
+            <div class="pcard__badge-row">
+              <span class="notas-badge">
+                <ng-container [ngComponentOutlet]="icons['file']" [ngComponentOutletInputs]="iconXs" />
+                {{ p.total_notas }} {{ (p.total_notas === 1 ? 'historial.nota' : 'historial.notas') | translate }}
+              </span>
+            </div>
+
+            <div class="pcard__body">
+              <p class="pcard__name">{{ p.apellido }}, {{ p.nombre }}</p>
+              <p class="pcard__dpi">
+                @if (calcEdad(p.fecha_nacimiento); as edad) { {{ edad }} {{ 'historial.anos' | translate }} }
+                @if (p.tipo_sangre) { · {{ p.tipo_sangre }} }
+              </p>
+            </div>
+
+            <div class="pcard__foot">
+              <div class="pcard__metas">
+                <span class="pcard__meta">
+                  @if (p.ultima_consulta) {
+                    {{ 'historial.ultima' | translate }} {{ formatFecha(p.ultima_consulta) }}
+                  } @else {
+                    {{ 'historial.sin_notas' | translate }}
+                  }
+                </span>
+              </div>
+              <ng-container [ngComponentOutlet]="icons['chevron']" [ngComponentOutletInputs]="iconSm" />
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  }
+
+</div>

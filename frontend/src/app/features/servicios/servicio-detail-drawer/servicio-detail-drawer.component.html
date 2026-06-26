@@ -1,0 +1,103 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="topbar">
+    <span class="topbar__label">{{ 'servicios.detail_eyebrow' | translate }}</span>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  @if (u(); as s) {
+    <div class="drawer__body">
+
+      <!-- Hero -->
+      <div class="hero">
+        <h2 class="hero__name">{{ s.nombre }}</h2>
+        <span class="status" [class.status--active]="s.activo">
+          {{ (s.activo ? 'servicios.status_active' : 'servicios.status_inactive') | translate }}
+        </span>
+      </div>
+
+      <!-- Precio + duración destacados -->
+      <div class="highlight">
+        <div class="highlight__item">
+          <ng-container [ngComponentOutlet]="icons.banknote" [ngComponentOutletInputs]="iconField" />
+          <div class="highlight__data">
+            <span class="highlight__value">Q {{ money(s.precio) }}</span>
+            <span class="highlight__label">{{ 'servicios.field_price' | translate }}</span>
+          </div>
+        </div>
+        <div class="highlight__item">
+          <ng-container [ngComponentOutlet]="icons.clock" [ngComponentOutletInputs]="iconField" />
+          <div class="highlight__data">
+            <span class="highlight__value">{{ duracionLabel(s.duracion) }}</span>
+            <span class="highlight__label">{{ 'servicios.field_duration' | translate }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      @if (s.descripcion) {
+        <section class="block">
+          <p class="block__title">{{ 'servicios.block_description' | translate }}</p>
+          <p class="bio">{{ s.descripcion }}</p>
+        </section>
+      }
+
+      <!-- Info -->
+      <section class="block">
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.calendar" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'servicios.field_created' | translate }}</span>
+          <span class="info-row__value">{{ formatFecha(s.created_at) }}</span>
+        </div>
+      </section>
+
+      <!-- Acciones -->
+      <section class="actions">
+        <button class="action" type="button" (click)="pedirEditar()">
+          <ng-container [ngComponentOutlet]="icons.pencil" [ngComponentOutletInputs]="iconAction" />
+          {{ 'btn.edit' | translate }}
+        </button>
+        @if (s.activo) {
+          <button class="action action--danger" type="button" (click)="pedirToggle()">
+            <ng-container [ngComponentOutlet]="icons.powerOff" [ngComponentOutletInputs]="iconAction" />
+            {{ 'servicios.deactivate' | translate }}
+          </button>
+        } @else {
+          <button class="action action--activate" type="button" (click)="pedirToggle()">
+            <ng-container [ngComponentOutlet]="icons.power" [ngComponentOutletInputs]="iconAction" />
+            {{ 'servicios.activate' | translate }}
+          </button>
+        }
+      </section>
+    </div>
+  }
+</aside>
+
+<!-- Confirmación toggle -->
+@if (confirmToggle()) {
+  <div class="overlay" (click)="cancelarToggle()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ 'servicios.confirm_title' | translate }}</h2>
+      <p class="modal__text">
+        {{ (u()?.activo ? 'servicios.confirm_deactivate' : 'servicios.confirm_activate') | translate }}
+      </p>
+      @if (toggleError()) { <p class="modal__error">{{ toggleError() }}</p> }
+      <div class="modal__actions">
+        <button class="btn-secondary" (click)="cancelarToggle()">{{ 'btn.cancel' | translate }}</button>
+        <button
+          [class.btn-danger]="u()?.activo"
+          [class.btn-activate]="!u()?.activo"
+          [disabled]="toggleSaving()"
+          (click)="confirmarToggle()"
+        >
+          @if (toggleSaving()) { <span class="spinner spinner--light"></span> }
+          {{ (u()?.activo ? 'servicios.deactivate' : 'servicios.activate') | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

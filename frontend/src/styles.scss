@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-primary: 'Inter', sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  --font-light: 300;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --color-bg-app: #F4F5F7;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-subtle: #F8F9FA;
+  --color-bg-hover: #F0F1F3;
+  --color-bg-active: #EBEBED;
+  --color-bg-sidebar: rgba(235, 242, 245, 0.75);
+  --color-border-sidebar: rgba(229, 231, 235, 0.6);
+
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-disabled: #D1D5DB;
+  --color-text-inverse: #FFFFFF;
+
+  --color-border: #E5E7EB;
+  --color-border-strong: #D1D5DB;
+  --color-divider: #F3F4F6;
+
+  --color-primary-50: #EFF6FF;
+  --color-primary-100: #DBEAFE;
+  --color-primary-200: #BFDBFE;
+  --color-primary-300: #93C5FD;
+  --color-primary-400: #60A5FA;
+  --color-primary-500: #3B82F6;
+  --color-primary-600: #2563EB;
+  --color-primary-700: #1D4ED8;
+  --color-primary-800: #1E40AF;
+  --color-primary-900: #1E3A8A;
+
+  --color-appointment-agendada: #E8EDFF;
+  --color-appointment-agendada-text: #4F6EF7;
+  --color-appointment-confirmada: #E8F8F0;
+  --color-appointment-confirmada-text: #2D9E6B;
+  --color-appointment-atendida: #F0F0F0;
+  --color-appointment-atendida-text: #6B7280;
+  --color-appointment-reprogramada: #FFF8E8;
+  --color-appointment-reprogramada-text: #D4A017;
+  --color-appointment-cancelada: #FFF0F0;
+  --color-appointment-cancelada-text: #E05252;
+  --color-appointment-no-presentado: #FFF4EC;
+  --color-appointment-no-presentado-text: #D47A2A;
+
+  --color-success-bg: #ECFDF5;
+  --color-success: #10B981;
+  --color-success-dark: #065F46;
+  --color-warning-bg: #FFFBEB;
+  --color-warning: #F59E0B;
+  --color-warning-dark: #92400E;
+  --color-error-bg: #FEF2F2;
+  --color-error: #EF4444;
+  --color-error-dark: #991B1B;
+  --color-info-bg: #EFF6FF;
+  --color-info: #3B82F6;
+  --color-info-dark: #1E40AF;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+  --radius-full: 9999px;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.06), 0 4px 6px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.07), 0 10px 10px rgba(0, 0, 0, 0.04);
+
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(15, 17, 23, 0.18) transparent;
+}
+
+// Webkit (Chrome, Edge, Safari)
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  {
+  background: rgba(15, 17, 23, 0.18);
+  border-radius: 99px;
+  &:hover { background: rgba(15, 17, 23, 0.30); }
+}
+
+// Ocultar el botón nativo de "mostrar contraseña" de Edge/Chrome
+// para que no choque con nuestro botón custom del pwd-wrap
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-strong-password-auto-fill-button {
+  display: none !important;
+}
+
+// El input dentro de pwd-wrap no debe mostrar su propio focus ring —
+// el foco lo maneja el contenedor pwd-wrap entero con :focus-within.
+// Chrome aplica :focus-visible con mayor especificidad que los estilos
+// encapsulados de Angular, por eso se necesita esta regla global.
+.pwd-wrap input:focus,
+.pwd-wrap input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+// El elemento raíz se usa directamente para fade login↔app.
+// La transición vive aquí (global) porque AppComponent ya no tiene wrapper div.
+app-root {
+  display: block;
+  min-height: 100vh;
+  opacity: 1;
+  transition: opacity 180ms ease;
+}
+
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  font-weight: var(--font-regular);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-app);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+

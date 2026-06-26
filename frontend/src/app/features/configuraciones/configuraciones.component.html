@@ -1,0 +1,246 @@
+<div class="cfg">
+
+  <!-- Header -->
+  <div class="cfg__header">
+    <p class="cfg__eyebrow">{{ 'cfg.eyebrow' | translate }}</p>
+    <h1 class="cfg__title">{{ 'cfg.title' | translate }}</h1>
+    <p class="cfg__subtitle">{{ 'cfg.subtitle' | translate }}</p>
+  </div>
+
+  <!-- ── MI CUENTA ─────────────────────────────────────────────────────── -->
+  <section class="cfg__section">
+    <h2 class="cfg__section-title">{{ 'cfg.section_account' | translate }}</h2>
+
+    <div class="cfg__grid">
+
+      <!-- Perfil -->
+      <div class="cfg__card">
+        <div class="cfg__card-head">
+          <div class="cfg__card-icon">
+            <ng-container *ngComponentOutlet="IconUser; inputs: iconSm" />
+          </div>
+          <div>
+            <h3 class="cfg__card-title">{{ 'cfg.card_profile_title' | translate }}</h3>
+            <p class="cfg__card-sub">{{ 'cfg.card_profile_sub' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="cfg__divider"></div>
+
+        <div class="cfg__profile">
+          <div class="cfg__avatar-wrap" [title]="'cfg.photo_soon' | translate">
+            <div class="cfg__avatar">{{ userInitials() }}</div>
+            <div class="cfg__avatar-overlay">
+              <ng-container *ngComponentOutlet="IconCamera; inputs: iconSm" />
+            </div>
+          </div>
+          <div class="cfg__profile-info">
+            <span class="cfg__profile-name">{{ user()?.nombre }} {{ user()?.apellido }}</span>
+            <span class="cfg__profile-meta">{{ user()?.email }}</span>
+            <span class="cfg__role-chip">{{ rolLabel() | translate }}</span>
+          </div>
+        </div>
+
+        <div class="cfg__profile-actions">
+          <button class="cfg__btn cfg__btn--outline" (click)="perfilDrawerOpen.set(true)">
+            {{ 'cfg.edit_profile' | translate }}
+          </button>
+          <span class="cfg__photo-hint">{{ 'cfg.photo_hint' | translate }}</span>
+        </div>
+      </div>
+
+      <!-- Seguridad -->
+      <div class="cfg__card">
+        <div class="cfg__card-head">
+          <div class="cfg__card-icon">
+            <ng-container *ngComponentOutlet="IconShield; inputs: iconSm" />
+          </div>
+          <div>
+            <h3 class="cfg__card-title">{{ 'cfg.card_security_title' | translate }}</h3>
+            <p class="cfg__card-sub">{{ 'cfg.card_security_sub' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="cfg__divider"></div>
+
+        <div class="cfg__row">
+          <div class="cfg__row-label">
+            <span class="cfg__row-title">{{ 'cfg.password_row_title' | translate }}</span>
+            <span class="cfg__row-desc">{{ 'cfg.password_row_desc' | translate }}</span>
+          </div>
+          <button class="cfg__btn cfg__btn--outline" (click)="drawerOpen.set(true)">
+            {{ 'cfg.change_password' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Preferencias -->
+      <div class="cfg__card">
+        <div class="cfg__card-head">
+          <div class="cfg__card-icon">
+            <ng-container *ngComponentOutlet="IconGlobe; inputs: iconSm" />
+          </div>
+          <div>
+            <h3 class="cfg__card-title">{{ 'cfg.card_prefs_title' | translate }}</h3>
+            <p class="cfg__card-sub">{{ 'cfg.card_prefs_sub' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="cfg__divider"></div>
+
+        <!-- Idioma -->
+        <div class="cfg__row">
+          <div class="cfg__row-label">
+            <span class="cfg__row-title">{{ 'cfg.lang_title' | translate }}</span>
+            <span class="cfg__row-desc">{{ 'cfg.lang_desc' | translate }}</span>
+          </div>
+          <div class="cfg__seg">
+            <button
+              [class]="'cfg__seg-btn' + (lang() === 'es' ? ' cfg__seg-btn--active' : '')"
+              (click)="setLang('es')"
+            >ES</button>
+            <button
+              [class]="'cfg__seg-btn' + (lang() === 'en' ? ' cfg__seg-btn--active' : '')"
+              (click)="setLang('en')"
+            >EN</button>
+          </div>
+        </div>
+
+        <!-- Notificaciones -->
+        <div class="cfg__row">
+          <div class="cfg__row-label">
+            <span class="cfg__row-title">{{ 'cfg.notif_title' | translate }}</span>
+            <span class="cfg__row-desc">{{ 'cfg.notif_desc' | translate }}</span>
+          </div>
+          <button
+            [class]="'cfg__toggle' + (notifications() ? ' cfg__toggle--on' : '')"
+            (click)="toggleNotifications()"
+            role="switch"
+            [attr.aria-checked]="notifications()"
+          >
+            <span class="cfg__toggle-thumb"></span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── SISTEMA (solo admin) ────────────────────────────────────────── -->
+  @if (isAdmin()) {
+    <section class="cfg__section">
+      <h2 class="cfg__section-title">{{ 'cfg.section_system' | translate }}</h2>
+      <p class="cfg__section-sub">{{ 'cfg.section_system_sub' | translate }}</p>
+
+      <div class="cfg__grid">
+
+        <!-- Hospital -->
+        <div class="cfg__card">
+          <div class="cfg__card-head">
+            <div class="cfg__card-icon">
+              <ng-container *ngComponentOutlet="IconBuilding; inputs: iconSm" />
+            </div>
+            <div>
+              <h3 class="cfg__card-title">{{ 'cfg.card_hospital_title' | translate }}</h3>
+              <p class="cfg__card-sub">{{ 'cfg.card_hospital_sub' | translate }}</p>
+            </div>
+          </div>
+          <div class="cfg__divider"></div>
+
+          <div class="cfg__fields">
+            <div class="cfg__field">
+              <label class="cfg__label">{{ 'cfg.hospital_name_label' | translate }}</label>
+              <input class="cfg__input" type="text" [(ngModel)]="sysForm.hospitalNombre" [placeholder]="'cfg.hospital_name_ph' | translate" />
+            </div>
+            <div class="cfg__field">
+              <label class="cfg__label">{{ 'cfg.hospital_phone_label' | translate }}</label>
+              <input class="cfg__input" type="tel" [(ngModel)]="sysForm.hospitalTelefono" [placeholder]="'cfg.hospital_phone_ph' | translate" />
+            </div>
+            <div class="cfg__field">
+              <label class="cfg__label">{{ 'cfg.hospital_address_label' | translate }}</label>
+              <input class="cfg__input" type="text" [(ngModel)]="sysForm.hospitalDireccion" [placeholder]="'cfg.hospital_address_ph' | translate" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Agenda -->
+        <div class="cfg__card">
+          <div class="cfg__card-head">
+            <div class="cfg__card-icon">
+              <ng-container *ngComponentOutlet="IconCalendar; inputs: iconSm" />
+            </div>
+            <div>
+              <h3 class="cfg__card-title">{{ 'cfg.card_agenda_title' | translate }}</h3>
+              <p class="cfg__card-sub">{{ 'cfg.card_agenda_sub' | translate }}</p>
+            </div>
+          </div>
+          <div class="cfg__divider"></div>
+
+          <div class="cfg__fields">
+            <div class="cfg__field">
+              <label class="cfg__label">{{ 'cfg.duration_label' | translate }}</label>
+              <app-dropdown [options]="duracionOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.citaDuracion" />
+            </div>
+            <div class="cfg__field">
+              <label class="cfg__label">{{ 'cfg.open_label' | translate }}</label>
+              <app-dropdown [options]="timeOptions" placeholder="HH:MM" [(ngModel)]="sysForm.horarioApertura" />
+            </div>
+            <div class="cfg__field">
+              <label class="cfg__label">{{ 'cfg.close_label' | translate }}</label>
+              <app-dropdown [options]="timeOptions" placeholder="HH:MM" [(ngModel)]="sysForm.horarioCierre" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Regional -->
+        <div class="cfg__card">
+          <div class="cfg__card-head">
+            <div class="cfg__card-icon">
+              <ng-container *ngComponentOutlet="IconMap; inputs: iconSm" />
+            </div>
+            <div>
+              <h3 class="cfg__card-title">{{ 'cfg.card_regional_title' | translate }}</h3>
+              <p class="cfg__card-sub">{{ 'cfg.card_regional_sub' | translate }}</p>
+            </div>
+          </div>
+          <div class="cfg__divider"></div>
+
+          <div class="cfg__fields">
+            <div class="cfg__field">
+              <label class="cfg__label">{{ 'cfg.timezone_label' | translate }}</label>
+              <app-dropdown [options]="zonaOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.zonaHoraria" />
+            </div>
+            <div class="cfg__field">
+              <label class="cfg__label">{{ 'cfg.currency_label' | translate }}</label>
+              <app-dropdown [options]="monedaOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.moneda" />
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Guardar sistema -->
+      <div class="cfg__save-row">
+        <button class="cfg__btn cfg__btn--primary" (click)="guardarSistema()">
+          {{ 'cfg.save_btn' | translate }}
+        </button>
+        @if (sysSaved()) {
+          <span class="cfg__saved-msg">{{ 'cfg.saved_msg' | translate }}</span>
+        }
+      </div>
+
+    </section>
+  }
+
+</div>
+
+<!-- Drawers -->
+<app-editar-perfil-drawer
+  [open]="perfilDrawerOpen()"
+  (closed)="perfilDrawerOpen.set(false)"
+/>
+<app-cambiar-password-drawer
+  [open]="drawerOpen()"
+  (closed)="drawerOpen.set(false)"
+/>

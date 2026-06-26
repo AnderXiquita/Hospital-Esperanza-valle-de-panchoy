@@ -1,0 +1,116 @@
+<div class="notif">
+
+  <!-- Header -->
+  <div class="notif__header">
+    <div class="notif__header-icon">
+      <ng-container *ngComponentOutlet="IconBell; inputs: iconHeader" />
+    </div>
+    <div>
+      <p class="notif__eyebrow">{{ 'notif.eyebrow' | translate }}</p>
+      <h1 class="notif__title">
+        {{ 'notif.title' | translate }}
+        @if (noLeidas() > 0) {
+          <span class="notif__title-badge">{{ noLeidas() }}</span>
+        }
+      </h1>
+    </div>
+  </div>
+
+  <!-- Pills de categoría -->
+  <div class="notif__pills">
+    @for (cat of CATEGORIAS; track cat.key) {
+      <button
+        [class]="'notif__pill' + (categoria() === cat.key ? ' notif__pill--active' : '')"
+        (click)="setCategoria(cat.key)"
+      >
+        {{ cat.labelKey | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- Fila de controles -->
+  <div class="notif__controls">
+    <div class="notif__seg">
+      <button
+        [class]="'notif__seg-btn' + (filtroLectura() === 'todas' ? ' notif__seg-btn--active' : '')"
+        (click)="setFiltroLectura('todas')"
+      >
+        {{ 'notif.filter_all' | translate }}
+      </button>
+      <button
+        [class]="'notif__seg-btn' + (filtroLectura() === 'no_leidas' ? ' notif__seg-btn--active' : '')"
+        (click)="setFiltroLectura('no_leidas')"
+      >
+        {{ 'notif.filter_unread' | translate }}
+        @if (noLeidas() > 0) {
+          <span class="notif__seg-count">{{ noLeidas() }}</span>
+        }
+      </button>
+    </div>
+
+    <div class="notif__actions">
+      @if (noLeidas() > 0) {
+        <button class="notif__mark-all" (click)="marcarTodas()" [disabled]="markingAll()">
+          <ng-container *ngComponentOutlet="IconCheck; inputs: iconCheck" />
+          {{ (markingAll() ? 'notif.marking' : 'notif.mark_all') | translate }}
+        </button>
+      }
+      @if ((allData()?.total ?? 0) > 0) {
+        <button class="notif__delete-all" (click)="eliminarTodas()" [disabled]="deletingAll()">
+          <ng-container *ngComponentOutlet="IconTrash2; inputs: iconTrash" />
+          {{ (deletingAll() ? 'notif.deleting' : 'notif.delete_all') | translate }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Lista agrupada por tiempo -->
+  <div class="notif__list">
+
+    @if (loading()) {
+      @for (i of [1,2,3,4,5]; track i) {
+        <div class="notif__skeleton"></div>
+      }
+    } @else if (grupos().length === 0) {
+      <div class="notif__empty">
+        <ng-container *ngComponentOutlet="IconInbox; inputs: iconEmpty" />
+        <p>
+          @if (filtroLectura() === 'no_leidas') {
+            {{ 'notif.empty_unread' | translate }}
+          } @else if (categoria() !== 'todas') {
+            {{ 'notif.empty_category' | translate }}
+          } @else {
+            {{ 'notif.empty_all' | translate }}
+          }
+        </p>
+      </div>
+    } @else {
+      @for (grupo of grupos(); track grupo.key) {
+        <div class="notif__group">
+          <span class="notif__group-label">{{ grupo.label | translate }}</span>
+
+          @for (n of grupo.items; track n.id) {
+            <div
+              [class]="'notif__item' + (n.leida ? ' notif__item--read' : '') + (n.link ? ' notif__item--clickable' : '')"
+              (click)="abrir(n)"
+            >
+              <span class="notif__dot"></span>
+              <div class="notif__item-body">
+                <span class="notif__item-title">{{ n.titulo }}</span>
+                <span class="notif__item-msg">{{ n.mensaje }}</span>
+              </div>
+              <div class="notif__item-right">
+                <span class="notif__item-time">{{ timeAgo(n.created_at) }}</span>
+                <button class="notif__item-del" (click)="eliminarUna($event, n)">
+                  <ng-container *ngComponentOutlet="IconX; inputs: iconX" />
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+  </div>
+
+</div>

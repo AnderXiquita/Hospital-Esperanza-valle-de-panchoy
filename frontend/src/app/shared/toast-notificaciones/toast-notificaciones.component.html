@@ -1,0 +1,17 @@
+<div class="toast-stack">
+  @for (t of toasts(); track t.id) {
+    <div
+      [class]="'toast' + (isExiting(t.id) ? ' toast--out' : '')"
+      (click)="irANotificaciones(t.id)"
+    >
+      <span class="toast__dot"></span>
+      <div class="toast__body">
+        <span class="toast__title">{{ t.titulo }}</span>
+        <span class="toast__msg">{{ t.mensaje }}</span>
+      </div>
+      <button class="toast__close" (click)="$event.stopPropagation(); dismiss(t.id)">
+        <ng-container *ngComponentOutlet="IconX; inputs: iconX" />
+      </button>
+    </div>
+  }
+</div>

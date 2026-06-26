@@ -1,0 +1,70 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="drawer__head">
+    <div>
+      <p class="drawer__eyebrow">{{ (esEdicion ? 'servicios.form_edit_eyebrow' : 'servicios.form_new_eyebrow') | translate }}</p>
+      <h2 class="drawer__title">{{ (esEdicion ? 'servicios.form_edit_title' : 'servicios.form_new_title') | translate }}</h2>
+    </div>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  <div class="drawer__body">
+    <section class="section">
+      <p class="section__head">
+        <span class="section__chip">
+          <ng-container [ngComponentOutlet]="icons.layers" [ngComponentOutletInputs]="iconSection" />
+        </span>
+        {{ 'servicios.section_data' | translate }}
+      </p>
+
+      <div class="field">
+        <label>{{ 'servicios.label_name' | translate }} <span>*</span></label>
+        <input type="text" [(ngModel)]="form.nombre" [placeholder]="'servicios.ph_name' | translate"
+          [class.invalid]="submitted() && !form.nombre.trim()" />
+        @if (submitted() && !form.nombre.trim()) { <span class="field__err">{{ 'servicios.err_required' | translate }}</span> }
+      </div>
+
+      <div class="field">
+        <label>{{ 'servicios.label_description' | translate }}</label>
+        <textarea [(ngModel)]="form.descripcion" rows="3" [placeholder]="'servicios.ph_description' | translate"></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'servicios.label_price' | translate }} <span>*</span></label>
+          <input type="number" min="0" step="0.01" [(ngModel)]="form.precio" [placeholder]="'servicios.ph_price' | translate"
+            [class.invalid]="submitted() && !precioValido()" />
+          @if (submitted() && !precioValido()) { <span class="field__err">{{ 'servicios.err_price' | translate }}</span> }
+        </div>
+        <div class="field">
+          <label>{{ 'servicios.label_duration' | translate }} <span>*</span></label>
+          <app-dropdown
+            [options]="duracionOptions()"
+            [(ngModel)]="form.duracion"
+            [placeholder]="'servicios.select_duration' | translate"
+          />
+          @if (submitted() && !form.duracion) { <span class="field__err">{{ 'servicios.err_duration' | translate }}</span> }
+        </div>
+      </div>
+    </section>
+
+    @if (errorMsg()) {
+      <div class="form-error">{{ errorMsg() }}</div>
+    }
+  </div>
+
+  <footer class="drawer__foot">
+    <button class="btn-secondary" type="button" (click)="cerrar()">{{ 'btn.cancel' | translate }}</button>
+    <button class="btn-primary" type="button" [disabled]="guardando()" (click)="guardar()">
+      @if (guardando()) {
+        <span class="spinner spinner--light"></span> {{ 'servicios.saving' | translate }}
+      } @else {
+        {{ (esEdicion ? 'servicios.save_changes' : 'servicios.create') | translate }}
+      }
+    </button>
+  </footer>
+</aside>

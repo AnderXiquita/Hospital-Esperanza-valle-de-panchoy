@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Rol {
+  admin
+  recepcionista
+  medico
+}
+
+enum EstadoCita {
+  agendada
+  confirmada
+  atendida
+  reprogramada
+  cancelada
+  no_presentado
+}
+
+enum EstadoPago {
+  pendiente
+  pagado
+  anulado
+}
+
+enum Genero {
+  masculino
+  femenino
+  otro
+}
+
+model usuarios {
+  id                Int       @id @default(autoincrement())
+  nombre            String    @db.VarChar(100)
+  apellido          String    @db.VarChar(100)
+  email             String    @unique @db.VarChar(150)
+  password_hash     String    @db.VarChar(255)
+  rol               Rol
+  activo            Boolean   @default(true)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  ultimo_login      DateTime?
+
+  medico            medicos?
+  refresh_tokens    refresh_tokens[]
+  notificaciones    notificaciones[]
+}
+
+model refresh_tokens {
+  id           Int      @id @default(autoincrement())
+  usuario_id   Int
+  token_hash   String   @unique @db.VarChar(255)
+  expires_at   DateTime
+  usado        Boolean  @default(false)
+  created_at   DateTime @default(now())
+
+  usuario      usuarios @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+}
+
+model medicos {
+  id                  Int       @id @default(autoincrement())
+  usuario_id          Int       @unique
+  especialidad        String    @db.VarChar(150)
+  subespecialidad     String?   @db.VarChar(150)
+  numero_colegiado    String    @unique @db.VarChar(50)
+  dpi                 String?   @unique @db.VarChar(20)
+  fecha_nacimiento    DateTime? @db.Date
+  genero              Genero?
+  telefono            String?   @db.VarChar(20)
+  telefono_emergencia String?   @db.VarChar(20)
+  direccion           String?   @db.Text
+  fecha_ingreso       DateTime? @db.Date
+  consultorio         String?   @db.VarChar(50)
+  tarifa_consulta     Decimal?  @db.Decimal(10, 2)
+  biografia           String?   @db.Text
+  foto_url            String?   @db.Text
+  activo              Boolean   @default(true)
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  usuario             usuarios         @relation(fields: [usuario_id], references: [id], onDelete: Restrict)
+  horarios            horarios_medico[]
+  citas               citas[]
+  notas               notas_clinicas[]
+}
+
+model horarios_medico {
+  id           Int      @id @default(autoincrement())
+  medico_id    Int
+  dia_semana   Int      // 0=domingo, 1=lunes, ..., 6=sábado
+  hora_inicio  String   @db.VarChar(5)  // HH:MM
+  hora_fin     String   @db.VarChar(5)  // HH:MM
+  activo       Boolean  @default(true)
+
+  medico       medicos  @relation(fields: [medico_id], references: [id], onDelete: Cascade)
+}
+
+model servicios {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @db.VarChar(150)
+  descripcion String?  @db.Text
+  precio      Decimal  @db.Decimal(10, 2)
+  duracion    Int      // duración en minutos
+  activo      Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  citas       citas[]
+}
+
+model pacientes {
+  id                          Int       @id @default(autoincrement())
+  nombre                      String    @db.VarChar(100)
+  apellido                    String    @db.VarChar(100)
+  fecha_nacimiento            DateTime  @db.Date
+  dpi                         String    @unique @db.VarChar(20)
+  genero                      Genero?
+  estado_civil                String?   @db.VarChar(20)
+  ocupacion                   String?   @db.VarChar(100)
+  telefono                    String?   @db.VarChar(20)
+  telefono_emergencia         String?   @db.VarChar(20)
+  contacto_emergencia_nombre  String?   @db.VarChar(150)
+  email                       String?   @db.VarChar(150)
+  direccion                   String?   @db.Text
+  tipo_sangre                 String?   @db.VarChar(5)
+  alergias                    String?   @db.Text
+  antecedentes                String?   @db.Text
+  medicamentos                String?   @db.Text
+  seguro                      String?   @db.VarChar(150)
+  numero_afiliacion           String?   @db.VarChar(50)
+  observaciones               String?   @db.Text
+  activo                      Boolean   @default(true)
+  created_at                  DateTime  @default(now())
+  updated_at                  DateTime  @updatedAt
+
+  citas                       citas[]
+  notas                       notas_clinicas[]
+}
+
+model citas {
+  id              Int        @id @default(autoincrement())
+  paciente_id     Int
+  medico_id       Int
+  servicio_id     Int
+  fecha           DateTime   @db.Date
+  hora_inicio     String     @db.VarChar(5)   // HH:MM
+  hora_fin        String     @db.VarChar(5)   // HH:MM
+  estado          EstadoCita @default(agendada)
+  motivo_consulta String?    @db.Text
+  notas_medicas   String?    @db.Text
+  diagnostico     String?    @db.Text
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt
+
+  paciente        pacientes      @relation(fields: [paciente_id], references: [id], onDelete: Restrict)
+  medico          medicos        @relation(fields: [medico_id], references: [id], onDelete: Restrict)
+  servicio        servicios      @relation(fields: [servicio_id], references: [id], onDelete: Restrict)
+  pago            pagos?
+  nota_clinica    notas_clinicas?
+}
+
+model notas_clinicas {
+  id                       Int      @id @default(autoincrement())
+  cita_id                  Int      @unique
+  medico_id                Int
+  paciente_id              Int
+
+  sv_presion_sistolica     Int?
+  sv_presion_diastolica    Int?
+  sv_frecuencia_cardiaca   Int?
+  sv_frecuencia_resp       Int?
+  sv_temperatura           Decimal? @db.Decimal(4, 1)
+  sv_saturacion_o2         Int?
+  sv_peso                  Decimal? @db.Decimal(5, 2)
+  sv_talla                 Decimal? @db.Decimal(5, 2)
+
+  motivo_consulta          String?  @db.Text
+  anamnesis                String?  @db.Text
+  examen_fisico            String?  @db.Text
+
+  diagnostico_principal    String?  @db.Text
+  diagnosticos_secundarios String[]
+
+  medicamentos             Json     @default("[]")
+  indicaciones             String?  @db.Text
+  proxima_consulta         String?  @db.VarChar(200)
+  notas_adicionales        String?  @db.Text
+
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
+
+  cita                     citas    @relation(fields: [cita_id], references: [id], onDelete: Restrict)
+  medico                   medicos  @relation(fields: [medico_id], references: [id], onDelete: Restrict)
+  paciente                 pacientes @relation(fields: [paciente_id], references: [id], onDelete: Restrict)
+}
+
+model notificaciones {
+  id         Int      @id @default(autoincrement())
+  usuario_id Int
+  tipo       String   @db.VarChar(50)
+  titulo     String   @db.VarChar(150)
+  mensaje    String   @db.VarChar(300)
+  leida      Boolean  @default(false)
+  link       String?  @db.VarChar(100)
+  created_at DateTime @default(now())
+
+  usuario    usuarios @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@index([usuario_id, leida])
+}
+
+model pagos {
+  id            Int        @id @default(autoincrement())
+  cita_id       Int        @unique
+  monto         Decimal    @db.Decimal(10, 2)
+  estado        EstadoPago @default(pendiente)
+  metodo_pago   String?    @db.VarChar(50)
+  referencia    String?    @db.VarChar(100)
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+
+  cita          citas      @relation(fields: [cita_id], references: [id], onDelete: Restrict)
+}

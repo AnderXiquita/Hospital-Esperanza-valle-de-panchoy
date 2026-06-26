@@ -1,0 +1,394 @@
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="dashboard__header">
+    <div class="dashboard__greeting">
+      <p class="dashboard__greeting-text">{{ greetingKey | translate }}, {{ auth.user()?.nombre }}</p>
+      <h1 class="dashboard__title">{{ 'dashboard.title' | translate }}</h1>
+      <p class="dashboard__date">{{ todayLabel() }}</p>
+    </div>
+    @if (!esMedico()) {
+      <button class="dashboard__cta" type="button" (click)="irANuevaCita()">
+        <ng-container [ngComponentOutlet]="icons['calendarPlus']" [ngComponentOutletInputs]="iconInputsSm"></ng-container>
+        {{ 'dashboard.btn_new_cita' | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- ═══════════════════════ VISTA ADMIN / RECEPCIONISTA ═══════════════════════ -->
+  @if (!esMedico()) {
+
+    <!-- Zona 1 — Métricas bento -->
+    <div class="metrics-bento">
+
+      <div class="metric-card metric-card--hero">
+        <div class="metric-card__label">{{ 'dashboard.citas_hoy' | translate }}</div>
+        @if (cargando()) {
+          <div class="metric-card__number metric-card__number--skeleton"></div>
+          <div class="metric-card__sub metric-card__sub--skeleton"></div>
+        } @else {
+          <div class="metric-card__number">{{ totalHoy() }}</div>
+          <div class="metric-card__sub">
+            {{ pendientesHoy() }} {{ 'dashboard.pendientes' | translate }} ·
+            {{ confirmadasHoy() }} {{ 'dashboard.confirmadas' | translate }} ·
+            {{ atendidasHoy() }} {{ 'dashboard.atendidas' | translate }}
+          </div>
+        }
+      </div>
+
+      <div class="metric-card metric-card--teal">
+        <div class="metric-card__label">{{ 'dashboard.ingresos_mes' | translate }}</div>
+        @if (cargando()) {
+          <div class="metric-card__number metric-card__number--skeleton"></div>
+          <div class="metric-card__sub metric-card__sub--skeleton"></div>
+        } @else {
+          <div class="metric-card__number">{{ ingresosMes() }}</div>
+          <div class="metric-card__sub">{{ 'dashboard.pagos_registrados' | translate }}: {{ pagoStats()?.num_pagados ?? '—' }}</div>
+        }
+      </div>
+
+      <div class="metrics-stack">
+        <div class="metric-card metric-card--light">
+          <div class="metric-card__icon-wrap">
+            <ng-container [ngComponentOutlet]="icons['users']" [ngComponentOutletInputs]="iconInputs"></ng-container>
+          </div>
+          <div class="metric-card__body">
+            <div class="metric-card__label">{{ 'dashboard.pacientes_nuevos_mes' | translate }}</div>
+            @if (cargando()) {
+              <div class="metric-card__number metric-card__number--md metric-card__number--skeleton"></div>
+            } @else {
+              <div class="metric-card__number metric-card__number--md">{{ pacientesNuevosMes() }}</div>
+            }
+          </div>
+        </div>
+        <div class="metric-card metric-card--light">
+          <div class="metric-card__icon-wrap metric-card__icon-wrap--teal">
+            <ng-container [ngComponentOutlet]="icons['stethoscope']" [ngComponentOutletInputs]="iconInputs"></ng-container>
+          </div>
+          <div class="metric-card__body">
+            <div class="metric-card__label">{{ 'dashboard.medicos_activos_hoy' | translate }}</div>
+            @if (cargando()) {
+              <div class="metric-card__number metric-card__number--md metric-card__number--skeleton"></div>
+            } @else {
+              <div class="metric-card__number metric-card__number--md">{{ medicosHoy().length }}</div>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Zona 2 — Próximas citas | Médicos disponibles | Gráfico semanal -->
+    <div class="lower-grid">
+
+      <div class="panel panel--appointments">
+        <div class="panel__head">
+          <h2 class="panel__title">{{ 'dashboard.proximas_citas' | translate }}</h2>
+          <button class="panel__link" type="button" (click)="verCitasHoy()">
+            {{ 'dashboard.ver_todas' | translate }}
+            <ng-container [ngComponentOutlet]="icons['arrowRight']" [ngComponentOutletInputs]="iconInputsXs"></ng-container>
+          </button>
+        </div>
+        <div class="appt-list">
+          @if (cargando()) {
+            @for (_ of [1,2,3]; track $index) { <div class="appt-row appt-row--skeleton"></div> }
+          } @else if (proximasCitas().length === 0) {
+            <p class="panel__empty">{{ 'dashboard.no_mas_citas' | translate }}</p>
+          } @else {
+            @for (appt of proximasCitas(); track appt.id) {
+              <div class="appt-row appt-row--clickable" (click)="verCita(appt.id)">
+                <span class="appt-time">{{ appt.hora_inicio }}</span>
+                <div class="appt-info">
+                  <span class="appt-patient">{{ appt.paciente_nombre }} {{ appt.paciente_apellido }}</span>
+                  <span class="appt-detail">Dr. {{ appt.medico_nombre }} {{ appt.medico_apellido }} · {{ appt.servicio_nombre }}</span>
+                </div>
+                <span class="appt-status appt-status--{{ appt.estado }}">{{ 'citas.estado_' + appt.estado | translate }}</span>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="panel panel--doctors">
+        <div class="panel__head">
+          <h2 class="panel__title">{{ 'dashboard.medicos_disponibles' | translate }}</h2>
+          @if (!cargando()) {
+            <span class="panel__count">{{ medicosHoy().length }} {{ 'dashboard.en_turno' | translate }}</span>
+          }
+        </div>
+        <div class="doctor-list">
+          @if (cargando()) {
+            @for (_ of [1,2,3]; track $index) { <div class="doctor-row doctor-row--skeleton"></div> }
+          } @else if (medicosDisponibles().length === 0) {
+            <p class="panel__empty">{{ 'dashboard.ningun_medico' | translate }}</p>
+          } @else {
+            @for (doc of medicosDisponibles(); track doc.id) {
+              <div class="doctor-row">
+                <div class="doctor-avatar">{{ doc.initials }}</div>
+                <div class="doctor-info">
+                  <span class="doctor-name">{{ doc.nombre }}</span>
+                  <span class="doctor-specialty">{{ doc.especialidad }}</span>
+                </div>
+                <span class="doctor-slots">{{ doc.citasHoy }}</span>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="panel panel--chart">
+        <div class="panel__head">
+          <div>
+            <h2 class="panel__title">{{ 'dashboard.esta_semana' | translate }}</h2>
+            <span class="panel__subtitle">{{ 'dashboard.citas_por_dia' | translate }}</span>
+          </div>
+          @if (!cargando()) {
+            <span class="panel__count">{{ weekTotal() }} {{ 'dashboard.total' | translate }}</span>
+          }
+        </div>
+        <div class="week-chart">
+          @for (day of weekData(); track day.label) {
+            <div class="bar-col" [class.bar-col--today]="day.today">
+              <span class="bar-col__count">{{ day.count || '' }}</span>
+              <div class="bar-col__track">
+                <div class="bar-col__fill" [style.height.%]="day.pct"></div>
+              </div>
+              <span class="bar-col__label">{{ day.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Zona 3 — Tabla completa de citas del día -->
+    <div class="panel zone3">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">{{ 'dashboard.todas_citas_dia' | translate }}</h2>
+          @if (!cargando()) {
+            <span class="panel__subtitle">{{ citasTabla().length }} {{ 'dashboard.citas_agendadas' | translate }}</span>
+          }
+        </div>
+      </div>
+      <div class="table-scroll-wrap">
+        @if (cargando()) {
+          <div class="table-loading">{{ 'dashboard.cargando' | translate }}</div>
+        } @else if (citasTabla().length === 0) {
+          <p class="panel__empty panel__empty--table">{{ 'dashboard.no_citas_registradas' | translate }}</p>
+        } @else {
+          <table class="appt-table">
+            <thead>
+              <tr>
+                <th>{{ 'dashboard.th_hora' | translate }}</th>
+                <th>{{ 'dashboard.th_paciente' | translate }}</th>
+                <th>{{ 'dashboard.th_medico' | translate }}</th>
+                <th>{{ 'dashboard.th_servicio' | translate }}</th>
+                <th>{{ 'dashboard.th_estado' | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (appt of citasTabla(); track appt.id) {
+                <tr class="appt-table__row--{{ appt.estado }}" (click)="verCita(appt.id)" style="cursor:pointer">
+                  <td class="appt-table__time">{{ appt.hora_inicio }}</td>
+                  <td class="appt-table__patient">{{ appt.paciente_nombre }} {{ appt.paciente_apellido }}</td>
+                  <td class="appt-table__secondary">Dr. {{ appt.medico_nombre }} {{ appt.medico_apellido }}</td>
+                  <td class="appt-table__secondary">{{ appt.servicio_nombre }}</td>
+                  <td>
+                    <span class="appt-status appt-status--{{ appt.estado }}">{{ 'citas.estado_' + appt.estado | translate }}</span>
+                  </td>
+                  <td class="appt-table__actions">
+                    <button class="appt-table__action-btn" type="button" (click)="$event.stopPropagation(); verCita(appt.id)">
+                      <ng-container [ngComponentOutlet]="icons['eye']" [ngComponentOutletInputs]="iconInputsTable"></ng-container>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+
+  }
+
+  <!-- ═══════════════════════════ VISTA MÉDICO ══════════════════════════════════ -->
+  @else {
+
+    <!-- Zona 1 — Bento métricas del médico -->
+    <div class="metrics-bento">
+
+      <div class="metric-card metric-card--hero">
+        <div class="metric-card__label">{{ 'dashboard.mis_citas_hoy' | translate }}</div>
+        @if (cargando()) {
+          <div class="metric-card__number metric-card__number--skeleton"></div>
+          <div class="metric-card__sub metric-card__sub--skeleton"></div>
+        } @else {
+          <div class="metric-card__number">{{ totalHoy() }}</div>
+          <div class="metric-card__sub">
+            {{ pendientesHoy() }} {{ 'dashboard.pendientes' | translate }} ·
+            {{ confirmadasHoy() }} {{ 'dashboard.confirmadas' | translate }} ·
+            {{ atendidasHoy() }} {{ 'dashboard.atendidas' | translate }}
+          </div>
+        }
+      </div>
+
+      <div class="metric-card metric-card--teal">
+        <div class="metric-card__label">{{ 'dashboard.atendidas_semana' | translate }}</div>
+        @if (cargando()) {
+          <div class="metric-card__number metric-card__number--skeleton"></div>
+          <div class="metric-card__sub metric-card__sub--skeleton"></div>
+        } @else {
+          <div class="metric-card__number">{{ atendidasSemana() }}</div>
+          <div class="metric-card__sub">{{ medicoEspecialidad() }}</div>
+        }
+      </div>
+
+      <div class="metrics-stack">
+        <div class="metric-card metric-card--light">
+          <div class="metric-card__icon-wrap metric-card__icon-wrap--teal">
+            <ng-container [ngComponentOutlet]="icons['stethoscope']" [ngComponentOutletInputs]="iconInputs"></ng-container>
+          </div>
+          <div class="metric-card__body">
+            <div class="metric-card__label">{{ 'dashboard.confirmadas_hoy' | translate }}</div>
+            @if (cargando()) {
+              <div class="metric-card__number metric-card__number--md metric-card__number--skeleton"></div>
+            } @else {
+              <div class="metric-card__number metric-card__number--md">{{ confirmadasHoy() }}</div>
+            }
+          </div>
+        </div>
+        <div class="metric-card metric-card--light">
+          <div class="metric-card__icon-wrap">
+            <ng-container [ngComponentOutlet]="icons['clock']" [ngComponentOutletInputs]="iconInputs"></ng-container>
+          </div>
+          <div class="metric-card__body">
+            <div class="metric-card__label">{{ 'dashboard.proxima_cita' | translate }}</div>
+            @if (cargando()) {
+              <div class="metric-card__number metric-card__number--md metric-card__number--skeleton"></div>
+            } @else {
+              <div class="metric-card__number metric-card__number--md">{{ proximaCita()?.hora_inicio ?? '—' }}</div>
+              @if (proximaCita()) {
+                <div class="metric-card__sub" style="font-size:var(--text-xs);opacity:0.6;margin-top:2px">
+                  {{ proximaCita()!.paciente_nombre }} {{ proximaCita()!.paciente_apellido }}
+                </div>
+              } @else if (!cargando()) {
+                <div class="metric-card__sub" style="font-size:var(--text-xs);opacity:0.5;margin-top:2px">
+                  {{ 'dashboard.sin_mas_citas' | translate }}
+                </div>
+              }
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Zona 2 — Mis próximas citas + Gráfico semanal -->
+    <div class="lower-grid lower-grid--medico">
+
+      <div class="panel panel--appointments">
+        <div class="panel__head">
+          <h2 class="panel__title">{{ 'dashboard.mis_proximas_citas' | translate }}</h2>
+          <button class="panel__link" type="button" (click)="verCitasHoy()">
+            {{ 'dashboard.ver_agenda' | translate }}
+            <ng-container [ngComponentOutlet]="icons['arrowRight']" [ngComponentOutletInputs]="iconInputsXs"></ng-container>
+          </button>
+        </div>
+        <div class="appt-list">
+          @if (cargando()) {
+            @for (_ of [1,2,3]; track $index) { <div class="appt-row appt-row--skeleton"></div> }
+          } @else if (proximasCitas().length === 0) {
+            <p class="panel__empty">{{ 'dashboard.no_mas_citas' | translate }}</p>
+          } @else {
+            @for (appt of proximasCitas(); track appt.id) {
+              <div class="appt-row appt-row--clickable" (click)="verCita(appt.id)">
+                <span class="appt-time">{{ appt.hora_inicio }}</span>
+                <div class="appt-info">
+                  <span class="appt-patient">{{ appt.paciente_nombre }} {{ appt.paciente_apellido }}</span>
+                  <span class="appt-detail">{{ appt.servicio_nombre }}</span>
+                </div>
+                <span class="appt-status appt-status--{{ appt.estado }}">{{ 'citas.estado_' + appt.estado | translate }}</span>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="panel panel--chart">
+        <div class="panel__head">
+          <div>
+            <h2 class="panel__title">{{ 'dashboard.esta_semana' | translate }}</h2>
+            <span class="panel__subtitle">{{ 'dashboard.citas_por_dia' | translate }}</span>
+          </div>
+          @if (!cargando()) {
+            <span class="panel__count">{{ weekTotal() }} {{ 'dashboard.total' | translate }}</span>
+          }
+        </div>
+        <div class="week-chart">
+          @for (day of weekData(); track day.label) {
+            <div class="bar-col" [class.bar-col--today]="day.today">
+              <span class="bar-col__count">{{ day.count || '' }}</span>
+              <div class="bar-col__track">
+                <div class="bar-col__fill" [style.height.%]="day.pct"></div>
+              </div>
+              <span class="bar-col__label">{{ day.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Zona 3 — Tabla de mis citas del día (sin columna Médico) -->
+    <div class="panel zone3">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">{{ 'dashboard.mis_citas_dia' | translate }}</h2>
+          @if (!cargando()) {
+            <span class="panel__subtitle">{{ citasTabla().length }} {{ 'dashboard.citas_agendadas' | translate }}</span>
+          }
+        </div>
+      </div>
+      <div class="table-scroll-wrap">
+        @if (cargando()) {
+          <div class="table-loading">{{ 'dashboard.cargando' | translate }}</div>
+        } @else if (citasTabla().length === 0) {
+          <p class="panel__empty panel__empty--table">{{ 'dashboard.no_citas_medico' | translate }}</p>
+        } @else {
+          <table class="appt-table">
+            <thead>
+              <tr>
+                <th>{{ 'dashboard.th_hora' | translate }}</th>
+                <th>{{ 'dashboard.th_paciente' | translate }}</th>
+                <th>{{ 'dashboard.th_servicio' | translate }}</th>
+                <th>{{ 'dashboard.th_estado' | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (appt of citasTabla(); track appt.id) {
+                <tr class="appt-table__row--{{ appt.estado }}" (click)="verCita(appt.id)" style="cursor:pointer">
+                  <td class="appt-table__time">{{ appt.hora_inicio }}</td>
+                  <td class="appt-table__patient">{{ appt.paciente_nombre }} {{ appt.paciente_apellido }}</td>
+                  <td class="appt-table__secondary">{{ appt.servicio_nombre }}</td>
+                  <td>
+                    <span class="appt-status appt-status--{{ appt.estado }}">{{ 'citas.estado_' + appt.estado | translate }}</span>
+                  </td>
+                  <td class="appt-table__actions">
+                    <button class="appt-table__action-btn" type="button" (click)="$event.stopPropagation(); verCita(appt.id)">
+                      <ng-container [ngComponentOutlet]="icons['eye']" [ngComponentOutletInputs]="iconInputsTable"></ng-container>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+
+  }
+
+</div>

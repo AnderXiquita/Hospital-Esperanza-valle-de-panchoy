@@ -1,0 +1,177 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="topbar">
+    <span class="topbar__label">{{ 'pacientes.detail_eyebrow' | translate }}</span>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  @if (u(); as p) {
+    <div class="drawer__body">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero__avatar">{{ iniciales }}</div>
+        <h2 class="hero__name">{{ p.nombre }} {{ p.apellido }}</h2>
+        <p class="hero__dpi">{{ p.dpi }}</p>
+        <span class="status" [class.status--active]="p.activo">
+          {{ (p.activo ? 'pacientes.status_active' : 'pacientes.status_inactive') | translate }}
+        </span>
+      </div>
+
+      <!-- Quick stats -->
+      <div class="quickstats">
+        <div class="quickstat">
+          <span class="quickstat__label">{{ 'pacientes.field_age' | translate }}</span>
+          <span class="quickstat__value">{{ edad }}</span>
+        </div>
+        <div class="quickstat">
+          <span class="quickstat__label">{{ 'pacientes.field_blood' | translate }}</span>
+          <span class="quickstat__value">{{ p.tipo_sangre || '—' }}</span>
+        </div>
+        <div class="quickstat">
+          <span class="quickstat__label">{{ 'pacientes.field_gender' | translate }}</span>
+          <span class="quickstat__value">{{ generoLabel(p.genero) }}</span>
+        </div>
+      </div>
+
+      <!-- Información clínica -->
+      <section class="block">
+        <p class="block__title">{{ 'pacientes.block_clinical' | translate }}</p>
+        <div class="kv">
+          <span class="kv__label">{{ 'pacientes.field_allergies' | translate }}</span>
+          <span class="kv__value">{{ p.alergias || '—' }}</span>
+        </div>
+        <div class="kv">
+          <span class="kv__label">{{ 'pacientes.field_history' | translate }}</span>
+          <span class="kv__value">{{ p.antecedentes || '—' }}</span>
+        </div>
+        <div class="kv">
+          <span class="kv__label">{{ 'pacientes.field_medications' | translate }}</span>
+          <span class="kv__value">{{ p.medicamentos || '—' }}</span>
+        </div>
+      </section>
+
+      <!-- Contacto -->
+      <section class="block">
+        <p class="block__title">{{ 'pacientes.block_contact' | translate }}</p>
+        <div class="info-list">
+          <div class="info-row">
+            <ng-container [ngComponentOutlet]="icons.phone" [ngComponentOutletInputs]="iconField" />
+            <span class="info-row__text">{{ p.telefono || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <ng-container [ngComponentOutlet]="icons.mail" [ngComponentOutletInputs]="iconField" />
+            <span class="info-row__text">{{ p.email || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <ng-container [ngComponentOutlet]="icons.mapPin" [ngComponentOutletInputs]="iconField" />
+            <span class="info-row__text">{{ p.direccion || '—' }}</span>
+          </div>
+          <div class="info-row">
+            <ng-container [ngComponentOutlet]="icons.userRound" [ngComponentOutletInputs]="iconField" />
+            <span class="info-row__text">
+              {{ p.contacto_emergencia_nombre || '—' }}
+              @if (p.telefono_emergencia) { <span class="info-row__tag">{{ p.telefono_emergencia }}</span> }
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Datos personales -->
+      <section class="block">
+        <p class="block__title">{{ 'pacientes.section_personal' | translate }}</p>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-item__label">{{ 'pacientes.field_birthdate' | translate }}</span>
+            <span class="data-item__value">{{ formatFecha(p.fecha_nacimiento) }}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-item__label">{{ 'pacientes.field_civil' | translate }}</span>
+            <span class="data-item__value">{{ civilLabel(p.estado_civil) }}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-item__label">{{ 'pacientes.field_occupation' | translate }}</span>
+            <span class="data-item__value">{{ p.ocupacion || '—' }}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-item__label">{{ 'pacientes.field_created' | translate }}</span>
+            <span class="data-item__value">{{ formatFecha(p.created_at) }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seguro -->
+      @if (tieneSeguro) {
+        <section class="block">
+          <p class="block__title">{{ 'pacientes.block_insurance' | translate }}</p>
+          <div class="data-grid">
+            <div class="data-item">
+              <span class="data-item__label">{{ 'pacientes.field_insurance' | translate }}</span>
+              <span class="data-item__value">{{ p.seguro || '—' }}</span>
+            </div>
+            <div class="data-item">
+              <span class="data-item__label">{{ 'pacientes.field_affiliation' | translate }}</span>
+              <span class="data-item__value">{{ p.numero_afiliacion || '—' }}</span>
+            </div>
+          </div>
+        </section>
+      }
+
+      <!-- Observaciones -->
+      @if (p.observaciones) {
+        <section class="block">
+          <p class="block__title">{{ 'pacientes.block_notes' | translate }}</p>
+          <p class="bio">{{ p.observaciones }}</p>
+        </section>
+      }
+
+      <!-- Acciones -->
+      <section class="actions">
+        <button class="action" type="button" (click)="pedirEditar()">
+          <ng-container [ngComponentOutlet]="icons.pencil" [ngComponentOutletInputs]="iconAction" />
+          {{ 'pacientes.edit_record' | translate }}
+        </button>
+        @if (p.activo) {
+          <button class="action action--danger" type="button" (click)="pedirToggle()">
+            <ng-container [ngComponentOutlet]="icons.powerOff" [ngComponentOutletInputs]="iconAction" />
+            {{ 'pacientes.deactivate' | translate }}
+          </button>
+        } @else {
+          <button class="action action--activate" type="button" (click)="pedirToggle()">
+            <ng-container [ngComponentOutlet]="icons.power" [ngComponentOutletInputs]="iconAction" />
+            {{ 'pacientes.activate' | translate }}
+          </button>
+        }
+      </section>
+    </div>
+  }
+</aside>
+
+<!-- Confirmación toggle -->
+@if (confirmToggle()) {
+  <div class="overlay" (click)="cancelarToggle()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ 'pacientes.confirm_title' | translate }}</h2>
+      <p class="modal__text">
+        {{ (u()?.activo ? 'pacientes.confirm_deactivate' : 'pacientes.confirm_activate') | translate }}
+      </p>
+      @if (toggleError()) { <p class="modal__error">{{ toggleError() }}</p> }
+      <div class="modal__actions">
+        <button class="btn-secondary" (click)="cancelarToggle()">{{ 'btn.cancel' | translate }}</button>
+        <button
+          [class.btn-danger]="u()?.activo"
+          [class.btn-activate]="!u()?.activo"
+          [disabled]="toggleSaving()"
+          (click)="confirmarToggle()"
+        >
+          @if (toggleSaving()) { <span class="spinner spinner--light"></span> }
+          {{ (u()?.activo ? 'pacientes.deactivate' : 'pacientes.activate') | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

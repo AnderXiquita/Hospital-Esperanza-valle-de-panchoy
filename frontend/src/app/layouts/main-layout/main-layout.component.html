@@ -1,0 +1,151 @@
+<div class="app-shell" [class.sidebar-collapsed]="collapsed()" [class.mobile-open]="mobileOpen()">
+
+  <!-- Blobs detrás del sidebar -->
+  <div class="app-blobs" aria-hidden="true">
+    <div class="app-blob app-blob--1"></div>
+    <div class="app-blob app-blob--2"></div>
+    <div class="app-blob app-blob--3"></div>
+  </div>
+
+  <!-- Overlay oscuro al abrir menú mobile (toca fuera para cerrar) -->
+  @if (mobileOpen()) {
+    <div class="mobile-overlay" (click)="closeMobileMenu()" aria-hidden="true"></div>
+  }
+
+  <!-- Overlay para el arrastre — siempre en DOM, opacidad manejada por JS durante el drag -->
+  <div class="drag-overlay" aria-hidden="true"></div>
+
+  <!-- ── Sidebar ──────────────────────────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <div class="sidebar__header">
+      <!-- Desktop: logo + toggle -->
+      <div class="sidebar__brand">
+        <img src="/assets/Logo/LogoNegro.png" alt="Hospital Esperanza" class="sidebar__icon">
+      </div>
+      <button class="sidebar__toggle" (click)="toggleSidebar()" aria-label="Colapsar sidebar">
+        <ng-container
+          [ngComponentOutlet]="icon('panel-left')"
+          [ngComponentOutletInputs]="navIconInputs">
+        </ng-container>
+      </button>
+      <!-- Mobile: solo botón X para cerrar -->
+      <button class="sidebar__close-mobile" (click)="closeMobileMenu()" aria-label="Cerrar menú">
+        <ng-container
+          [ngComponentOutlet]="icon('x')"
+          [ngComponentOutletInputs]="navIconInputs">
+        </ng-container>
+      </button>
+    </div>
+
+    <!-- Mobile only: perfil en la parte superior del drawer -->
+    <div class="sidebar__pm">
+      <div class="sidebar__pm-avatar">{{ userInitials }}</div>
+      <div class="sidebar__pm-info">
+        <span class="sidebar__pm-name">{{ user()?.nombre }} {{ user()?.apellido }}</span>
+        <span class="sidebar__pm-role">{{ rolLabel }}</span>
+      </div>
+    </div>
+
+    <nav class="sidebar__nav">
+      @for (section of sections(); track section.titleKey) {
+        <div class="sidebar__section">
+          @if (!collapsed()) {
+            <span class="sidebar__section-title">{{ section.titleKey | translate }}</span>
+          }
+          @for (item of section.items; track item.route) {
+            <a
+              class="sidebar__item"
+              [class.sidebar__item--bottom-nav]="isBottomNavRoute(item.route)"
+              [routerLink]="item.route"
+              routerLinkActive="sidebar__item--active"
+              [title]="collapsed() ? (item.labelKey | translate) : ''"
+              (click)="closeMobileMenu()"
+            >
+              <span class="sidebar__item-icon-wrap">
+                <ng-container
+                  [ngComponentOutlet]="icon(item.icon)"
+                  [ngComponentOutletInputs]="navIconInputs">
+                </ng-container>
+                @if (item.route === '/notificaciones' && unreadCount() > 0) {
+                  <span class="sidebar__notif-dot"></span>
+                }
+              </span>
+              @if (!collapsed()) {
+                <span class="sidebar__item-label">{{ item.labelKey | translate }}</span>
+                @if (item.route === '/notificaciones' && unreadCount() > 0) {
+                  <span class="sidebar__notif-count">{{ unreadCount() > 99 ? '99+' : unreadCount() }}</span>
+                }
+              }
+            </a>
+          }
+        </div>
+      }
+
+    </nav>
+
+    <div class="sidebar__footer">
+      @if (!collapsed()) {
+        <span class="sidebar__footer-title">{{ 'nav.section.account' | translate }}</span>
+      }
+      <button class="sidebar__logout" (click)="logout()" [title]="'btn.logout' | translate">
+        <span class="sidebar__item-icon-wrap">
+          <ng-container
+            [ngComponentOutlet]="icon('log-out')"
+            [ngComponentOutletInputs]="navIconInputs">
+          </ng-container>
+        </span>
+        <span class="sidebar__logout-label">{{ 'btn.logout' | translate }}</span>
+      </button>
+      <div class="sidebar__user" [class.sidebar__user--collapsed]="collapsed()">
+        <div class="sidebar__avatar">{{ userInitials }}</div>
+        @if (!collapsed()) {
+          <div class="sidebar__user-info">
+            <span class="sidebar__user-name">{{ user()?.nombre }} {{ user()?.apellido }}</span>
+            <span class="sidebar__user-role">{{ rolLabel }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Navbar mobile — solo visible en <600px, fuera del main-content para que el blur actúe sobre los blobs -->
+  <div class="mobile-nav">
+    <button class="mobile-nav__menu" (click)="toggleMobileMenu()" aria-label="Abrir menú">
+      <ng-container [ngComponentOutlet]="icon('menu')" [ngComponentOutletInputs]="navIconInputs"></ng-container>
+    </button>
+    <img src="/assets/Logo/LogoNegro.png" class="mobile-nav__logo" alt="Hospital Esperanza">
+  </div>
+
+  <!-- Bottom nav mobile — solo visible en <600px -->
+  <nav class="bottom-nav" [class.bottom-nav--hidden]="bottomNavHidden()">
+    @for (item of bottomNavItems(); track item.route) {
+      <a
+        class="bottom-nav__item"
+        [routerLink]="item.route"
+        routerLinkActive="bottom-nav__item--active"
+      >
+        <span class="bottom-nav__icon-wrap">
+          <ng-container
+            [ngComponentOutlet]="icon(item.icon)"
+            [ngComponentOutletInputs]="bottomNavIconInputs"
+          ></ng-container>
+          @if (item.route === '/notificaciones' && unreadCount() > 0) {
+            <span class="bottom-nav__dot"></span>
+          }
+        </span>
+      </a>
+    }
+  </nav>
+
+  <!-- ── Contenido ─────────────────────────────────────────────────────────── -->
+  <div class="main-content">
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+</div>
+
+<app-toast-notificaciones />

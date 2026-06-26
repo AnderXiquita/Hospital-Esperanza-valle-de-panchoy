@@ -1,0 +1,381 @@
+$ink:  #0f1117;
+$teal: #154C56;
+
+.notif {
+  padding: var(--space-8) var(--space-8) var(--space-10);
+  max-width: 700px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.notif__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: var(--space-5);
+}
+
+.notif__header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(15, 17, 23, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $ink;
+  flex-shrink: 0;
+  ng-component { display: flex; }
+}
+
+.notif__eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $teal;
+  margin: 0 0 2px;
+}
+
+.notif__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $ink;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notif__title-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: $ink;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 20px;
+  line-height: 1.5;
+}
+
+// ── Pills de categoría ────────────────────────────────────────────────────────
+.notif__pills {
+  display: flex;
+  gap: 6px;
+  margin-bottom: var(--space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+  padding-bottom: 2px;
+}
+
+.notif__pill {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: inherit;
+  background: #F3F4F6;
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  color: #6B7280;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &--active {
+    background: $ink;
+    color: #fff;
+    border-color: $ink;
+  }
+
+  &:not(&--active):hover {
+    background: #E5E7EB;
+    color: $ink;
+  }
+}
+
+// ── Fila de controles ─────────────────────────────────────────────────────────
+.notif__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.notif__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.notif__mark-all,
+.notif__delete-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  ng-component { display: flex; }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.notif__mark-all {
+  background: transparent;
+  border: 1.5px solid #D1D5DB;
+  color: #374151;
+  &:hover:not(:disabled) { background: #F9FAFB; border-color: #9CA3AF; }
+}
+
+.notif__delete-all {
+  background: transparent;
+  border: 1.5px solid #D1D5DB;
+  color: #9CA3AF;
+  &:hover:not(:disabled) { border-color: #EF4444; color: #EF4444; background: #FEF2F2; }
+}
+
+// ── Segmented control ─────────────────────────────────────────────────────────
+.notif__seg {
+  display: inline-flex;
+  background: #F3F4F6;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.notif__seg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #6B7280;
+  transition: background 0.15s, color 0.15s;
+
+  &--active { background: $ink; color: #fff; }
+  &:not(&--active):hover { background: rgba(0,0,0,0.05); }
+}
+
+.notif__seg-count {
+  background: $ink;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 20px;
+  line-height: 1.4;
+}
+
+// ── Grupos temporales ─────────────────────────────────────────────────────────
+.notif__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.notif__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--space-4);
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.notif__group-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9CA3AF;
+  padding: 0 4px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+// ── Item ──────────────────────────────────────────────────────────────────────
+.notif__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #F3F4F6;
+  transition: background 0.15s;
+
+  &--read {
+    .notif__item-title { font-weight: 400; color: #6B7280; }
+    .notif__dot { background: #D1D5DB; }
+  }
+
+  &--clickable { cursor: pointer; }
+  &--clickable:hover { background: #F9FAFB; }
+
+  &:hover .notif__item-del { opacity: 1; }
+}
+
+.notif__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+  background: $ink;
+  .notif__item--read & { background: #D1D5DB; }
+}
+
+.notif__item-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.notif__item-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: $ink;
+}
+
+.notif__item-msg {
+  font-size: 0.76rem;
+  color: #6B7280;
+  line-height: 1.45;
+}
+
+.notif__item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.notif__item-time {
+  font-size: 0.68rem;
+  color: #9CA3AF;
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+.notif__item-del {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #D1D5DB;
+  opacity: 0;
+  transition: color 0.15s, background 0.15s, opacity 0.15s;
+  ng-component { display: flex; }
+
+  &:hover { color: #EF4444; background: #FEF2F2; }
+}
+
+// ── Empty ─────────────────────────────────────────────────────────────────────
+.notif__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: #D1D5DB;
+  ng-component { display: flex; }
+
+  p {
+    font-size: 0.875rem;
+    color: #9CA3AF;
+    margin: 0;
+  }
+}
+
+// ── Skeleton ──────────────────────────────────────────────────────────────────
+.notif__skeleton {
+  height: 60px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  margin-bottom: 2px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Mobile ────────────────────────────────────────────────────────────────────
+@media (max-width: 600px) {
+  .notif {
+    padding: 16px 0 32px;
+    max-width: 100%;
+  }
+
+  .notif__header {
+    gap: 10px;
+    margin-bottom: var(--space-3);
+  }
+
+  .notif__header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .notif__eyebrow { font-size: 0.65rem; }
+  .notif__title   { font-size: 1.25rem; }
+
+  .notif__pills {
+    margin-bottom: var(--space-3);
+  }
+
+  .notif__controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .notif__actions {
+    width: 100%;
+    .notif__mark-all, .notif__delete-all {
+      flex: 1;
+      justify-content: center;
+      height: 36px;
+    }
+  }
+
+  .notif__item {
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
+  .notif__item-title { font-size: 0.8rem; }
+  .notif__item-msg   { font-size: 0.74rem; }
+
+  .notif__item-del { opacity: 1; }
+}

@@ -1,0 +1,32 @@
+<div class="rep">
+
+  <div class="rep__header">
+    <p class="rep__eyebrow">{{ 'reportes.eyebrow' | translate }}</p>
+    <h1 class="rep__title">{{ 'reportes.title' | translate }}</h1>
+    <p class="rep__subtitle">{{ 'reportes.subtitle' | translate }}</p>
+  </div>
+
+  <div class="cards-grid">
+    @for (r of reportes; track r.id) {
+      <a [class]="'rcard rcard--' + r.color" [routerLink]="['/reportes', r.id]">
+
+        <div class="rcard__left">
+          <div class="rcard__icon-wrap">
+            <ng-container *ngComponentOutlet="r.icono; inputs: iconLg" />
+          </div>
+          <div class="rcard__meta">
+            <span class="rcard__label">{{ 'reportes.badge_pdf' | translate }}</span>
+            <h2 class="rcard__title">{{ r.tituloKey | translate }}</h2>
+            <p class="rcard__desc">{{ r.descripKey | translate }}</p>
+          </div>
+        </div>
+
+        <div class="rcard__arrow">
+          <ng-container *ngComponentOutlet="ChevronRight; inputs: iconArrow" />
+        </div>
+
+      </a>
+    }
+  </div>
+
+</div>

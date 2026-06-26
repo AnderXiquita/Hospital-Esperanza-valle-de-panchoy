@@ -1,0 +1,72 @@
+@if (open()) {
+  <div class="ep-backdrop" (click)="cerrar()"></div>
+}
+
+<div [class]="'ep-drawer' + (open() ? ' ep-drawer--open' : '')">
+
+  <!-- Header -->
+  <div class="ep-drawer__header">
+    <div class="ep-drawer__header-left">
+      <div class="ep-drawer__icon">
+        <ng-container *ngComponentOutlet="IconUser; inputs: iconUser" />
+      </div>
+      <div>
+        <h2 class="ep-drawer__title">Editar perfil</h2>
+        <p class="ep-drawer__sub">Actualiza tu nombre y correo electrónico</p>
+      </div>
+    </div>
+    <button class="ep-drawer__close" (click)="cerrar()">
+      <ng-container *ngComponentOutlet="IconX; inputs: iconSm" />
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="ep-drawer__body">
+
+    @if (success()) {
+      <div class="ep-success">
+        <span class="ep-success__icon">✓</span>
+        <span>Perfil actualizado correctamente</span>
+      </div>
+    } @else {
+
+      @if (error()) {
+        <div class="ep-error">{{ error() }}</div>
+      }
+
+      <div class="ep-field">
+        <label class="ep-label">Nombre</label>
+        <input class="ep-input" type="text" placeholder="Tu nombre" [(ngModel)]="nombreModel" autocomplete="given-name" />
+      </div>
+
+      <div class="ep-field">
+        <label class="ep-label">Apellido</label>
+        <input class="ep-input" type="text" placeholder="Tu apellido" [(ngModel)]="apellidoModel" autocomplete="family-name" />
+      </div>
+
+      <div class="ep-field">
+        <label class="ep-label">Correo electrónico</label>
+        <input class="ep-input" type="email" placeholder="correo@ejemplo.com" [(ngModel)]="emailModel" autocomplete="email" />
+        <span class="ep-hint">Cambiar el correo afecta las credenciales de inicio de sesión</span>
+      </div>
+
+    }
+
+  </div>
+
+  <!-- Footer -->
+  @if (!success()) {
+    <div class="ep-drawer__footer">
+      <button class="ep-cancel" (click)="cerrar()">Cancelar</button>
+      <button class="ep-submit" [disabled]="!canSubmit" (click)="submit()">
+        @if (loading()) {
+          <span class="ep-spinner"></span>
+          Guardando...
+        } @else {
+          Guardar cambios
+        }
+      </button>
+    </div>
+  }
+
+</div>

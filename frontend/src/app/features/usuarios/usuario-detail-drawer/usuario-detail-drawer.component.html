@@ -1,0 +1,138 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="topbar">
+    <span class="topbar__label">{{ 'usuarios.detail_eyebrow' | translate }}</span>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  @if (u(); as user) {
+    <div class="drawer__body">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero__avatar">{{ iniciales }}</div>
+        <h2 class="hero__name">{{ user.nombre }} {{ user.apellido }}</h2>
+        <p class="hero__email">{{ user.email }}</p>
+        <span class="status" [class.status--active]="user.activo">
+          {{ (user.activo ? 'usuarios.status_active' : 'usuarios.status_inactive') | translate }}
+        </span>
+      </div>
+
+      <!-- Datos -->
+      <section class="block">
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="rolIcon(user.rol)" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'usuarios.field_role' | translate }}</span>
+          <span class="info-row__value">{{ rolLabel(user.rol) }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.clock" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'usuarios.field_last_access' | translate }}</span>
+          <span class="info-row__value">{{ ultimoAcceso(user.ultimo_login) }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.calendar" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'usuarios.field_created' | translate }}</span>
+          <span class="info-row__value">{{ formatFecha(user.created_at) }}</span>
+        </div>
+      </section>
+
+      <!-- Acciones de seguridad -->
+      <section class="actions">
+        <button class="action" type="button" (click)="pedirEditar()">
+          <ng-container [ngComponentOutlet]="icons.pencil" [ngComponentOutletInputs]="iconAction" />
+          {{ 'btn.edit' | translate }}
+        </button>
+        <button class="action" type="button" (click)="abrirReset()">
+          <ng-container [ngComponentOutlet]="icons.key" [ngComponentOutletInputs]="iconAction" />
+          {{ 'usuarios.action_reset' | translate }}
+        </button>
+        @if (user.activo) {
+          <button
+            class="action action--danger"
+            type="button"
+            [disabled]="esPropia"
+            [title]="esPropia ? ('usuarios.cannot_toggle_self' | translate) : ''"
+            (click)="pedirToggle()"
+          >
+            <ng-container [ngComponentOutlet]="icons.powerOff" [ngComponentOutletInputs]="iconAction" />
+            {{ 'usuarios.deactivate' | translate }}
+          </button>
+        } @else {
+          <button class="action action--activate" type="button" (click)="pedirToggle()">
+            <ng-container [ngComponentOutlet]="icons.power" [ngComponentOutletInputs]="iconAction" />
+            {{ 'usuarios.activate' | translate }}
+          </button>
+        }
+        @if (esPropia && user.activo) {
+          <p class="actions__hint">{{ 'usuarios.cannot_toggle_self' | translate }}</p>
+        }
+      </section>
+    </div>
+  }
+</aside>
+
+<!-- Confirmación toggle -->
+@if (confirmToggle()) {
+  <div class="overlay" (click)="cancelarToggle()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ 'usuarios.confirm_title' | translate }}</h2>
+      <p class="modal__text">
+        {{ (u()?.activo ? 'usuarios.confirm_deactivate' : 'usuarios.confirm_activate') | translate }}
+      </p>
+      @if (toggleError()) { <p class="modal__error">{{ toggleError() }}</p> }
+      <div class="modal__actions">
+        <button class="btn-secondary" (click)="cancelarToggle()">{{ 'btn.cancel' | translate }}</button>
+        <button
+          [class.btn-danger]="u()?.activo"
+          [class.btn-activate]="!u()?.activo"
+          [disabled]="toggleSaving()"
+          (click)="confirmarToggle()"
+        >
+          @if (toggleSaving()) { <span class="spinner spinner--light"></span> }
+          {{ (u()?.activo ? 'usuarios.deactivate' : 'usuarios.activate') | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Restablecer contraseña -->
+@if (resetOpen()) {
+  <div class="overlay" (click)="cancelarReset()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ 'usuarios.reset_title' | translate }}</h2>
+      @if (resetDone()) {
+        <p class="modal__success">{{ 'usuarios.reset_success' | translate }}</p>
+      } @else {
+        <p class="modal__text">{{ 'usuarios.reset_hint' | translate }}</p>
+        <div class="field">
+          <label>{{ 'usuarios.reset_label' | translate }}</label>
+          <div class="pwd-wrap" [class.invalid]="resetSubmitted() && !passwordValida()">
+            <input [type]="showResetPwd() ? 'text' : 'password'"
+              [ngModel]="resetPwd()" (ngModelChange)="resetPwd.set($event)"
+              [placeholder]="'usuarios.ph_password' | translate" />
+            <button type="button" class="pwd-toggle" (click)="showResetPwd.set(!showResetPwd())" tabindex="-1">
+              <ng-container *ngComponentOutlet="showResetPwd() ? icons.eyeOff : icons.eye; inputs: iconField" />
+            </button>
+          </div>
+          @if (resetSubmitted() && !passwordValida()) {
+            <span class="field__err">{{ 'usuarios.err_password' | translate }}</span>
+          }
+        </div>
+        @if (resetError()) { <p class="modal__error">{{ resetError() }}</p> }
+        <div class="modal__actions">
+          <button class="btn-secondary" (click)="cancelarReset()">{{ 'btn.cancel' | translate }}</button>
+          <button class="btn-primary" [disabled]="resetSaving()" (click)="confirmarReset()">
+            @if (resetSaving()) { <span class="spinner spinner--light"></span> }
+            {{ 'common.confirm' | translate }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}

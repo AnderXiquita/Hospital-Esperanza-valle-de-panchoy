@@ -1,0 +1,16 @@
+services:
+  hospital_db:
+    image: postgres:16-alpine
+    container_name: hospital_esperanza_db
+    environment:
+      POSTGRES_USER: hospital_user
+      POSTGRES_PASSWORD: hospital_pass
+      POSTGRES_DB: hospital_esperanza
+    ports:
+      - "5433:5432"
+    volumes:
+      - hospital_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  hospital_db_data:

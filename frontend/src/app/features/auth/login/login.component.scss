@@ -1,0 +1,709 @@
+// ── Layout ───────────────────────────────────────────────────────────────────
+.login-layout {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+// ── Panel izquierdo ──────────────────────────────────────────────────────────
+.panel-left {
+  display: none;
+  position: relative;
+  width: 62%;
+  overflow: hidden;
+  background: #151515;
+
+  @media (min-width: 1024px) {
+    display: block;
+  }
+}
+
+.panel-left__slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 900ms ease;
+
+  &.is-active { opacity: 1; }
+}
+
+.panel-left__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(17, 24, 39, 0.2) 0%,
+    rgba(17, 24, 39, 0.0) 40%,
+    rgba(17, 24, 39, 0.6) 100%
+  );
+  z-index: 1;
+}
+
+.panel-left__branding {
+  position: absolute;
+  bottom: var(--space-10);
+  left: var(--space-10);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.panel-left__logo-img {
+  width: 240px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 1px 6px rgba(0,0,0,0.4));
+}
+
+// ── Bienvenida + tip ─────────────────────────────────────────────────────────
+.panel-left__tip {
+  position: absolute;
+  top: var(--space-8);
+  left: var(--space-8);
+  z-index: 3;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  @media (max-width: 1023px) { display: none; }
+}
+
+.panel-left__welcome {
+  margin: 0;
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-weight: var(--font-bold);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
+}
+
+.panel-left__tip-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.panel-left__tip-badge {
+  font-size: 10px;
+  font-weight: var(--font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.panel-left__tip-text {
+  font-size: var(--text-sm);
+  font-weight: var(--font-light);
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.65;
+  margin: 0;
+  transition: opacity 220ms ease;
+
+  &.is-hidden { opacity: 0; }
+}
+
+.panel-left__dots {
+  position: absolute;
+  bottom: var(--space-10);
+  right: var(--space-10);
+  z-index: 2;
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.panel-left__dot {
+  height: 6px;
+  width: 6px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.38);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--transition-fast), width var(--transition-base);
+
+  &.is-active {
+    background: white;
+    width: 20px;
+  }
+}
+
+// ── Panel derecho ────────────────────────────────────────────────────────────
+.panel-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f3f5f7;
+  position: relative;
+  padding: var(--space-8);
+}
+
+.panel-right__inner {
+  width: 100%;
+  max-width: 360px;
+}
+
+// ── Cabecera ─────────────────────────────────────────────────────────────────
+.form-header {
+  position: absolute;
+  top: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.form-header__logo-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.form-header__logo {
+  width: 200px;
+  height: auto;
+  display: block;
+}
+
+.form-header__title {
+  font-size: 2rem;
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.form-header__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+// ── Error ────────────────────────────────────────────────────────────────────
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-error-bg);
+  color: var(--color-error-dark);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-5);
+  line-height: 1.5;
+}
+
+// ── Título y saludo ───────────────────────────────────────────────────────────
+.form-greeting-block {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.form-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.form-greeting {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: #154C56;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.form-greeting-sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+// ── Campos ───────────────────────────────────────────────────────────────────
+.form-field {
+  margin-bottom: var(--space-4);
+}
+
+.form-field__label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.form-field__input {
+  display: block;
+  width: 100%;
+  background: var(--color-bg-surface);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.55rem var(--space-4);
+  font-size: var(--text-sm);
+  font-family: var(--font-primary);
+  color: var(--color-text-primary);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+
+  &::placeholder { color: var(--color-text-tertiary); }
+
+  &:hover:not(:focus):not(.is-invalid) {
+    background: var(--color-bg-hover);
+  }
+
+  &:focus {
+    background: var(--color-bg-surface);
+    border-color: var(--color-primary-400);
+    box-shadow: 0 0 0 3px var(--color-primary-50);
+  }
+
+  &.is-invalid {
+    border-color: var(--color-error);
+    background: var(--color-bg-surface);
+    &:focus { box-shadow: 0 0 0 3px var(--color-error-bg); }
+  }
+}
+
+// Wrapper solo para el campo password + ojo
+.password-wrapper {
+  position: relative;
+
+  &.is-invalid .form-field__input--password {
+    border-color: var(--color-error);
+    background: var(--color-bg-surface);
+  }
+}
+
+.form-field__input--password {
+  padding-right: 3rem;
+}
+
+.form-field__eye {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast);
+
+  &:hover { color: var(--color-text-secondary); }
+}
+
+.form-field__msg {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  margin-top: var(--space-1);
+  padding-left: 2px;
+}
+
+// ── Botón submit ─────────────────────────────────────────────────────────────
+.btn-submit {
+  width: 100%;
+  background: #0f1117;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.6rem var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast), box-shadow var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--space-6);
+  letter-spacing: 0.01em;
+
+  &:hover:not(:disabled) {
+    background: #20242e;
+    box-shadow: 0 4px 16px rgba(15, 17, 23, 0.35);
+  }
+
+  &:active:not(:disabled) {
+    background: #20242e;
+    box-shadow: none;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-submit__spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Barra inferior ────────────────────────────────────────────────────────────
+.bottom-bar {
+  position: absolute;
+  bottom: var(--space-5);
+  left: var(--space-8);
+  right: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.panel-footer__link {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover { color: var(--color-text-secondary); }
+}
+
+.panel-footer__sep {
+  font-size: var(--text-xs);
+  color: var(--color-border-strong);
+  user-select: none;
+}
+
+// ── Selector de idioma ───────────────────────────────────────────────────────
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.lang-switcher__btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  font-family: var(--font-primary);
+  color: var(--color-text-tertiary);
+  padding: 4px var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background var(--transition-fast);
+
+  &:hover {
+    color: var(--color-text-secondary);
+    background: var(--color-bg-hover);
+  }
+
+  &.is-active {
+    color: var(--color-primary-600);
+    font-weight: var(--font-semibold);
+  }
+}
+
+.lang-switcher__sep {
+  color: var(--color-border-strong);
+  font-size: var(--text-xs);
+  user-select: none;
+}
+
+// ── Tips mobile (hidden on desktop) ──────────────────────────────────────────
+.mobile-tip-section { display: none; }
+
+// ── Mobile ────────────────────────────────────────────────────────────────────
+@media (max-width: 1023px) {
+  .login-layout {
+    flex-direction: column;
+  }
+
+  // Imagen fija cubriendo toda la pantalla — así el blur funciona en todo el card
+  .panel-left {
+    display: block;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    flex-shrink: 0;
+  }
+
+  // Logo centrado en la zona de imagen (encima del card)
+  .panel-left__branding {
+    bottom: auto;
+    left: 50%;
+    top: var(--space-8);
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+
+  .panel-left__logo-img {
+    width: 148px;
+  }
+
+  .panel-left__dots { display: none; }
+
+  // Card con glassmorphism — imagen visible por TODA la superficie del card
+  .panel-right {
+    position: relative;
+    z-index: 10;
+    margin-top: 44vh;
+    min-height: 56vh;
+    border-radius: 24px 24px 0 0;
+    justify-content: flex-start;
+    padding: var(--space-8) var(--space-6) var(--space-6);
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.68);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+  }
+
+  .panel-right__inner {
+    max-width: 100%;
+  }
+
+  // Inputs con tinte glass — sin borde azul de focus
+  .form-field__input {
+    background: rgba(255, 255, 255, 0.42);
+    border: 1.5px solid rgba(0, 0, 0, 0.08);
+
+    &:focus {
+      background: rgba(255, 255, 255, 0.82);
+      border-color: rgba(0, 0, 0, 0.12);
+      box-shadow: none;
+    }
+
+    &:hover:not(:focus):not(.is-invalid) {
+      background: rgba(255, 255, 255, 0.56);
+    }
+  }
+
+  .password-wrapper.is-invalid .form-field__input--password,
+  .form-field__input.is-invalid {
+    background: rgba(255, 255, 255, 0.50);
+  }
+
+  // Texto del footer (privacidad, contacto, idioma)
+  .panel-footer__link {
+    color: var(--color-text-secondary);
+    &:hover { color: var(--color-text-primary); }
+  }
+
+  .panel-footer__sep { color: var(--color-text-tertiary); }
+
+  .lang-switcher__btn {
+    color: var(--color-text-secondary);
+    &.is-active { color: var(--color-primary-600); font-weight: var(--font-semibold); }
+  }
+
+  // Tips pegados al fondo, sin espacio arriba
+  .mobile-tip-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+    padding: 0 0 var(--space-3);
+  }
+
+  .mobile-tip__badge {
+    font-size: 9px;
+    font-weight: var(--font-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-secondary);
+  }
+
+  .mobile-tip__text {
+    font-size: var(--text-xs);
+    font-weight: var(--font-light);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    transition: opacity 220ms ease;
+
+    &.is-hidden { opacity: 0; }
+  }
+
+  // Logo color y título ocultos en mobile
+  .form-header { display: none; }
+  .form-title { display: none; }
+  .form-greeting-sub { display: none; }
+
+  .form-greeting {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-5) 0;
+  }
+
+  .form-greeting-block {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: var(--space-5);
+  }
+
+  // Barra inferior: flujo normal, centrada
+  .bottom-bar {
+    position: static;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .panel-footer { justify-content: center; }
+
+  .lang-switcher__btn {
+    color: var(--color-text-secondary);
+  }
+}
+
+// El logo blanco solo es visible en mobile (se oculta en desktop)
+@media (min-width: 1024px) {
+  .panel-left__logo-img { display: none; }
+}
+
+// ── Modal Privacidad y Términos ───────────────────────────────────────────────
+.privacy-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 23, 0.48);
+  z-index: 200;
+  animation: fadeIn 180ms ease;
+}
+
+.privacy-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 201;
+  width: min(560px, calc(100vw - 32px));
+  max-height: min(680px, calc(100vh - 48px));
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(15, 17, 23, 0.18);
+  display: flex;
+  flex-direction: column;
+  animation: modalIn 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalIn { from { opacity: 0; transform: translate(-50%, calc(-50% + 12px)); } to { opacity: 1; transform: translate(-50%, -50%); } }
+
+.privacy-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.privacy-modal__title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.privacy-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  &:hover { background: var(--color-bg-subtle); color: var(--color-text-primary); }
+}
+
+.privacy-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  h3 {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+    padding-top: var(--space-2);
+  }
+
+  p {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+.privacy-modal__updated {
+  font-size: var(--text-xs) !important;
+  color: var(--color-text-tertiary) !important;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.privacy-modal__foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.privacy-modal__btn {
+  background: #0f1117;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  &:hover { background: #20242e; }
+}
+
+// El link de footer también puede ser un button
+.panel-footer__link {
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+}

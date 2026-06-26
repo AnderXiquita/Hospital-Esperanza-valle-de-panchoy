@@ -1,0 +1,86 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="topbar">
+    <span class="topbar__label">{{ 'pagos.detail_eyebrow' | translate }}</span>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  @if (u(); as p) {
+    <div class="drawer__body">
+
+      <!-- Hero monto -->
+      <div class="hero">
+        <span class="hero__amount">Q {{ money(p.monto) }}</span>
+        <span class="estado-chip estado--{{ p.estado }}">
+          <span class="estado-dot"></span>{{ estadoLabel(p.estado) }}
+        </span>
+      </div>
+
+      <!-- Datos -->
+      <section class="block">
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.user" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'pagos.col_patient' | translate }}</span>
+          <span class="info-row__value">{{ p.paciente_nombre }} {{ p.paciente_apellido }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.servicio" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'pagos.col_service' | translate }}</span>
+          <span class="info-row__value">{{ p.servicio_nombre }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.card" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'pagos.col_method' | translate }}</span>
+          <span class="info-row__value">{{ metodoLabel(p.metodo_pago) }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.hash" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'pagos.field_reference' | translate }}</span>
+          <span class="info-row__value">{{ p.referencia || '—' }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.calendar" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'pagos.field_appointment_date' | translate }}</span>
+          <span class="info-row__value">{{ formatFecha(p.fecha) }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.calendar" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'pagos.field_registered' | translate }}</span>
+          <span class="info-row__value">{{ formatFecha(p.created_at) }}</span>
+        </div>
+      </section>
+
+      @if (errorMsg()) { <div class="form-error">{{ errorMsg() }}</div> }
+
+      @if (puedeAnular) {
+        <section class="actions">
+          <button class="action action--danger" type="button" (click)="pedirAnular()">
+            <ng-container [ngComponentOutlet]="icons.ban" [ngComponentOutletInputs]="iconField" />
+            {{ 'pagos.action_void' | translate }}
+          </button>
+        </section>
+      }
+    </div>
+  }
+</aside>
+
+<!-- Confirmar anulación -->
+@if (confirmVoid()) {
+  <div class="overlay" (click)="cancelarAnular()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ 'pagos.void_confirm_title' | translate }}</h2>
+      <p class="modal__text">{{ 'pagos.void_confirm_text' | translate }}</p>
+      <div class="modal__actions">
+        <button class="btn-secondary" (click)="cancelarAnular()">{{ 'btn.cancel' | translate }}</button>
+        <button class="btn-danger" [disabled]="saving()" (click)="anular()">
+          @if (saving()) { <span class="spinner spinner--light"></span> }
+          {{ 'pagos.action_void' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

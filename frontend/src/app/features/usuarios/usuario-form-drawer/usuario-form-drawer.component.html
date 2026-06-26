@@ -1,0 +1,124 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <!-- Header -->
+  <header class="drawer__head">
+    <div>
+      <p class="drawer__eyebrow">{{ (esEdicion ? 'usuarios.form_edit_eyebrow' : 'usuarios.form_new_eyebrow') | translate }}</p>
+      <h2 class="drawer__title">{{ (esEdicion ? 'usuarios.form_edit_title' : 'usuarios.form_new_title') | translate }}</h2>
+    </div>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  <!-- Body -->
+  <div class="drawer__body">
+
+    <!-- Identidad -->
+    <div class="identity">
+      <div class="identity__avatar">{{ avatarIniciales }}</div>
+      <div class="identity__meta">
+        <span class="identity__name">
+          {{ (form.nombre || ('usuarios.label_name' | translate)) + ' ' + (form.apellido || ('usuarios.label_lastname' | translate)) }}
+        </span>
+        <span class="identity__role">{{ form.email || ('usuarios.label_email' | translate) }}</span>
+      </div>
+    </div>
+
+    <!-- Datos de la cuenta -->
+    <section class="section">
+      <p class="section__head">
+        <span class="section__chip">
+          <ng-container [ngComponentOutlet]="icons.user" [ngComponentOutletInputs]="iconSection" />
+        </span>
+        {{ 'usuarios.section_account' | translate }}
+      </p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'usuarios.label_name' | translate }} <span>*</span></label>
+          <input type="text" [(ngModel)]="form.nombre" [placeholder]="'usuarios.ph_name' | translate"
+            [class.invalid]="submitted() && !form.nombre.trim()" />
+          @if (submitted() && !form.nombre.trim()) { <span class="field__err">{{ 'common.required_short' | translate }}</span> }
+        </div>
+        <div class="field">
+          <label>{{ 'usuarios.label_lastname' | translate }} <span>*</span></label>
+          <input type="text" [(ngModel)]="form.apellido" [placeholder]="'usuarios.ph_lastname' | translate"
+            [class.invalid]="submitted() && !form.apellido.trim()" />
+          @if (submitted() && !form.apellido.trim()) { <span class="field__err">{{ 'common.required_short' | translate }}</span> }
+        </div>
+      </div>
+
+      <div class="field">
+        <label>{{ 'usuarios.label_email' | translate }} <span>*</span></label>
+        <input type="email" [(ngModel)]="form.email" [placeholder]="'usuarios.ph_email' | translate"
+          [class.invalid]="submitted() && (!form.email.trim() || !form.email.includes('@'))" />
+        @if (submitted() && (!form.email.trim() || !form.email.includes('@'))) {
+          <span class="field__err">{{ 'usuarios.err_email' | translate }}</span>
+        }
+      </div>
+
+      <div class="field">
+        <label>{{ 'usuarios.label_role' | translate }} @if (!esEdicion) { <span>*</span> }</label>
+        @if (rolBloqueado) {
+          <div class="role-locked">{{ rolLabelActual() }}</div>
+          <span class="field__hint">{{ 'usuarios.role_locked' | translate }}</span>
+        } @else {
+          <app-dropdown
+            [options]="rolOptions()"
+            [(ngModel)]="form.rol"
+            [placeholder]="'usuarios.select_role' | translate"
+          />
+          @if (submitted() && !esEdicion && !form.rol) {
+            <span class="field__err">{{ 'usuarios.err_role' | translate }}</span>
+          }
+        }
+      </div>
+    </section>
+
+    <!-- Credenciales (solo al crear) -->
+    @if (!esEdicion) {
+      <section class="section">
+        <p class="section__head">
+          <span class="section__chip">
+            <ng-container [ngComponentOutlet]="icons.key" [ngComponentOutletInputs]="iconSection" />
+          </span>
+          {{ 'usuarios.section_credentials' | translate }}
+        </p>
+        <p class="section__hint">{{ 'usuarios.credentials_hint' | translate }}</p>
+
+        <div class="field">
+          <label>{{ 'usuarios.label_password' | translate }} <span>*</span></label>
+          <div class="pwd-wrap" [class.invalid]="submitted() && !passwordValida()">
+            <input [type]="showPassword() ? 'text' : 'password'" [(ngModel)]="form.password"
+              [placeholder]="'usuarios.ph_password' | translate" />
+            <button type="button" class="pwd-toggle" (click)="showPassword.set(!showPassword())" tabindex="-1">
+              <ng-container *ngComponentOutlet="showPassword() ? icons.eyeOff : icons.eye; inputs: iconSection" />
+            </button>
+          </div>
+          @if (submitted() && !passwordValida()) {
+            <span class="field__err">{{ 'usuarios.err_password' | translate }}</span>
+          }
+        </div>
+      </section>
+    }
+
+    @if (errorMsg()) {
+      <div class="form-error">{{ errorMsg() }}</div>
+    }
+  </div>
+
+  <!-- Footer -->
+  <footer class="drawer__foot">
+    <button class="btn-secondary" type="button" (click)="cerrar()">{{ 'btn.cancel' | translate }}</button>
+    <button class="btn-primary" type="button" [disabled]="guardando()" (click)="guardar()">
+      @if (guardando()) {
+        <span class="spinner spinner--light"></span> {{ 'usuarios.saving' | translate }}
+      } @else {
+        {{ (esEdicion ? 'usuarios.save_changes' : 'usuarios.create') | translate }}
+      }
+    </button>
+  </footer>
+</aside>

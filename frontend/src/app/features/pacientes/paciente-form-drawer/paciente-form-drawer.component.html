@@ -1,0 +1,181 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="drawer__head">
+    <div class="drawer__head-text">
+      <p class="drawer__eyebrow">{{ (esEdicion ? 'pacientes.form_edit_eyebrow' : 'pacientes.form_new_eyebrow') | translate }}</p>
+      <h2 class="drawer__title">{{ (esEdicion ? 'pacientes.form_edit_title' : 'pacientes.form_new_title') | translate }}</h2>
+    </div>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  <div class="drawer__body">
+
+    <!-- Identidad -->
+    <div class="identity">
+      <div class="identity__avatar">{{ avatarIniciales }}</div>
+      <div class="identity__meta">
+        <span class="identity__name">
+          {{ (form.nombre || ('pacientes.label_name' | translate)) + ' ' + (form.apellido || ('pacientes.label_lastname' | translate)) }}
+        </span>
+        <span class="identity__role">{{ form.dpi || ('pacientes.label_dpi' | translate) }}</span>
+      </div>
+    </div>
+
+    <!-- Datos personales -->
+    <section class="section">
+      <p class="section__head">
+        <span class="section__chip"><ng-container [ngComponentOutlet]="icons.user" [ngComponentOutletInputs]="iconSection" /></span>
+        {{ 'pacientes.section_personal' | translate }}
+      </p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'pacientes.label_name' | translate }} <span>*</span></label>
+          <input type="text" [(ngModel)]="form.nombre" [placeholder]="'pacientes.ph_name' | translate"
+            [class.invalid]="submitted() && !form.nombre.trim()" />
+          @if (submitted() && !form.nombre.trim()) { <span class="field__err">{{ 'pacientes.err_required' | translate }}</span> }
+        </div>
+        <div class="field">
+          <label>{{ 'pacientes.label_lastname' | translate }} <span>*</span></label>
+          <input type="text" [(ngModel)]="form.apellido" [placeholder]="'pacientes.ph_lastname' | translate"
+            [class.invalid]="submitted() && !form.apellido.trim()" />
+          @if (submitted() && !form.apellido.trim()) { <span class="field__err">{{ 'pacientes.err_required' | translate }}</span> }
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'pacientes.label_dpi' | translate }} <span>*</span></label>
+          <input type="text" inputmode="numeric" [(ngModel)]="form.dpi" [placeholder]="'pacientes.ph_dpi' | translate"
+            [class.invalid]="submitted() && dpiInvalido()" />
+          @if (submitted() && dpiInvalido()) { <span class="field__err">{{ 'pacientes.err_dpi' | translate }}</span> }
+        </div>
+        <div class="field">
+          <label>{{ 'pacientes.label_birthdate' | translate }} <span>*</span></label>
+          <app-date-field [(ngModel)]="form.fecha_nacimiento" [placeholder]="'common.select_date' | translate" />
+          @if (submitted() && !form.fecha_nacimiento) { <span class="field__err">{{ 'pacientes.err_required' | translate }}</span> }
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'pacientes.label_gender' | translate }}</label>
+          <app-dropdown [options]="generoOptions()" [(ngModel)]="form.genero" [placeholder]="'pacientes.gender_unspecified' | translate" />
+        </div>
+        <div class="field">
+          <label>{{ 'pacientes.label_civil' | translate }}</label>
+          <app-dropdown [options]="civilOptions()" [(ngModel)]="form.estado_civil" [placeholder]="'pacientes.civil_unspecified' | translate" />
+        </div>
+      </div>
+
+      <div class="field field--half">
+        <label>{{ 'pacientes.label_occupation' | translate }}</label>
+        <input type="text" [(ngModel)]="form.ocupacion" [placeholder]="'pacientes.ph_occupation' | translate" />
+      </div>
+    </section>
+
+    <!-- Contacto -->
+    <section class="section">
+      <p class="section__head">
+        <span class="section__chip"><ng-container [ngComponentOutlet]="icons.phone" [ngComponentOutletInputs]="iconSection" /></span>
+        {{ 'pacientes.section_contact' | translate }}
+      </p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'pacientes.label_phone' | translate }}</label>
+          <input type="tel" [(ngModel)]="form.telefono" [placeholder]="'pacientes.ph_phone' | translate" />
+        </div>
+        <div class="field">
+          <label>{{ 'pacientes.label_email' | translate }}</label>
+          <input type="email" [(ngModel)]="form.email" [placeholder]="'pacientes.ph_email' | translate" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>{{ 'pacientes.label_address' | translate }}</label>
+        <input type="text" [(ngModel)]="form.direccion" [placeholder]="'pacientes.ph_address' | translate" autocomplete="nope" />
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'pacientes.label_emergency_name' | translate }}</label>
+          <input type="text" [(ngModel)]="form.contacto_emergencia_nombre" [placeholder]="'pacientes.ph_emergency_name' | translate" />
+        </div>
+        <div class="field">
+          <label>{{ 'pacientes.label_emergency_phone' | translate }}</label>
+          <input type="tel" [(ngModel)]="form.telefono_emergencia" [placeholder]="'pacientes.ph_phone' | translate" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Información clínica -->
+    <section class="section">
+      <p class="section__head">
+        <span class="section__chip"><ng-container [ngComponentOutlet]="icons.clinical" [ngComponentOutletInputs]="iconSection" /></span>
+        {{ 'pacientes.section_clinical' | translate }}
+      </p>
+
+      <div class="field field--half">
+        <label>{{ 'pacientes.label_blood' | translate }}</label>
+        <app-dropdown [options]="sangreOptions()" [(ngModel)]="form.tipo_sangre" [placeholder]="'pacientes.blood_unspecified' | translate" />
+      </div>
+
+      <div class="field">
+        <label>{{ 'pacientes.label_allergies' | translate }}</label>
+        <textarea [(ngModel)]="form.alergias" rows="2" [placeholder]="'pacientes.ph_allergies' | translate"></textarea>
+      </div>
+      <div class="field">
+        <label>{{ 'pacientes.label_history' | translate }}</label>
+        <textarea [(ngModel)]="form.antecedentes" rows="2" [placeholder]="'pacientes.ph_history' | translate"></textarea>
+      </div>
+      <div class="field">
+        <label>{{ 'pacientes.label_medications' | translate }}</label>
+        <textarea [(ngModel)]="form.medicamentos" rows="2" [placeholder]="'pacientes.ph_medications' | translate"></textarea>
+      </div>
+    </section>
+
+    <!-- Seguro y notas -->
+    <section class="section">
+      <p class="section__head">
+        <span class="section__chip"><ng-container [ngComponentOutlet]="icons.shield" [ngComponentOutletInputs]="iconSection" /></span>
+        {{ 'pacientes.section_insurance' | translate }}
+      </p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'pacientes.label_insurance' | translate }}</label>
+          <input type="text" [(ngModel)]="form.seguro" [placeholder]="'pacientes.ph_insurance' | translate" />
+        </div>
+        <div class="field">
+          <label>{{ 'pacientes.label_affiliation' | translate }}</label>
+          <input type="text" [(ngModel)]="form.numero_afiliacion" [placeholder]="'pacientes.ph_affiliation' | translate" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>{{ 'pacientes.label_notes' | translate }}</label>
+        <textarea [(ngModel)]="form.observaciones" rows="2" [placeholder]="'pacientes.ph_notes' | translate"></textarea>
+      </div>
+    </section>
+
+    @if (errorMsg()) {
+      <div class="form-error">{{ errorMsg() }}</div>
+    }
+  </div>
+
+  <footer class="drawer__foot">
+    <button class="btn-secondary" type="button" (click)="cerrar()">{{ 'btn.cancel' | translate }}</button>
+    <button class="btn-primary" type="button" [disabled]="guardando()" (click)="guardar()">
+      @if (guardando()) {
+        <span class="spinner spinner--light"></span> {{ 'pacientes.saving' | translate }}
+      } @else {
+        {{ (esEdicion ? 'pacientes.save_changes' : 'pacientes.create') | translate }}
+      }
+    </button>
+  </footer>
+</aside>

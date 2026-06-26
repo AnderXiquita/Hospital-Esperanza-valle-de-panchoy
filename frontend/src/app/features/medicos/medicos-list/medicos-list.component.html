@@ -1,0 +1,327 @@
+<div class="medicos">
+
+  <!-- Header -->
+  <div class="medicos__header">
+    <div class="medicos__heading">
+      <p class="medicos__eyebrow">{{ 'medicos.eyebrow' | translate }}</p>
+      <h1 class="medicos__title">{{ 'medicos.title' | translate }}</h1>
+      <p class="medicos__subtitle">
+        {{ (total() === 1 ? 'medicos.subtitle_one' : 'medicos.subtitle_other') | translate:{ count: total() } }}
+      </p>
+    </div>
+    <button class="btn-primary" (click)="abrirCrear()">
+      <ng-container *ngComponentOutlet="icon('plus'); inputs: iconInputs" />
+      {{ 'medicos.new' | translate }}
+    </button>
+  </div>
+
+  <!-- Banda de métricas -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container *ngComponentOutlet="icon('stethoscope'); inputs: iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.total ?? 0 }}</span>
+        <span class="metric__label">{{ 'medicos.metric_total' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container *ngComponentOutlet="icon('activity'); inputs: iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.activos ?? 0 }}</span>
+        <span class="metric__label">{{ 'medicos.metric_active' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container *ngComponentOutlet="icon('layers'); inputs: iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.especialidades?.length ?? 0 }}</span>
+        <span class="metric__label">{{ 'medicos.metric_specialties' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container *ngComponentOutlet="icon('clock'); inputs: iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.con_horario ?? 0 }}</span>
+        <span class="metric__label">{{ 'medicos.metric_scheduled' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <ng-container *ngComponentOutlet="icon('search'); inputs: iconInputs" />
+      <input
+        type="text"
+        [placeholder]="'medicos.search_placeholder' | translate"
+        [ngModel]="busqueda()"
+        (ngModelChange)="onBusquedaChange($event)"
+        (keyup.enter)="buscarInmediato()"
+      />
+      @if (busqueda()) {
+        <button class="search-box__clear" (click)="busqueda.set(''); buscarInmediato()" [title]="'common.clear' | translate">
+          <ng-container *ngComponentOutlet="icon('x'); inputs: iconInputs" />
+        </button>
+      }
+    </div>
+
+    <div class="toolbar__filters">
+      @if (stats()?.especialidades?.length) {
+        <app-dropdown
+          class="esp-dropdown"
+          [options]="espOptions()"
+          [ngModel]="especialidad()"
+          (ngModelChange)="cambiarEspecialidad($event)"
+        />
+      }
+
+      <div class="segmented">
+        <button class="segmented__opt" [class.active]="filtroEstado() === 'activos'" (click)="cambiarFiltro('activos')">{{ 'medicos.filter_active' | translate }}</button>
+        <button class="segmented__opt" [class.active]="filtroEstado() === 'inactivos'" (click)="cambiarFiltro('inactivos')">{{ 'medicos.filter_inactive' | translate }}</button>
+        <button class="segmented__opt" [class.active]="filtroEstado() === 'todos'" (click)="cambiarFiltro('todos')">{{ 'medicos.filter_all' | translate }}</button>
+      </div>
+
+      <div class="viewtoggle">
+        <button class="viewtoggle__opt" [class.active]="vista() === 'tabla'" (click)="setVista('tabla')" [title]="'medicos.view_table' | translate">
+          <ng-container *ngComponentOutlet="icon('list'); inputs: iconInputs" />
+        </button>
+        <button class="viewtoggle__opt" [class.active]="vista() === 'tarjetas'" (click)="setVista('tarjetas')" [title]="'medicos.view_cards' | translate">
+          <ng-container *ngComponentOutlet="icon('grid'); inputs: iconInputs" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estados compartidos -->
+  @if (cargando()) {
+    <div class="panel">
+      <div class="state"><span class="spinner"></span><span>{{ 'medicos.loading' | translate }}</span></div>
+    </div>
+  } @else if (errorLista()) {
+    <div class="panel">
+      <div class="state state--error">{{ errorLista() }}</div>
+    </div>
+  } @else if (medicos().length === 0) {
+    <div class="panel">
+      <div class="state">
+        <div class="state__icon">
+          <ng-container *ngComponentOutlet="icon('stethoscope'); inputs: { size: 28, strokeWidth: 1.25 }" />
+        </div>
+        <span class="state__title">{{ 'medicos.empty_title' | translate }}</span>
+        <span class="state__hint">
+          {{ (busqueda() || especialidad() ? 'medicos.empty_filtered' : 'medicos.empty_create') | translate }}
+        </span>
+      </div>
+    </div>
+  } @else {
+
+    <!-- Vista TABLA -->
+    @if (vista() === 'tabla') {
+      <div class="panel">
+        <div class="table-scroll-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ 'medicos.col_doctor' | translate }}</th>
+                <th>{{ 'medicos.col_specialty' | translate }}</th>
+                <th>{{ 'medicos.col_license' | translate }}</th>
+                <th>{{ 'medicos.col_attends' | translate }}</th>
+                <th>{{ 'medicos.col_status' | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of medicos(); track m.id) {
+                <tr [class.row--inactive]="!m.activo" (click)="abrirDetalle(m)">
+                  <td>
+                    <div class="cell-doctor">
+                      <div class="avatar">{{ iniciales(m) }}</div>
+                      <div class="cell-doctor__info">
+                        <span class="cell-doctor__name">{{ m.nombre }} {{ m.apellido }}</span>
+                        <span class="cell-doctor__email">{{ m.email }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="td-strong">{{ m.especialidad }}</span>
+                    @if (m.subespecialidad) { <span class="td-sub">{{ m.subespecialidad }}</span> }
+                  </td>
+                  <td class="td-mono">{{ m.numero_colegiado }}</td>
+                  <td>
+                    @if (m.dias_atencion.length) {
+                      <div class="weekstrip">
+                        @for (d of weekStrip(m.dias_atencion); track $index) {
+                          <span class="weekstrip__day" [class.on]="d.active">{{ d.label }}</span>
+                        }
+                      </div>
+                    } @else {
+                      <span class="td-empty">{{ 'medicos.no_schedule' | translate }}</span>
+                    }
+                  </td>
+                  <td>
+                    <span class="status" [class.status--active]="m.activo">
+                      {{ (m.activo ? 'medicos.status_active' : 'medicos.status_inactive') | translate }}
+                    </span>
+                  </td>
+                  <td class="td-actions" (click)="$event.stopPropagation()">
+                    <button class="icon-btn" [title]="'btn.edit' | translate" [disabled]="abriendoEdicion() === m.id" (click)="abrirEditar(m)">
+                      @if (abriendoEdicion() === m.id) {
+                        <span class="spinner spinner--xs"></span>
+                      } @else {
+                        <ng-container *ngComponentOutlet="icon('edit2'); inputs: iconInputsTable" />
+                      }
+                    </button>
+                    <button
+                      class="icon-btn"
+                      [class.icon-btn--activate]="!m.activo"
+                      [class.icon-btn--deactivate]="m.activo"
+                      [title]="(m.activo ? 'medicos.deactivate' : 'medicos.activate') | translate"
+                      (click)="pedirConfirmToggle(m.id)"
+                    >
+                      <ng-container *ngComponentOutlet="icon(m.activo ? 'power-off' : 'power'); inputs: iconInputsTable" />
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalPaginas() > 1) {
+          <div class="pagination">
+            <span class="pagination__info">{{ 'medicos.page_of' | translate:{ current: pagina(), total: totalPaginas() } }}</span>
+            <div class="pagination__controls">
+              <button class="page-btn" [disabled]="pagina() === 1" (click)="cambiarPagina(pagina() - 1)" [title]="'common.previous' | translate">
+                <ng-container *ngComponentOutlet="icon('chevron-left'); inputs: iconInputsTable" />
+              </button>
+              @for (p of paginasVisibles; track p) {
+                <button class="page-btn" [class.active]="p === pagina()" (click)="cambiarPagina(p)">{{ p }}</button>
+              }
+              <button class="page-btn" [disabled]="pagina() === totalPaginas()" (click)="cambiarPagina(pagina() + 1)" [title]="'common.next' | translate">
+                <ng-container *ngComponentOutlet="icon('chevron-right'); inputs: iconInputsTable" />
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Vista TARJETAS -->
+    @if (vista() === 'tarjetas') {
+      <div class="cards">
+        @for (m of medicos(); track m.id) {
+          <article class="dcard" [class.dcard--inactive]="!m.activo" (click)="abrirDetalle(m)">
+            <div class="dcard__top">
+              <div class="avatar avatar--lg">{{ iniciales(m) }}</div>
+              <span class="status" [class.status--active]="m.activo">{{ (m.activo ? 'medicos.status_active' : 'medicos.status_inactive') | translate }}</span>
+            </div>
+            <div class="dcard__body">
+              <span class="dcard__name">{{ m.nombre }} {{ m.apellido }}</span>
+              <span class="dcard__spec">
+                {{ m.especialidad }}{{ m.subespecialidad ? ' · ' + m.subespecialidad : '' }}
+              </span>
+              <span class="dcard__email">{{ m.email }}</span>
+            </div>
+
+            @if (m.dias_atencion.length) {
+              <div class="weekstrip">
+                @for (d of weekStrip(m.dias_atencion); track $index) {
+                  <span class="weekstrip__day" [class.on]="d.active">{{ d.label }}</span>
+                }
+              </div>
+            } @else {
+              <span class="td-empty">{{ 'medicos.no_schedule_card' | translate }}</span>
+            }
+
+            <div class="dcard__foot">
+              <div class="dcard__meta">
+                <span class="dcard__meta-item">{{ m.numero_colegiado }}</span>
+                @if (m.consultorio) { <span class="dcard__meta-dot">·</span><span class="dcard__meta-item">{{ 'medicos.office_prefix' | translate }} {{ m.consultorio }}</span> }
+              </div>
+              <div class="dcard__actions" (click)="$event.stopPropagation()">
+                <button class="icon-btn" [title]="'btn.edit' | translate" [disabled]="abriendoEdicion() === m.id" (click)="abrirEditar(m)">
+                  @if (abriendoEdicion() === m.id) {
+                    <span class="spinner spinner--xs"></span>
+                  } @else {
+                    <ng-container *ngComponentOutlet="icon('edit2'); inputs: iconInputsTable" />
+                  }
+                </button>
+                <button
+                  class="icon-btn"
+                  [class.icon-btn--activate]="!m.activo"
+                  [class.icon-btn--deactivate]="m.activo"
+                  [title]="(m.activo ? 'medicos.deactivate' : 'medicos.activate') | translate"
+                  (click)="pedirConfirmToggle(m.id)"
+                >
+                  <ng-container *ngComponentOutlet="icon(m.activo ? 'power-off' : 'power'); inputs: iconInputsTable" />
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+
+      @if (totalPaginas() > 1) {
+        <div class="pagination pagination--cards">
+          <span class="pagination__info">{{ 'medicos.page_of' | translate:{ current: pagina(), total: totalPaginas() } }}</span>
+          <div class="pagination__controls">
+            <button class="page-btn" [disabled]="pagina() === 1" (click)="cambiarPagina(pagina() - 1)" [title]="'common.previous' | translate">
+              <ng-container *ngComponentOutlet="icon('chevron-left'); inputs: iconInputsTable" />
+            </button>
+            @for (p of paginasVisibles; track p) {
+              <button class="page-btn" [class.active]="p === pagina()" (click)="cambiarPagina(p)">{{ p }}</button>
+            }
+            <button class="page-btn" [disabled]="pagina() === totalPaginas()" (click)="cambiarPagina(pagina() + 1)" [title]="'common.next' | translate">
+              <ng-container *ngComponentOutlet="icon('chevron-right'); inputs: iconInputsTable" />
+            </button>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
+
+<!-- Drawer: detalle -->
+@if (detailOpen() && detailId() !== null) {
+  <app-medico-detail-drawer
+    [medicoId]="detailId()!"
+    (closed)="cerrarDetalle()"
+    (editar)="onDetailEditar($event)"
+  />
+}
+
+<!-- Drawer: crear / editar -->
+@if (formOpen()) {
+  <app-medico-form-drawer
+    [medico]="formMedico()"
+    (closed)="cerrarForm()"
+    (saved)="onFormSaved()"
+  />
+}
+
+<!-- Confirm toggle -->
+@if (confirmToggleId() !== null) {
+  <div class="overlay" (click)="cancelarToggle()">
+    <div class="confirm" (click)="$event.stopPropagation()">
+      <h2 class="confirm__title">{{ 'medicos.confirm_title' | translate }}</h2>
+      <p class="confirm__text">{{ (toggleEsDesactivar ? 'medicos.confirm_deactivate' : 'medicos.confirm_activate') | translate }}</p>
+      @if (toggleError()) { <p class="confirm__error">{{ toggleError() }}</p> }
+      <div class="confirm__actions">
+        <button class="btn-secondary" (click)="cancelarToggle()">{{ 'btn.cancel' | translate }}</button>
+        <button
+          [class.btn-danger]="toggleEsDesactivar"
+          [class.btn-activate]="!toggleEsDesactivar"
+          (click)="confirmarToggle()"
+        >{{ (toggleEsDesactivar ? 'medicos.deactivate' : 'medicos.activate') | translate }}</button>
+      </div>
+    </div>
+  </div>
+}

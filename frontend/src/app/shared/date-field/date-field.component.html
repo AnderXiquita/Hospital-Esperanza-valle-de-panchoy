@@ -1,0 +1,63 @@
+<button
+  type="button"
+  class="dp__trigger"
+  [class.dp__trigger--open]="open()"
+  [class.dp__trigger--placeholder]="!display()"
+  (click)="toggle()"
+>
+  <span class="dp__value">{{ display() ?? placeholder() }}</span>
+  <span class="dp__cal">
+    <ng-container [ngComponentOutlet]="calendarIcon" [ngComponentOutletInputs]="calInputs" />
+  </span>
+</button>
+
+@if (open()) {
+  <div class="dp__pop">
+    @if (view() === 'days') {
+      <div class="dp__head">
+        <button type="button" class="dp__nav" (click)="prevMonth()" title="Mes anterior">
+          <ng-container [ngComponentOutlet]="prevIcon" [ngComponentOutletInputs]="navInputs" />
+        </button>
+        <button type="button" class="dp__title" (click)="openYears()">{{ monthLabel() }}</button>
+        <button type="button" class="dp__nav" (click)="nextMonth()" title="Mes siguiente">
+          <ng-container [ngComponentOutlet]="nextIcon" [ngComponentOutletInputs]="navInputs" />
+        </button>
+      </div>
+
+      <div class="dp__weekdays">
+        @for (w of weekdays(); track $index) { <span>{{ w }}</span> }
+      </div>
+
+      <div class="dp__grid">
+        @for (c of cells(); track c.iso) {
+          <button
+            type="button"
+            class="dp__day"
+            [class.is-other]="c.other"
+            [class.is-today]="c.today && !c.disabled"
+            [class.is-selected]="c.selected"
+            [class.is-unavailable]="c.unavailable"
+            [class.is-past]="c.past && !c.unavailable"
+            (click)="pick(c)"
+          >{{ c.day }}</button>
+        }
+      </div>
+
+      <div class="dp__foot">
+        <button type="button" class="dp__link" (click)="borrar()">Borrar</button>
+        <button type="button" class="dp__link dp__link--accent" (click)="hoy()">Hoy</button>
+      </div>
+    } @else {
+      <div class="dp__years">
+        @for (y of years(); track y) {
+          <button
+            type="button"
+            class="dp__year"
+            [class.is-selected]="y === viewYear()"
+            (click)="pickYear(y)"
+          >{{ y }}</button>
+        }
+      </div>
+    }
+  </div>
+}

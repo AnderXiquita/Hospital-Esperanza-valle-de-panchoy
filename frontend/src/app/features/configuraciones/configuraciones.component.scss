@@ -1,0 +1,399 @@
+$ink:  #0f1117;
+$teal: #154C56;
+
+// ── Shell ─────────────────────────────────────────────────────────────────────
+.cfg {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  max-width: 680px;
+}
+
+// ── Header simple ─────────────────────────────────────────────────────────────
+.cfg__header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 14px;
+  border-left: 3px solid $teal;
+}
+
+.cfg__eyebrow {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.cfg__title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.cfg__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+// ── Sección ───────────────────────────────────────────────────────────────────
+.cfg__section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cfg__section-title {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cfg__section-sub {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: -8px 0 0;
+}
+
+// ── Grid de cards — siempre columna única (diseño de página de ajustes) ───────
+.cfg__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.cfg__card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.cfg__card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cfg__card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(15, 17, 23, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: $ink;
+  ng-component { display: flex; }
+}
+
+.cfg__card-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 2px;
+}
+
+.cfg__card-sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.cfg__divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0 -20px;
+}
+
+// ── Perfil usuario ────────────────────────────────────────────────────────────
+.cfg__profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cfg__avatar-wrap {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  cursor: not-allowed;
+
+  &:hover .cfg__avatar-overlay { opacity: 1; }
+}
+
+.cfg__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: $ink;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.04em;
+}
+
+.cfg__avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.18s;
+  ng-component { display: flex; }
+}
+
+.cfg__profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cfg__profile-name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cfg__profile-meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.cfg__role-chip {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(15, 17, 23, 0.06);
+  color: var(--color-text-secondary);
+  width: fit-content;
+  margin-top: 2px;
+}
+
+// ── Fila de preferencia ───────────────────────────────────────────────────────
+.cfg__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cfg__row-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cfg__row-title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+}
+
+.cfg__row-desc {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+// ── Segmented control idioma ──────────────────────────────────────────────────
+.cfg__seg {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cfg__seg-btn {
+  padding: 6px 14px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: background 0.15s, color 0.15s;
+
+  &:first-child { border-right: 1px solid var(--color-border); }
+
+  &--active {
+    background: $ink;
+    color: #fff;
+  }
+
+  &:not(&--active):hover {
+    background: var(--color-bg-hover);
+    color: var(--color-text-primary);
+  }
+}
+
+// ── Toggle switch ─────────────────────────────────────────────────────────────
+.cfg__toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #D1D5DB;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  &--on {
+    background: $ink;
+  }
+}
+
+.cfg__toggle-thumb {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+
+  .cfg__toggle--on & { transform: translateX(20px); }
+}
+
+// ── Campos del sistema ────────────────────────────────────────────────────────
+.cfg__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 340px));
+  gap: 14px;
+}
+
+.cfg__field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cfg__label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+}
+
+.cfg__input {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: var(--text-sm);
+  font-family: inherit;
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $teal;
+    box-shadow: 0 0 0 3px rgba(21, 76, 86, 0.1);
+  }
+
+  &::placeholder { color: var(--color-text-tertiary); }
+}
+
+.cfg__select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+// ── Fila de guardado ──────────────────────────────────────────────────────────
+.cfg__save-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cfg__saved-msg {
+  font-size: var(--text-sm);
+  color: $teal;
+  font-weight: var(--font-medium);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+// ── Acciones del perfil ───────────────────────────────────────────────────────
+.cfg__profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.cfg__photo-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+// ── Botones ───────────────────────────────────────────────────────────────────
+.cfg__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 20px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  font-family: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+
+  &:active { transform: scale(0.98); }
+
+  &--primary {
+    background: $ink;
+    color: #fff;
+    border: none;
+    &:hover { background: #20242e; }
+  }
+
+  &--outline {
+    background: transparent;
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    &:hover { background: var(--color-bg-hover); border-color: #9CA3AF; }
+  }
+}

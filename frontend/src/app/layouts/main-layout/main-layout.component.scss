@@ -1,0 +1,782 @@
+// ── Shell ─────────────────────────────────────────────────────────────────────
+.app-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: #dde4ec;
+  position: relative;
+  --sidebar-width: 248px;
+  --sidebar-collapsed-width: 60px;
+  --header-height: 56px;
+
+  // Capa de cristal unificada — cubre TODO el shell (sidebar + franjas arriba/abajo)
+  // Los blobs (z-index:0) quedan detrás; esta capa los difumina uniformemente
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.32);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    pointer-events: none;
+  }
+}
+
+// Blobs de color — cubre todo el shell para que los bordes redondeados de la card
+// no expongan fondo liso sin color
+.app-blobs {
+  position: absolute;
+  top: -60px;
+  bottom: -60px;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  pointer-events: none;
+  animation: blobs-hue 20s ease-in-out infinite alternate;
+}
+
+.app-blob {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.app-blob--1 {
+  width: 700px;
+  height: 700px;
+  top: -250px;
+  left: -200px;
+  background: radial-gradient(circle, rgba(21, 76, 86, 0.45), transparent 65%);
+  filter: blur(80px);
+  animation: blob-drift-1 14s ease-in-out infinite alternate, blob-fade-1 18s ease-in-out infinite;
+}
+
+.app-blob--2 {
+  width: 650px;
+  height: 650px;
+  bottom: -200px;
+  left: -150px;
+  background: radial-gradient(circle, rgba(62, 185, 168, 0.75), transparent 65%);
+  filter: blur(75px);
+  animation: blob-drift-2 17s ease-in-out infinite alternate, blob-fade-2 18s ease-in-out infinite;
+}
+
+.app-blob--3 {
+  width: 550px;
+  height: 550px;
+  top: 20%;
+  left: -100px;
+  background: radial-gradient(circle, rgba(217, 179, 130, 0.7), transparent 65%);
+  filter: blur(70px);
+  animation: blob-drift-3 20s ease-in-out infinite alternate, blob-fade-3 18s ease-in-out infinite;
+}
+
+@keyframes blobs-hue {
+  0%   { filter: hue-rotate(-15deg); }
+  100% { filter: hue-rotate(20deg); }
+}
+
+@keyframes blob-drift-1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 60px) scale(1.1); }
+}
+
+@keyframes blob-drift-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-30px, -50px) scale(1.12); }
+}
+
+@keyframes blob-drift-3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(25px, -40px) scale(0.92); }
+}
+
+// Opacidad desfasada: nunca las tres visibles al mismo tiempo
+@keyframes blob-fade-1 {
+  0%   { opacity: 1; }
+  25%  { opacity: 1; }
+  40%  { opacity: 0; }
+  65%  { opacity: 0; }
+  80%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+@keyframes blob-fade-2 {
+  0%   { opacity: 0; }
+  20%  { opacity: 0; }
+  35%  { opacity: 1; }
+  60%  { opacity: 1; }
+  75%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes blob-fade-3 {
+  0%   { opacity: 0.5; }
+  30%  { opacity: 1; }
+  50%  { opacity: 0; }
+  70%  { opacity: 0.5; }
+  100% { opacity: 0.5; }
+}
+
+// ── Sidebar — cristal sobre los blobs ────────────────────────────────────────
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+  transition: width var(--transition-base);
+  overflow: hidden;
+
+  background: transparent;
+
+  .sidebar-collapsed & {
+    width: var(--sidebar-collapsed-width);
+  }
+}
+
+// Cabecera
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-8) var(--space-4) var(--space-3);
+  height: var(--header-height);
+  flex-shrink: 0;
+
+  .sidebar-collapsed & {
+    justify-content: center;
+  }
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-width: 0;
+
+  .sidebar-collapsed & {
+    display: none;
+  }
+}
+
+.sidebar__icon {
+  height: 26px;
+  width: auto;
+  max-width: 80px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.sidebar__toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #000;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+  flex-shrink: 0;
+
+  &:hover { color: #374151; }
+
+  svg {
+    stroke: #000;
+  }
+}
+
+// Navegación
+.sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: calc(var(--space-3) + 30px) var(--space-3) var(--space-3);
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.sidebar__section {
+  margin-bottom: var(--space-5);
+}
+
+.sidebar__section-title {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #000;
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-2);
+  white-space: nowrap;
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0.42rem var(--space-3) 0.42rem 1.5rem;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: #000;
+  font-size: 0.78rem;
+  font-weight: var(--font-regular);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  margin-bottom: 6px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: #000;
+  }
+
+  &--active {
+    background: rgba(255, 255, 255, 0.22);
+    color: #000;
+    font-weight: var(--font-medium);
+  }
+
+  .sidebar-collapsed & {
+    justify-content: center;
+    padding: 0.42rem;
+  }
+}
+
+// Envoltorio del ícono — sin fondo
+.sidebar__item-icon-wrap {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+
+  svg { color: #000; }
+}
+
+// Punto indicador sobre el ícono
+// Oculto en sidebar expandido; visible cuando sidebar está colapsado (JS o CSS)
+.sidebar__notif-dot {
+  display: none;
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0f1117;
+  pointer-events: none;
+
+  .sidebar-collapsed & { display: block; }
+}
+
+// Contador inline (sidebar expandido, a la derecha del label)
+.sidebar__notif-count {
+  margin-left: auto;
+  background: #0f1117;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 400;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 20px;
+}
+
+.sidebar__item-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Footer del sidebar
+.sidebar__footer {
+  padding: var(--space-2) var(--space-3) var(--space-4);
+  flex-shrink: 0;
+}
+
+.sidebar__footer-title {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #000;
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-2);
+  white-space: nowrap;
+}
+
+// Logout — mismo estilo que un item de nav
+.sidebar__logout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.42rem var(--space-3) 0.42rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  font-family: var(--font-primary);
+  color: #000;
+  font-size: 0.78rem;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  margin-bottom: 6px;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.07);
+    color: var(--color-error);
+
+    .sidebar__item-icon-wrap svg { color: var(--color-error); }
+  }
+
+  .sidebar-collapsed & {
+    justify-content: center;
+    padding: 0.42rem;
+  }
+}
+
+.sidebar__logout-label {
+  .sidebar-collapsed & { display: none; }
+}
+
+
+// Perfil de usuario al fondo
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0.42rem var(--space-3) 0.42rem 1.5rem;
+  border-radius: var(--radius-md);
+
+  &--collapsed {
+    justify-content: center;
+    padding: 0.42rem;
+  }
+}
+
+.sidebar__avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  background: #0f1117;
+  color: white;
+  font-size: 0.6rem;
+  font-weight: var(--font-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar__user-info {
+  overflow: hidden;
+  min-width: 0;
+  transition: opacity var(--transition-fast);
+
+  .sidebar-collapsed & { opacity: 0; width: 0; }
+}
+
+.sidebar__user-name {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__user-role {
+  display: block;
+  font-size: 0.68rem;
+  color: #4B5563;
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+}
+
+
+// ── Contenido principal — card flotante, encima de la capa glass del shell ────
+// z-index: 50 > sidebar (20) so form-drawer backdrops (fixed, inside this context)
+// are painted above the sidebar in the root stacking order.
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 50;
+  overflow: hidden;
+  min-width: 0;
+  background: white;
+  border-radius: 14px 0 0 14px;
+  box-shadow: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+// Navbar mobile — position:fixed fuera del main-content para que el blur vea los blobs
+// z-index: 60 > main-content (50) so it stays visible above content on mobile
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  z-index: 60;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-5);
+  background: rgba(221, 228, 236, 0.28);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  @media (max-width: 600px) { display: flex; }
+}
+
+.mobile-nav__menu {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  transition: background var(--transition-fast);
+
+  &:hover { background: rgba(255, 255, 255, 0.25); }
+}
+
+.mobile-nav__logo {
+  height: 22px;
+  width: auto;
+}
+
+// ── Drag overlay (dimming durante el gesto de arrastre) ──────────────────────
+// Opacity manejada por JS en tiempo real; siempre en DOM para evitar
+// costos de creación durante el gesto (latencia de touch)
+.drag-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 89;
+  background: rgba(0, 0, 0, 0.42);
+  opacity: 0;
+  pointer-events: none;
+
+  @media (min-width: 601px) { display: none; }
+}
+
+// ── Bottom nav mobile ─────────────────────────────────────────────────────────
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 60;
+  align-items: center;
+  justify-content: space-around;
+  background: rgba(221, 228, 236, 0.28);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transform: translateY(0);
+  transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+
+  @media (max-width: 600px) { display: flex; }
+
+  &.bottom-nav--hidden { transform: translateY(100%); }
+}
+
+.bottom-nav__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: rgba(15, 17, 23, 0.38);
+  transition: color var(--transition-fast);
+
+  &.bottom-nav__item--active {
+    color: var(--color-text-primary);
+
+    svg { stroke-width: 1.75 !important; }
+  }
+
+  &:hover:not(.bottom-nav__item--active) {
+    color: rgba(15, 17, 23, 0.62);
+  }
+}
+
+.bottom-nav__icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-nav__dot {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-text-primary);
+  box-shadow: 0 0 0 1.5px rgba(221, 228, 236, 0.7);
+}
+
+// Área de contenido
+// La transición de navegación (.content-fading) vive en styles.scss global
+// para que el classList.add/remove directo la active sin depender del scoping de Angular
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+}
+
+// Botón X para cerrar en mobile — oculto en desktop
+.sidebar__close-mobile {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #000;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+// ── Tablet (600px–1190px): sidebar auto-colapsado, sin hamburguesa ────────────
+@media (min-width: 601px) and (max-width: 1190px) {
+  .sidebar {
+    width: var(--sidebar-collapsed-width) !important;
+  }
+
+  .sidebar__section-title,
+  .sidebar__item-label,
+  .sidebar__footer-title,
+  .sidebar__logout-label,
+  .sidebar__user-info,
+  .sidebar__toggle {
+    display: none !important;
+  }
+
+  .sidebar__brand {
+    display: flex !important;
+  }
+
+  .sidebar__icon {
+    height: 20px;
+  }
+
+  .sidebar__header {
+    justify-content: center;
+  }
+
+  .sidebar__item {
+    justify-content: center !important;
+    padding: 0.42rem !important;
+  }
+
+  .sidebar__logout {
+    justify-content: center !important;
+    padding: 0.42rem !important;
+  }
+
+  .sidebar__user {
+    justify-content: center;
+    padding: 0.42rem;
+  }
+
+  .sidebar__nav {
+    padding: calc(var(--space-3) + 30px) var(--space-2) var(--space-2);
+  }
+
+  // En mini sidebar el dot se muestra y el contador inline se oculta
+  .sidebar__notif-dot    { display: block !important; }
+  .sidebar__notif-count  { display: none  !important; }
+}
+
+// ── Perfil mobile-only (oculto en desktop / tablet) ──────────────────────────
+.sidebar__pm {
+  display: none;
+}
+
+.sidebar__pm-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: #0f1117;
+  color: #fff;
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar__pm-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sidebar__pm-name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: #0f1117;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__pm-role {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+// ── Responsive mobile (<600px) ────────────────────────────────────────────────
+@media (max-width: 600px) {
+
+  .app-shell.mobile-open {
+    overflow: hidden;
+  }
+
+  // Overlay oscuro sobre el área derecha (mismo patrón que los drawers de formularios)
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(0, 0, 0, 0.38);
+  }
+
+  // Sidebar: drawer parcial con esquinas redondeadas a la derecha (estilo Twitter)
+  .sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 280px !important;
+    max-width: 82vw !important;
+    height: 100%;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+    border-radius: 0 16px 16px 0;
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.14);
+
+    // Blur translúcido igual al navbar mobile, sin gradiente de colores
+    background: rgba(221, 228, 236, 0.45) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+
+    .mobile-open & {
+      transform: translateX(0);
+    }
+  }
+
+  // Ocultar el header completo en mobile (no hay logo ni X — se cierra con swipe o overlay)
+  .sidebar__header {
+    display: none;
+  }
+
+  // Mostrar la sección de perfil mobile: avatar arriba, nombre/rol debajo
+  .sidebar__pm {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid rgba(15, 17, 23, 0.08);
+    flex-shrink: 0;
+  }
+
+  // Ocultar toggle de colapso (no aplica en mobile)
+  .sidebar__toggle {
+    display: none;
+  }
+
+  // El botón X ya no se necesita en mobile
+  .sidebar__close-mobile {
+    display: none;
+  }
+
+  // Items full-width con padding táctil generoso
+  .sidebar__item {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    padding: 0.6rem var(--space-4) !important;
+    margin-left: 0 !important;
+    font-size: var(--text-sm) !important;
+
+    &:hover   { background: rgba(255, 255, 255, 0.12) !important; }
+    &--active { background: rgba(255, 255, 255, 0.12) !important; }
+  }
+
+  .sidebar__item-label {
+    display: block !important;
+  }
+
+  .sidebar__logout {
+    width: 100%;
+    justify-content: flex-start !important;
+    padding: 0.6rem var(--space-4) !important;
+  }
+
+  .sidebar__logout-label {
+    display: block !important;
+  }
+
+  // Nav con menos padding-top (la sección de perfil ya actúa de separador)
+  .sidebar__nav {
+    padding: var(--space-3) var(--space-3) var(--space-3) !important;
+  }
+
+  // Ocultar el bloque de perfil en el footer (ya está arriba)
+  .sidebar__user {
+    display: none;
+  }
+
+  // Ocultar el título "CUENTA" del footer en mobile
+  .sidebar__footer-title {
+    display: none;
+  }
+
+  // main-content ocupa toda la pantalla en mobile
+  .main-content {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-radius: 0;
+  }
+
+  .content-area {
+    padding: var(--space-4);
+    padding-top: calc(52px + var(--space-4));
+    padding-bottom: calc(56px + var(--space-4));
+  }
+
+  // Ocultar del menú hamburguesa los items que ya están en el bottom nav
+  .sidebar__item--bottom-nav {
+    display: none !important;
+  }
+}

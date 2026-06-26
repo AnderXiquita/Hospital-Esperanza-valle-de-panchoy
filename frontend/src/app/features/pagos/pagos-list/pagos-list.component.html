@@ -1,0 +1,223 @@
+<div class="pagos">
+
+  <!-- Header -->
+  <div class="pagos__header">
+    <div class="pagos__heading">
+      <p class="pagos__eyebrow">{{ 'pagos.eyebrow' | translate }}</p>
+      <h1 class="pagos__title">{{ 'pagos.title' | translate }}</h1>
+      <p class="pagos__subtitle">
+        {{ (total() === 1 ? 'pagos.subtitle_one' : 'pagos.subtitle_other') | translate:{ count: total() } }}
+      </p>
+    </div>
+    <button class="btn-primary" (click)="abrirRegistrar()">
+      <ng-container *ngComponentOutlet="icon('plus'); inputs: iconInputs" />
+      {{ 'pagos.new' | translate }}
+    </button>
+  </div>
+
+  <!-- Banda de métricas -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric__icon"><ng-container *ngComponentOutlet="icon('wallet'); inputs: iconMetric" /></div>
+      <div class="metric__data">
+        <span class="metric__value metric__value--sm">{{ totalRecaudado() }}</span>
+        <span class="metric__label">{{ 'pagos.metric_total' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon"><ng-container *ngComponentOutlet="icon('trending'); inputs: iconMetric" /></div>
+      <div class="metric__data">
+        <span class="metric__value metric__value--sm">{{ recaudadoMes() }}</span>
+        <span class="metric__label">{{ 'pagos.metric_month' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon"><ng-container *ngComponentOutlet="icon('receipt'); inputs: iconMetric" /></div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.num_pagados ?? 0 }}</span>
+        <span class="metric__label">{{ 'pagos.metric_count' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon"><ng-container *ngComponentOutlet="icon('card'); inputs: iconMetric" /></div>
+      <div class="metric__data">
+        <span class="metric__value metric__value--sm">{{ ticketPromedio() }}</span>
+        <span class="metric__label">{{ 'pagos.metric_avg' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <ng-container *ngComponentOutlet="icon('search'); inputs: iconInputs" />
+      <input
+        type="text"
+        [placeholder]="'pagos.search_placeholder' | translate"
+        [ngModel]="busqueda()"
+        (ngModelChange)="onBusquedaChange($event)"
+        (keyup.enter)="buscarInmediato()"
+      />
+      @if (busqueda()) {
+        <button class="search-box__clear" (click)="busqueda.set(''); buscarInmediato()" [title]="'common.clear' | translate">
+          <ng-container *ngComponentOutlet="icon('x'); inputs: iconInputs" />
+        </button>
+      }
+    </div>
+
+    <div class="toolbar__filters">
+      <app-dropdown
+        class="estado-dropdown"
+        [options]="estadoOptions()"
+        [ngModel]="estadoFiltro()"
+        (ngModelChange)="cambiarEstado($event)"
+      />
+      <div class="viewtoggle">
+        <button class="viewtoggle__opt" [class.active]="vista() === 'tabla'" (click)="setVista('tabla')" [title]="'pagos.view_table' | translate">
+          <ng-container *ngComponentOutlet="icon('list'); inputs: iconInputs" />
+        </button>
+        <button class="viewtoggle__opt" [class.active]="vista() === 'tarjetas'" (click)="setVista('tarjetas')" [title]="'pagos.view_cards' | translate">
+          <ng-container *ngComponentOutlet="icon('grid'); inputs: iconInputs" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estados -->
+  @if (cargando()) {
+    <div class="panel">
+      <div class="state"><span class="spinner"></span><span>{{ 'pagos.loading' | translate }}</span></div>
+    </div>
+  } @else if (errorLista()) {
+    <div class="panel">
+      <div class="state state--error">{{ errorLista() }}</div>
+    </div>
+  } @else if (pagos().length === 0) {
+    <div class="panel">
+      <div class="state">
+        <div class="state__icon">
+          <ng-container *ngComponentOutlet="icon('wallet'); inputs: { size: 28, strokeWidth: 1.25 }" />
+        </div>
+        <span class="state__title">{{ 'pagos.empty_title' | translate }}</span>
+        <span class="state__hint">{{ (busqueda() || estadoFiltro() ? 'pagos.empty_filtered' : 'pagos.empty_create') | translate }}</span>
+      </div>
+    </div>
+  } @else {
+
+    <!-- Vista TABLA -->
+    @if (vista() === 'tabla') {
+      <div class="panel">
+        <div class="table-scroll-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ 'pagos.col_patient' | translate }}</th>
+                <th>{{ 'pagos.col_service' | translate }}</th>
+                <th>{{ 'pagos.col_amount' | translate }}</th>
+                <th>{{ 'pagos.col_method' | translate }}</th>
+                <th>{{ 'pagos.col_status' | translate }}</th>
+                <th>{{ 'pagos.col_date' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of pagos(); track p.id) {
+                <tr [class.row--anulado]="p.estado === 'anulado'" (click)="abrirDetalle(p)">
+                  <td>
+                    <div class="cell-main">
+                      <span class="cell-main__name">{{ p.paciente_nombre }} {{ p.paciente_apellido }}</span>
+                      @if (p.referencia) { <span class="cell-main__ref">{{ p.referencia }}</span> }
+                    </div>
+                  </td>
+                  <td class="td-secondary">{{ p.servicio_nombre }}</td>
+                  <td class="td-amount">Q {{ money(p.monto) }}</td>
+                  <td class="td-secondary">{{ metodoLabel(p.metodo_pago) }}</td>
+                  <td>
+                    <span class="estado-chip estado--{{ p.estado }}">
+                      <span class="estado-dot"></span>{{ estadoLabel(p.estado) }}
+                    </span>
+                  </td>
+                  <td class="td-secondary">{{ fechaLabel(p.fecha) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalPaginas() > 1) {
+          <div class="pagination">
+            <span class="pagination__info">{{ 'pagos.page_of' | translate:{ current: pagina(), total: totalPaginas() } }}</span>
+            <div class="pagination__controls">
+              <button class="page-btn" [disabled]="pagina() === 1" (click)="cambiarPagina(pagina() - 1)" [title]="'common.previous' | translate">
+                <ng-container *ngComponentOutlet="icon('chevron-left'); inputs: iconInputsTable" />
+              </button>
+              @for (pg of paginasVisibles; track pg) {
+                <button class="page-btn" [class.active]="pg === pagina()" (click)="cambiarPagina(pg)">{{ pg }}</button>
+              }
+              <button class="page-btn" [disabled]="pagina() === totalPaginas()" (click)="cambiarPagina(pagina() + 1)" [title]="'common.next' | translate">
+                <ng-container *ngComponentOutlet="icon('chevron-right'); inputs: iconInputsTable" />
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Vista TARJETAS -->
+    @if (vista() === 'tarjetas') {
+      <div class="cards">
+        @for (p of pagos(); track p.id) {
+          <article class="pcard" [class.pcard--anulado]="p.estado === 'anulado'" (click)="abrirDetalle(p)">
+            <div class="pcard__head">
+              <span class="pcard__amount">Q {{ money(p.monto) }}</span>
+              <span class="estado-chip estado--{{ p.estado }}">
+                <span class="estado-dot"></span>{{ estadoLabel(p.estado) }}
+              </span>
+            </div>
+            <div class="pcard__body">
+              <span class="pcard__name">{{ p.paciente_nombre }} {{ p.paciente_apellido }}</span>
+              <span class="pcard__service">{{ p.servicio_nombre }}</span>
+            </div>
+            <div class="pcard__foot">
+              <span class="pcard__meta">{{ metodoLabel(p.metodo_pago) }}</span>
+              <span class="pcard__meta">{{ fechaLabel(p.fecha) }}</span>
+            </div>
+          </article>
+        }
+      </div>
+
+      @if (totalPaginas() > 1) {
+        <div class="pagination pagination--cards">
+          <span class="pagination__info">{{ 'pagos.page_of' | translate:{ current: pagina(), total: totalPaginas() } }}</span>
+          <div class="pagination__controls">
+            <button class="page-btn" [disabled]="pagina() === 1" (click)="cambiarPagina(pagina() - 1)" [title]="'common.previous' | translate">
+              <ng-container *ngComponentOutlet="icon('chevron-left'); inputs: iconInputsTable" />
+            </button>
+            @for (pg of paginasVisibles; track pg) {
+              <button class="page-btn" [class.active]="pg === pagina()" (click)="cambiarPagina(pg)">{{ pg }}</button>
+            }
+            <button class="page-btn" [disabled]="pagina() === totalPaginas()" (click)="cambiarPagina(pagina() + 1)" [title]="'common.next' | translate">
+              <ng-container *ngComponentOutlet="icon('chevron-right'); inputs: iconInputsTable" />
+            </button>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
+
+<!-- Drawer: detalle -->
+@if (detailOpen() && detailPago(); as dp) {
+  <app-pago-detail-drawer
+    [pago]="dp"
+    (closed)="cerrarDetalle()"
+    (changed)="onDetailChanged()"
+  />
+}
+
+<!-- Drawer: registrar pago -->
+@if (formOpen()) {
+  <app-pago-form-drawer
+    (closed)="cerrarForm()"
+    (saved)="onFormSaved()"
+  />
+}

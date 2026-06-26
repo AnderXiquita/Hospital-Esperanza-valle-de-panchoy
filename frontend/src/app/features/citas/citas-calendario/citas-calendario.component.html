@@ -1,0 +1,339 @@
+<div class="cal">
+
+  <!-- Header -->
+  <div class="cal__header">
+    <div class="cal__heading">
+      <p class="cal__eyebrow">{{ 'citas.eyebrow' | translate }}</p>
+      <h1 class="cal__title">{{ 'citas.title' | translate }}</h1>
+    </div>
+    @if (!esMedico()) {
+      <button class="btn-primary" (click)="abrirCrear()">
+        <ng-container [ngComponentOutlet]="icons.plus" [ngComponentOutletInputs]="iconSm" />
+        {{ 'citas.new' | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- DESKTOP: Barra de semana (>960px) -->
+  @if (!isMobile()) {
+    <div class="cal__week-bar">
+      <div class="cal__nav">
+        <button class="nav-btn" (click)="semanaAnterior()" [title]="'citas.prev_week' | translate">
+          <ng-container [ngComponentOutlet]="icons.prev" [ngComponentOutletInputs]="iconInputs" />
+        </button>
+        <button class="nav-today" (click)="hoy()">{{ 'citas.today' | translate }}</button>
+        <button class="nav-btn" (click)="semanaSiguiente()" [title]="'citas.next_week' | translate">
+          <ng-container [ngComponentOutlet]="icons.next" [ngComponentOutletInputs]="iconInputs" />
+        </button>
+        <span class="cal__week-label">{{ rangoLabel() }}</span>
+      </div>
+      @if (!esMedico()) {
+        <app-dropdown
+          class="cal__filter"
+          [options]="medicoOptions()"
+          [ngModel]="medicoFiltro()"
+          (ngModelChange)="cambiarMedico($event)"
+        />
+      }
+    </div>
+  }
+
+  <!-- MOBILE: Barra de mes (≤960px) — solo en vista mes -->
+  @if (isMobile() && mobileViewMode() === 'month') {
+    <div class="cal__month-bar">
+      <div class="cal__m-nav-row">
+        <div class="cal__nav">
+          <button class="nav-btn" (click)="mesAnterior()" [title]="'citas.prev_week' | translate">
+            <ng-container [ngComponentOutlet]="icons.prev" [ngComponentOutletInputs]="iconInputs" />
+          </button>
+          <button class="nav-today" (click)="hoy()">{{ 'citas.today' | translate }}</button>
+          <button class="nav-btn" (click)="mesSiguiente()" [title]="'citas.next_week' | translate">
+            <ng-container [ngComponentOutlet]="icons.next" [ngComponentOutletInputs]="iconInputs" />
+          </button>
+          <span class="cal__week-label cal__month-label">{{ mesLabel() }}</span>
+        </div>
+      </div>
+      @if (!esMedico()) {
+        <app-dropdown
+          class="cal__m-doc-filter"
+          [options]="medicoOptions()"
+          [ngModel]="medicoFiltro()"
+          (ngModelChange)="cambiarMedico($event)"
+        />
+      }
+    </div>
+  }
+
+  <!-- Pills de estado (ambas vistas) -->
+  <div class="cal__pills">
+    <button
+      class="pill pill--todos"
+      [class.pill--active]="estadoFiltro() === ''"
+      (click)="selEstado('')"
+    >{{ 'citas.all_estados' | translate }}</button>
+    @for (e of estadosList; track e) {
+      <button
+        class="pill pill--{{ e }}"
+        [class.pill--active]="estadoFiltro() === e"
+        (click)="selEstado(e)"
+      >{{ ('citas.estado_' + e) | translate }}</button>
+    }
+  </div>
+
+  <!-- MOBILE: Encabezado del día seleccionado (sticky, solo en vista día) -->
+  @if (isMobile() && mobileViewMode() === 'day') {
+    <div class="cal__m-dv-header">
+      <button class="cal__m-dv-back" (click)="volverAlMes()">
+        <ng-container [ngComponentOutlet]="icons.prev" [ngComponentOutletInputs]="iconInputs" />
+      </button>
+      <span class="cal__m-dv-date">{{ diaSeleccionadoLabel() }}</span>
+    </div>
+  }
+
+  <!-- DESKTOP: Calendario semanal (>960px) -->
+  @if (!isMobile()) {
+    <div class="cal__panel">
+      @if (cargando()) {
+        <div class="state"><span class="spinner"></span><span>{{ 'citas.loading' | translate }}</span></div>
+      } @else if (error()) {
+        <div class="state state--error">{{ error() }}</div>
+      } @else {
+        @if (totalCitas === 0) {
+          <div class="cal__empty">
+            <ng-container [ngComponentOutlet]="icons.cal" [ngComponentOutletInputs]="{ size: 22, strokeWidth: 1.5 }" />
+            {{ 'citas.empty_week' | translate }}
+          </div>
+        }
+
+        <div class="cal__scroll">
+          <div class="cal__grid">
+
+            <!-- Encabezado de días -->
+            <div class="cal__head-row">
+              <div class="cal__gutter-head"></div>
+              @for (d of dias(); track d.iso) {
+                <div class="cal__day-head" [class.is-today]="d.isToday">
+                  <span class="cal__day-name">{{ d.nombre }}</span>
+                  <span class="cal__day-num">{{ d.num }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Cuerpo -->
+            <div class="cal__body">
+
+              <!-- Gutter de horas -->
+              <div class="cal__gutter">
+                @for (h of horas; track h) {
+                  <div class="cal__hour-label" [style.height.px]="hourPx">{{ horaLabel(h) }}</div>
+                }
+              </div>
+
+              <!-- Columnas de días -->
+              @for (d of dias(); track d.iso; let di = $index) {
+                <div
+                  class="cal__col"
+                  [class.is-today]="d.isToday"
+                  [style.height.px]="gridHeight"
+                  (click)="onColClick(d, $event)"
+                >
+                  @for (h of horas; track h; let hi = $index) {
+                    <div class="cal__line" [style.top.px]="hi * hourPx"></div>
+                  }
+
+                  @if (d.isToday && currentTimeTop() !== null) {
+                    <div class="cal__now-line" [style.top.px]="currentTimeTop()">
+                      <span class="cal__now-badge">{{ currentTimeLabel() }}</span>
+                      <span class="cal__now-track"></span>
+                    </div>
+                  }
+
+                  @for (l of columnas()[di]; track l.cita.id) {
+                    <div
+                      class="cal__cita estado--{{ l.cita.estado }}"
+                      [style.top.px]="l.top"
+                      [style.height.px]="l.height"
+                      [style.left.%]="l.left"
+                      [style.width.%]="l.width"
+                      (click)="$event.stopPropagation(); abrirDetalle(l.cita)"
+                      (mouseenter)="onCardEnter(l.cita, $event)"
+                      (mouseleave)="onCardLeave()"
+                    >
+                      <div class="cal__cita-head">
+                        <span class="cal__cita-name">{{ l.cita.paciente_nombre }} {{ l.cita.paciente_apellido }}</span>
+                      </div>
+                      <span class="cal__cita-time">{{ l.cita.hora_inicio }}–{{ l.cita.hora_fin }}</span>
+                      @if (l.height >= 54) {
+                        <span class="cal__cita-svc">{{ l.cita.servicio_nombre }}{{ verTodosMedicos ? ' · Dr. ' + l.cita.medico_nombre : '' }}</span>
+                      }
+                      @if (l.height >= 80) {
+                        <div class="cal__cita-badge">
+                          <span class="cal__badge-dot"></span>
+                          <span>{{ ('citas.estado_' + l.cita.estado) | translate }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- MOBILE: Vista mensual + vista de día (≤960px) -->
+  @if (isMobile()) {
+    <div class="cal__mobile-panel">
+
+      @if (cargando()) {
+        <div class="state state--mobile"><span class="spinner"></span><span>{{ 'citas.loading' | translate }}</span></div>
+      } @else if (error()) {
+        <div class="state state--error">{{ error() }}</div>
+      } @else if (mobileViewMode() === 'month') {
+
+        <!-- ── VISTA MES ─────────────────────────────────────────────────────── -->
+        <div class="cal__m-panel">
+          <!-- Encabezados de días de la semana -->
+          <div class="cal__m-weekdays">
+            @for (label of weekdayLabels(); track label) {
+              <div class="cal__m-wd">{{ label }}</div>
+            }
+          </div>
+          <!-- Celdas del mes -->
+          <div class="cal__m-grid">
+            @let mapa = citasPorDia();
+            @for (day of diasMesGrid(); track day.iso) {
+              @let dayCitas = (mapa.get(day.iso) ?? []);
+              <button
+                class="cal__m-day"
+                [class.is-today]="day.isToday"
+                [class.out-of-month]="!day.isCurrentMonth"
+                (click)="seleccionarDia(day.iso)"
+              >
+                <span class="cal__m-day-num">{{ day.num }}</span>
+                @if (dayCitas.length > 0) {
+                  <div class="cal__m-events">
+                    @for (cita of dayCitas.slice(0, 2); track cita.id) {
+                      <span class="cal__m-evt ebar--{{ cita.estado }}">{{ cita.paciente_nombre }}</span>
+                    }
+                    @if (dayCitas.length > 2) {
+                      <span class="cal__m-evt-more">+{{ dayCitas.length - 2 }}</span>
+                    }
+                  </div>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+      } @else {
+
+        <!-- ── VISTA DÍA ──────────────────────────────────────────────────────── -->
+        <!-- Cabecera ya está fuera del panel (sticky sin margen negativo padre) -->
+        <div class="cal__m-dv-body">
+            <div class="cal__m-dv-gutter">
+              @for (h of horas; track h) {
+                <div class="cal__m-dv-hour" [style.height.px]="hourPx">{{ horaLabel(h) }}</div>
+              }
+            </div>
+
+            <div
+              class="cal__m-dv-col"
+              [style.height.px]="gridHeight"
+              (click)="onMobileDayColClick($event)"
+            >
+              @for (h of horas; track h; let hi = $index) {
+                <div class="cal__line" [style.top.px]="hi * hourPx"></div>
+              }
+
+              @if (selectedDayIsToday() && currentTimeTop() !== null) {
+                <div class="cal__now-line" [style.top.px]="currentTimeTop()">
+                  <span class="cal__now-badge">{{ currentTimeLabel() }}</span>
+                  <span class="cal__now-track"></span>
+                </div>
+              }
+
+              @for (l of citasLayoutDiaSeleccionado(); track l.cita.id) {
+                <div
+                  class="cal__cita estado--{{ l.cita.estado }}"
+                  [style.top.px]="l.top"
+                  [style.height.px]="l.height"
+                  [style.left.%]="l.left"
+                  [style.width.%]="l.width"
+                  (click)="$event.stopPropagation(); abrirDetalle(l.cita)"
+                >
+                  <div class="cal__cita-head">
+                    <span class="cal__cita-name">{{ l.cita.paciente_nombre }} {{ l.cita.paciente_apellido }}</span>
+                  </div>
+                  <span class="cal__cita-time">{{ l.cita.hora_inicio }}–{{ l.cita.hora_fin }}</span>
+                  @if (l.height >= 54) {
+                    <span class="cal__cita-svc">{{ l.cita.servicio_nombre }}{{ verTodosMedicos ? ' · Dr. ' + l.cita.medico_nombre : '' }}</span>
+                  }
+                  @if (l.height >= 80) {
+                    <div class="cal__cita-badge">
+                      <span class="cal__badge-dot"></span>
+                      <span>{{ ('citas.estado_' + l.cita.estado) | translate }}</span>
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (citasLayoutDiaSeleccionado().length === 0) {
+                <div class="cal__m-dv-empty">
+                  <ng-container [ngComponentOutlet]="icons.cal" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+                  {{ 'citas.empty_day' | translate }}
+                </div>
+              }
+            </div>
+          </div>
+
+      }
+    </div>
+  }
+
+</div>
+
+<!-- Tooltip de cita al hover (solo desktop) -->
+@if (!isMobile() && hoveredCita(); as h) {
+  <div
+    class="cal__tooltip estado--{{ h.cita.estado }}"
+    [class.tip--closing]="tooltipClosing()"
+    [style.left.px]="h.x"
+    [style.top.px]="h.y"
+    (mouseenter)="onTooltipEnter()"
+    (mouseleave)="onTooltipLeave()"
+  >
+    <div class="tooltip__status">
+      <span class="cal__badge-dot"></span>
+      <span>{{ ('citas.estado_' + h.cita.estado) | translate }}</span>
+    </div>
+    <div class="tooltip__name">{{ h.cita.paciente_nombre }} {{ h.cita.paciente_apellido }}</div>
+    <div class="tooltip__time">{{ h.cita.hora_inicio }} – {{ h.cita.hora_fin }}</div>
+    <div class="tooltip__row">{{ h.cita.servicio_nombre }}</div>
+    <div class="tooltip__row">Dr. {{ h.cita.medico_nombre }} {{ h.cita.medico_apellido }}</div>
+    @if (h.cita.motivo_consulta) {
+      <div class="tooltip__motivo">{{ h.cita.motivo_consulta }}</div>
+    }
+    <div class="tooltip__hint">{{ 'citas.click_detail' | translate }}</div>
+  </div>
+}
+
+<!-- Drawer: detalle -->
+@if (detailOpen() && detailCita(); as dc) {
+  <app-cita-detail-drawer
+    [cita]="dc"
+    (closed)="cerrarDetalle()"
+    (changed)="onDetailChanged()"
+  />
+}
+
+<!-- Drawer: agendar -->
+@if (formOpen()) {
+  <app-cita-form-drawer
+    [prefill]="formPrefill()"
+    (closed)="cerrarForm()"
+    (saved)="onFormSaved()"
+  />
+}

@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+.angular/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Local database
+*.sql
+*.dump
+
+# Editor and local tools
+.vscode/
+.claude/
+.idea/
+CLAUDE.md
+skills/
+
+# Prisma
+prisma/migrations/dev/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker (local data)
+docker-volumes/
+
+# pnpm
+pnpm-lock.yaml

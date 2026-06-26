@@ -1,0 +1,231 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <!-- Header -->
+  <header class="drawer__head">
+    <div class="drawer__head-text">
+      <p class="drawer__eyebrow">{{ (esEdicion ? 'medicos.form_edit_eyebrow' : 'medicos.form_new_eyebrow') | translate }}</p>
+      <h2 class="drawer__title">{{ (esEdicion ? 'medicos.form_edit_title' : 'medicos.form_new_title') | translate }}</h2>
+    </div>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  <!-- Body -->
+  <div class="drawer__body">
+
+    <!-- Identidad -->
+    <div class="identity">
+      <div class="identity__avatar">{{ avatarIniciales }}</div>
+      <div class="identity__meta">
+        <span class="identity__name">
+          {{ (form.nombre || ('medicos.preview_name' | translate)) + ' ' + (form.apellido || ('medicos.preview_lastname' | translate)) }}
+        </span>
+        <span class="identity__role">
+          {{ form.especialidad || ('medicos.preview_specialty' | translate) }}{{ form.subespecialidad ? ' · ' + form.subespecialidad : '' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Datos personales -->
+    <section class="section">
+      <p class="section__head">
+        <span class="section__chip">
+          <ng-container [ngComponentOutlet]="icons.user" [ngComponentOutletInputs]="iconSection" />
+        </span>
+        {{ 'medicos.section_personal' | translate }}
+      </p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'medicos.label_name' | translate }} <span>*</span></label>
+          <input type="text" [(ngModel)]="form.nombre" [placeholder]="'medicos.ph_name' | translate"
+            [class.invalid]="submitted() && !form.nombre.trim()" />
+          @if (submitted() && !form.nombre.trim()) { <span class="field__err">{{ 'common.required_short' | translate }}</span> }
+        </div>
+        <div class="field">
+          <label>{{ 'medicos.label_lastname' | translate }} <span>*</span></label>
+          <input type="text" [(ngModel)]="form.apellido" [placeholder]="'medicos.ph_lastname' | translate"
+            [class.invalid]="submitted() && !form.apellido.trim()" />
+          @if (submitted() && !form.apellido.trim()) { <span class="field__err">{{ 'common.required_short' | translate }}</span> }
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'medicos.label_dpi' | translate }}</label>
+          <input type="text" inputmode="numeric" [(ngModel)]="form.dpi" [placeholder]="'medicos.ph_dpi' | translate"
+            [class.invalid]="submitted() && dpiInvalido()" />
+          @if (submitted() && dpiInvalido()) { <span class="field__err">{{ 'medicos.err_dpi' | translate }}</span> }
+        </div>
+        <div class="field">
+          <label>{{ 'medicos.label_birthdate' | translate }}</label>
+          <app-date-field [(ngModel)]="form.fecha_nacimiento" [placeholder]="'common.select_date' | translate" />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'medicos.label_gender' | translate }}</label>
+          <app-dropdown [options]="generoOptions()" [(ngModel)]="form.genero" [placeholder]="'medicos.gender_unspecified' | translate" />
+        </div>
+        <div class="field">
+          <label>{{ 'medicos.label_address' | translate }}</label>
+          <input type="text" [(ngModel)]="form.direccion" [placeholder]="'medicos.ph_address' | translate" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Cuenta de acceso (solo al crear) -->
+    @if (!esEdicion) {
+      <section class="section">
+        <p class="section__head">
+          <span class="section__chip">
+            <ng-container [ngComponentOutlet]="icons.key" [ngComponentOutletInputs]="iconSection" />
+          </span>
+          {{ 'medicos.section_account' | translate }}
+        </p>
+        <p class="section__hint">{{ 'medicos.account_hint' | translate }}</p>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>{{ 'medicos.label_email' | translate }} <span>*</span></label>
+            <input type="email" [(ngModel)]="form.email" [placeholder]="'medicos.ph_email' | translate"
+              [class.invalid]="submitted() && (!form.email.trim() || !form.email.includes('@'))" />
+            @if (submitted() && (!form.email.trim() || !form.email.includes('@'))) {
+              <span class="field__err">{{ 'medicos.err_email' | translate }}</span>
+            }
+          </div>
+          <div class="field">
+            <label>{{ 'medicos.label_password' | translate }} <span>*</span></label>
+            <div class="pwd-wrap" [class.invalid]="submitted() && !passwordValida()">
+              <input [type]="showPassword() ? 'text' : 'password'" [(ngModel)]="form.password"
+                [placeholder]="'medicos.ph_password' | translate" />
+              <button type="button" class="pwd-toggle" (click)="showPassword.set(!showPassword())" tabindex="-1">
+                <ng-container *ngComponentOutlet="showPassword() ? icons.eyeOff : icons.eye; inputs: iconSection" />
+              </button>
+            </div>
+            @if (submitted() && !passwordValida()) {
+              <span class="field__err">{{ 'medicos.err_password' | translate }}</span>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Datos profesionales -->
+    <section class="section">
+      <p class="section__head">
+        <span class="section__chip">
+          <ng-container [ngComponentOutlet]="icons.briefcase" [ngComponentOutletInputs]="iconSection" />
+        </span>
+        {{ 'medicos.section_professional' | translate }}
+      </p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'medicos.label_specialty' | translate }} <span>*</span></label>
+          <input type="text" [(ngModel)]="form.especialidad" [placeholder]="'medicos.ph_specialty' | translate"
+            [class.invalid]="submitted() && !form.especialidad.trim()" />
+          @if (submitted() && !form.especialidad.trim()) { <span class="field__err">{{ 'common.required_short' | translate }}</span> }
+        </div>
+        <div class="field">
+          <label>{{ 'medicos.label_subspecialty' | translate }}</label>
+          <input type="text" [(ngModel)]="form.subespecialidad" [placeholder]="'medicos.ph_subspecialty' | translate" />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'medicos.label_license' | translate }} <span>*</span></label>
+          <input type="text" [(ngModel)]="form.numero_colegiado" [placeholder]="'medicos.ph_license' | translate"
+            [class.invalid]="submitted() && !form.numero_colegiado.trim()" />
+          @if (submitted() && !form.numero_colegiado.trim()) { <span class="field__err">{{ 'common.required_short' | translate }}</span> }
+        </div>
+        <div class="field">
+          <label>{{ 'medicos.label_office' | translate }}</label>
+          <input type="text" [(ngModel)]="form.consultorio" [placeholder]="'medicos.ph_office' | translate" />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'medicos.label_fee' | translate }}</label>
+          <input type="number" min="0" step="0.01" [(ngModel)]="form.tarifa_consulta" [placeholder]="'medicos.ph_fee' | translate" />
+        </div>
+        <div class="field">
+          <label>{{ 'medicos.label_hiredate' | translate }}</label>
+          <app-date-field [(ngModel)]="form.fecha_ingreso" [placeholder]="'common.select_date' | translate" />
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>{{ 'medicos.label_phone' | translate }}</label>
+          <input type="tel" [(ngModel)]="form.telefono" [placeholder]="'medicos.ph_phone' | translate" />
+        </div>
+        <div class="field">
+          <label>{{ 'medicos.label_emergency_phone' | translate }}</label>
+          <input type="tel" [(ngModel)]="form.telefono_emergencia" [placeholder]="'medicos.ph_emergency_phone' | translate" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>{{ 'medicos.label_bio' | translate }}</label>
+        <textarea [(ngModel)]="form.biografia" rows="3" [placeholder]="'medicos.ph_bio' | translate"></textarea>
+      </div>
+    </section>
+
+    <!-- Horarios -->
+    <section class="section">
+      <div class="section__row">
+        <p class="section__head" style="margin:0">
+          <span class="section__chip">
+            <ng-container [ngComponentOutlet]="icons.clock" [ngComponentOutletInputs]="iconSection" />
+          </span>
+          {{ 'medicos.section_schedule' | translate }}
+        </p>
+        <button class="btn-ghost" type="button" (click)="agregarHorario()">
+          <ng-container [ngComponentOutlet]="icons.plus" [ngComponentOutletInputs]="iconSm" />
+          {{ 'common.add' | translate }}
+        </button>
+      </div>
+
+      @if (horarios.length === 0) {
+        <p class="section__hint">{{ 'medicos.schedule_empty' | translate }}</p>
+      }
+
+      <div class="schedule-list">
+        @for (h of horarios; track $index; let i = $index) {
+          <div class="schedule-row">
+            <app-dropdown class="dd-day" [options]="diaOptions()" [(ngModel)]="h.dia_semana" />
+            <app-dropdown class="dd-hora" [options]="horaOptions" [(ngModel)]="h.hora_inicio" />
+            <span class="schedule-row__sep">{{ 'medicos.schedule_to' | translate }}</span>
+            <app-dropdown class="dd-hora" [options]="horaOptions" [(ngModel)]="h.hora_fin" />
+            <button class="icon-btn icon-btn--danger" type="button" (click)="quitarHorario(i)" [title]="'common.remove' | translate">
+              <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="iconSm" />
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+
+    @if (errorMsg()) {
+      <div class="form-error">{{ errorMsg() }}</div>
+    }
+  </div>
+
+  <!-- Footer -->
+  <footer class="drawer__foot">
+    <button class="btn-secondary" type="button" (click)="cerrar()">{{ 'btn.cancel' | translate }}</button>
+    <button class="btn-primary" type="button" [disabled]="guardando()" (click)="guardar()">
+      @if (guardando()) {
+        <span class="spinner spinner--light"></span> {{ 'medicos.saving' | translate }}
+      } @else {
+        {{ (esEdicion ? 'medicos.save_changes' : 'medicos.create_doctor') | translate }}
+      }
+    </button>
+  </footer>
+</aside>

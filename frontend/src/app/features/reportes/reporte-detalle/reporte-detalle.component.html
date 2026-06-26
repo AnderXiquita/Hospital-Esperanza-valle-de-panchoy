@@ -1,0 +1,90 @@
+<div class="det">
+
+  <!-- Volver -->
+  <div class="det__nav">
+    <a routerLink="/reportes" class="back-btn">
+      <ng-container *ngComponentOutlet="ChevronLeft; inputs: iconBack" />
+      {{ 'reportes.back' | translate }}
+    </a>
+  </div>
+
+  @if (config) {
+
+    <!-- Hero -->
+    <div [class]="'det__hero det__hero--' + config.color">
+      <div class="det__hero-icon">
+        <ng-container *ngComponentOutlet="config.icono; inputs: iconHero" />
+      </div>
+      <div class="det__hero-body">
+        <span class="det__hero-label">{{ 'reportes.badge_pdf' | translate }}</span>
+        <h1 class="det__hero-title">{{ config.tituloKey | translate }}</h1>
+        <p class="det__hero-desc">{{ config.descripKey | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Paneles -->
+    <div class="det__panels">
+
+      <!-- Período -->
+      <div class="det__panel">
+        <div class="det__panel-head">
+          <h2 class="det__panel-title">{{ 'reportes.period_title' | translate }}</h2>
+          <p class="det__panel-sub">{{ 'reportes.period_sub' | translate }}</p>
+        </div>
+        <div class="det__dates">
+          <div class="det__date-row">
+            <span class="det__date-label">{{ 'reportes.date_from' | translate }}</span>
+            <app-date-field
+              [placeholder]="'reportes.date_from_ph' | translate"
+              [(ngModel)]="desdeModel"
+            />
+          </div>
+          <div class="det__date-row">
+            <span class="det__date-label">{{ 'reportes.date_to' | translate }}</span>
+            <app-date-field
+              [placeholder]="'reportes.date_to_ph' | translate"
+              [minDate]="desde()"
+              [(ngModel)]="hastaModel"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido -->
+      <div class="det__panel">
+        <div class="det__panel-head">
+          <h2 class="det__panel-title">{{ 'reportes.content_title' | translate }}</h2>
+          <p class="det__panel-sub">{{ 'reportes.content_sub' | translate }}</p>
+        </div>
+        <ul class="det__items">
+          @for (key of config.detalleKeys; track key) {
+            <li class="det__item">
+              <span [class]="'det__dot det__dot--' + config.color"></span>
+              {{ key | translate }}
+            </li>
+          }
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Acción -->
+    <div class="det__action">
+      <button
+        [class]="'gen-btn gen-btn--' + config.color"
+        [disabled]="!canGenerar()"
+        (click)="generar()"
+      >
+        @if (loading()) {
+          <span class="gen-btn__spinner"></span>
+          {{ 'reportes.generating' | translate }}
+        } @else {
+          <ng-container *ngComponentOutlet="Download; inputs: iconBtn" />
+          {{ 'reportes.download_btn' | translate }}
+        }
+      </button>
+    </div>
+
+  }
+
+</div>

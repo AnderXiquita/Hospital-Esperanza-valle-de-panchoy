@@ -1,0 +1,116 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="drawer__head">
+    <div>
+      <p class="drawer__eyebrow">{{ 'pagos.form_eyebrow' | translate }}</p>
+      <h2 class="drawer__title">{{ 'pagos.form_title' | translate }}</h2>
+    </div>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate" [disabled]="procesando()">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  <div class="drawer__body">
+
+    <!-- Selección de cita -->
+    <div class="field">
+      <label>{{ 'pagos.label_appointment' | translate }} <span>*</span></label>
+      @if (seleccion(); as c) {
+        <div class="cita-sel">
+          <div class="cita-sel__info">
+            <span class="cita-sel__name">{{ c.paciente_nombre }} {{ c.paciente_apellido }}</span>
+            <span class="cita-sel__meta">{{ c.servicio_nombre }} · {{ fechaCorta(c.fecha) }} · {{ c.hora_inicio }}</span>
+          </div>
+          <button class="icon-btn" type="button" (click)="limpiarSeleccion()" [title]="'common.clear' | translate">
+            <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="iconSm" />
+          </button>
+        </div>
+      } @else {
+        <div class="ac">
+          <div class="ac__input" [class.invalid]="submitted() && !seleccion()">
+            <ng-container [ngComponentOutlet]="icons.search" [ngComponentOutletInputs]="iconSm" />
+            <input
+              type="text"
+              [placeholder]="'pagos.search_appointment' | translate"
+              [ngModel]="query()"
+              (ngModelChange)="onInput($event)"
+              (focus)="abrirLista()"
+            />
+            @if (buscando()) { <span class="spinner spinner--xs"></span> }
+          </div>
+          @if (abierto()) {
+            <div class="ac__panel">
+              @if (resultados().length === 0) {
+                <div class="ac__empty">{{ 'pagos.no_appointments' | translate }}</div>
+              } @else {
+                @for (c of resultados(); track c.cita_id) {
+                  <button type="button" class="ac__opt" (click)="seleccionar(c)">
+                    <span class="ac__opt-top">
+                      <span class="ac__opt-name">{{ c.paciente_nombre }} {{ c.paciente_apellido }}</span>
+                      <span class="ac__opt-price">Q {{ c.servicio_precio }}</span>
+                    </span>
+                    <span class="ac__opt-meta">{{ c.servicio_nombre }} · {{ fechaCorta(c.fecha) }} · {{ c.hora_inicio }}</span>
+                  </button>
+                }
+              }
+            </div>
+          }
+        </div>
+        @if (submitted() && !seleccion()) { <span class="field__err">{{ 'pagos.err_appointment' | translate }}</span> }
+      }
+    </div>
+
+    <!-- Monto -->
+    <div class="field">
+      <label>{{ 'pagos.label_amount' | translate }} <span>*</span></label>
+      <input type="number" min="0" step="0.01" [ngModel]="monto()" (ngModelChange)="monto.set($event)"
+        [class.invalid]="submitted() && monto() === ''" />
+      @if (submitted() && monto() === '') { <span class="field__err">{{ 'pagos.err_amount' | translate }}</span> }
+    </div>
+
+    <!-- Método de pago -->
+    <div class="field">
+      <label>{{ 'pagos.label_method' | translate }} <span>*</span></label>
+      <div class="metodos">
+        @for (m of metodos; track m.value) {
+          <button type="button" class="metodo" [class.active]="metodo() === m.value" (click)="metodo.set(m.value)">
+            <ng-container [ngComponentOutlet]="m.icon" [ngComponentOutletInputs]="{ size: 18, strokeWidth: 1.5 }" />
+            {{ m.label | translate }}
+          </button>
+        }
+      </div>
+      @if (submitted() && !metodo()) { <span class="field__err">{{ 'pagos.err_method' | translate }}</span> }
+    </div>
+
+    <!-- Nota de simulación -->
+    <div class="sim-note">
+      <ng-container [ngComponentOutlet]="icons.shield" [ngComponentOutletInputs]="iconSm" />
+      {{ 'pagos.simulated_note' | translate }}
+    </div>
+
+    @if (errorMsg()) { <div class="form-error">{{ errorMsg() }}</div> }
+  </div>
+
+  <footer class="drawer__foot">
+    <button class="btn-secondary" type="button" (click)="cerrar()" [disabled]="procesando()">{{ 'btn.cancel' | translate }}</button>
+    <button class="btn-primary" type="button" [disabled]="procesando()" (click)="cobrar()">
+      @if (procesando()) {
+        <span class="spinner spinner--light"></span> {{ 'pagos.processing' | translate }}
+      } @else {
+        {{ 'pagos.pay' | translate:{ amount: montoLabel() } }}
+      }
+    </button>
+  </footer>
+
+  <!-- Overlay de procesamiento -->
+  @if (procesando()) {
+    <div class="processing">
+      <div class="processing__card">
+        <div class="processing__pulse"></div>
+        <span class="processing__text">{{ 'pagos.processing' | translate }}</span>
+      </div>
+    </div>
+  }
+</aside>

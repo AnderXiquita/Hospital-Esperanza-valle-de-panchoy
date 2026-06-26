@@ -1,0 +1,164 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="topbar">
+    <span class="topbar__label">{{ 'citas.detail_eyebrow' | translate }}</span>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  @if (u(); as c) {
+    <div class="drawer__body">
+
+      <!-- Estado -->
+      <div class="estado-band estado--{{ c.estado }}">
+        <span class="estado-dot"></span>
+        {{ estadoLabel(c.estado) }}
+      </div>
+
+      <!-- Datos -->
+      <section class="block">
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.user" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'citas.field_patient' | translate }}</span>
+          <span class="info-row__value">{{ c.paciente_nombre }} {{ c.paciente_apellido }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.medico" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'citas.field_doctor' | translate }}</span>
+          <span class="info-row__value">{{ c.medico_nombre }} {{ c.medico_apellido }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.servicio" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'citas.field_service' | translate }}</span>
+          <span class="info-row__value">{{ c.servicio_nombre }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.calendar" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'citas.field_date' | translate }}</span>
+          <span class="info-row__value">{{ formatFecha(c.fecha) }}</span>
+        </div>
+        <div class="info-row">
+          <ng-container [ngComponentOutlet]="icons.clock" [ngComponentOutletInputs]="iconField" />
+          <span class="info-row__label">{{ 'citas.field_time' | translate }}</span>
+          <span class="info-row__value">{{ c.hora_inicio }} – {{ c.hora_fin }}</span>
+        </div>
+      </section>
+
+      <!-- Motivo -->
+      <section class="block">
+        <p class="block__title">{{ 'citas.field_reason' | translate }}</p>
+        <p class="bio">{{ c.motivo_consulta || ('citas.no_reason' | translate) }}</p>
+      </section>
+
+      <!-- Nota clínica (solo médico, cita confirmada/atendida) -->
+      @if (puedeNota) {
+        <section class="nota-cta">
+          <button class="nota-btn" type="button" (click)="irANota()">
+            <ng-container [ngComponentOutlet]="icons.nota" [ngComponentOutletInputs]="iconAction" />
+            {{ 'citas.action_nota' | translate }}
+          </button>
+        </section>
+      }
+
+      @if (errorMsg()) { <div class="form-error">{{ errorMsg() }}</div> }
+
+      <!-- Acciones -->
+      @if (!esTerminal) {
+        <section class="actions">
+          @if (puedeConfirmar) {
+            <button class="action action--ok" type="button" [disabled]="saving()" (click)="confirmar()">
+              <ng-container [ngComponentOutlet]="icons.confirm" [ngComponentOutletInputs]="iconAction" />
+              {{ 'citas.action_confirm' | translate }}
+            </button>
+          }
+          @if (puedeAtender) {
+            <button class="action action--ok" type="button" [disabled]="saving()" (click)="atender()">
+              <ng-container [ngComponentOutlet]="icons.attend" [ngComponentOutletInputs]="iconAction" />
+              {{ 'citas.action_attend' | translate }}
+            </button>
+          }
+          @if (puedeReprogramar) {
+            <button class="action" type="button" [disabled]="saving()" (click)="abrirReprog()">
+              <ng-container [ngComponentOutlet]="icons.reschedule" [ngComponentOutletInputs]="iconAction" />
+              {{ 'citas.action_reschedule' | translate }}
+            </button>
+          }
+          @if (puedeNoShow) {
+            <button class="action" type="button" [disabled]="saving()" (click)="noShow()">
+              <ng-container [ngComponentOutlet]="icons.noshow" [ngComponentOutletInputs]="iconAction" />
+              {{ 'citas.action_noshow' | translate }}
+            </button>
+          }
+          @if (puedeCancelar) {
+            <button class="action action--danger" type="button" [disabled]="saving()" (click)="pedirCancelar()">
+              <ng-container [ngComponentOutlet]="icons.cancel" [ngComponentOutletInputs]="iconAction" />
+              {{ 'citas.action_cancel' | translate }}
+            </button>
+          }
+        </section>
+      }
+    </div>
+  }
+</aside>
+
+<!-- Reprogramar -->
+@if (reprogOpen()) {
+  <div class="overlay" (click)="cerrarReprog()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ 'citas.reschedule_title' | translate }}</h2>
+      <p class="modal__text">{{ 'citas.reschedule_hint' | translate }}</p>
+      <div class="modal__grid">
+        <div class="field">
+          <label>{{ 'citas.label_date' | translate }}</label>
+          <app-date-field
+            [ngModel]="reprogFecha()"
+            (ngModelChange)="onReprogFechaChange($event)"
+            [placeholder]="'common.select_date' | translate"
+            [minDate]="minDate"
+            [unavailableDaysOfWeek]="reprogUnavailableDays()"
+          />
+        </div>
+        <div class="field">
+          <label>{{ 'citas.label_time' | translate }}</label>
+          <app-dropdown
+            [options]="reprogAvailableHoras()"
+            [ngModel]="reprogHora()"
+            (ngModelChange)="reprogHora.set($event)"
+            [placeholder]="reprogLoadingSlots() ? ('citas.loading_slots' | translate) : ('citas.select_time' | translate)"
+          />
+          @if (reprogNoSlots()) {
+            <span class="modal__hint--warn">{{ 'citas.no_slots' | translate }}</span>
+          }
+        </div>
+      </div>
+      @if (reprogError()) { <p class="modal__error">{{ reprogError() }}</p> }
+      <div class="modal__actions">
+        <button class="btn-secondary" (click)="cerrarReprog()">{{ 'btn.cancel' | translate }}</button>
+        <button class="btn-primary" [disabled]="saving() || !reprogValido" (click)="guardarReprog()">
+          @if (saving()) { <span class="spinner spinner--light"></span> }
+          {{ 'citas.action_reschedule' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Confirmar cancelación -->
+@if (confirmCancel()) {
+  <div class="overlay" (click)="cancelarConfirm()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ 'citas.cancel_confirm_title' | translate }}</h2>
+      <p class="modal__text">{{ 'citas.cancel_confirm_text' | translate }}</p>
+      <div class="modal__actions">
+        <button class="btn-secondary" (click)="cancelarConfirm()">{{ 'citas.keep' | translate }}</button>
+        <button class="btn-danger" [disabled]="saving()" (click)="cancelarCita()">
+          @if (saving()) { <span class="spinner spinner--light"></span> }
+          {{ 'citas.cancel_confirm_yes' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

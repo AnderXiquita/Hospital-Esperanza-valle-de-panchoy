@@ -1,0 +1,103 @@
+$ink: #0f1117;
+
+.toast-stack {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 310px;
+  pointer-events: none;
+
+  @media (max-width: 480px) {
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: $ink;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  pointer-events: all;
+  animation: slideIn 0.22s cubic-bezier(0.34, 1.4, 0.64, 1);
+  transition: background 0.15s;
+
+  &:hover { background: #1a1e28; }
+
+  ng-component { display: flex; }
+}
+
+.toast__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.toast__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.toast__title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toast__msg {
+  font-size: 0.73rem;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toast__close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: color 0.15s;
+  ng-component { display: flex; }
+
+  &:hover { color: rgba(255, 255, 255, 0.75); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideOut {
+  from { opacity: 1; transform: translateX(0);    max-height: 80px; margin-bottom: 0; }
+  to   { opacity: 0; transform: translateX(20px); max-height: 0;    margin-bottom: -8px; }
+}
+
+.toast--out {
+  animation: slideOut 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}

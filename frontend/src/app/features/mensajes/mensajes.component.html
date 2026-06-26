@@ -1,0 +1,19 @@
+<div class="mensajes">
+
+  <div class="mensajes__header">
+    <div class="mensajes__heading">
+      <p class="mensajes__eyebrow">{{ 'mensajes.eyebrow' | translate }}</p>
+      <h1 class="mensajes__title">{{ 'mensajes.title' | translate }}</h1>
+    </div>
+  </div>
+
+  <div class="wip">
+    <div class="wip__icon-wrap">
+      <ng-container [ngComponentOutlet]="iconMsg" [ngComponentOutletInputs]="iconInputs" />
+    </div>
+    <span class="wip__badge">{{ 'mensajes.badge' | translate }}</span>
+    <h2 class="wip__heading">{{ 'mensajes.wip_title' | translate }}</h2>
+    <p class="wip__desc">{{ 'mensajes.wip_desc' | translate }}</p>
+  </div>
+
+</div>

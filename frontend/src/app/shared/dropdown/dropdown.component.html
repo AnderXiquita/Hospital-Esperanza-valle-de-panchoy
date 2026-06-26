@@ -1,0 +1,36 @@
+<button
+  type="button"
+  class="dd__trigger"
+  [class.dd__trigger--open]="open()"
+  [class.dd__trigger--placeholder]="selectedLabel() === null"
+  [disabled]="disabled() || isDisabled()"
+  (click)="toggle()"
+>
+  <span class="dd__label">{{ selectedLabel() ?? placeholder() }}</span>
+  <span class="dd__chevron" [class.dd__chevron--open]="open()">
+    <ng-container [ngComponentOutlet]="chevron" [ngComponentOutletInputs]="chevronInputs" />
+  </span>
+</button>
+
+@if (open()) {
+  <div class="dd__panel">
+    @for (opt of options(); track opt.value) {
+      <button
+        type="button"
+        class="dd__option"
+        [class.is-selected]="isSelected(opt)"
+        (click)="select(opt)"
+      >
+        <span class="dd__option-text">
+          <span class="dd__option-label">{{ opt.label }}</span>
+          @if (opt.sublabel) { <span class="dd__option-sub">{{ opt.sublabel }}</span> }
+        </span>
+        @if (isSelected(opt)) {
+          <span class="dd__check">
+            <ng-container [ngComponentOutlet]="check" [ngComponentOutletInputs]="checkInputs" />
+          </span>
+        }
+      </button>
+    }
+  </div>
+}

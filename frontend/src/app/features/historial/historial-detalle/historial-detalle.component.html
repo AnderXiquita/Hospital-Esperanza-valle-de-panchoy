@@ -1,0 +1,245 @@
+<div class="hd">
+
+  <!-- Loading -->
+  @if (cargando()) {
+    <div class="hd__loading">
+      <div class="skeleton skeleton--hero"></div>
+      <div class="skeleton skeleton--card"></div>
+      <div class="skeleton skeleton--card"></div>
+    </div>
+  }
+
+  @if (!cargando()) {
+
+    <!-- Back -->
+    <button class="hd__back" (click)="volver()">
+      <ng-container [ngComponentOutlet]="icons['back']" [ngComponentOutletInputs]="iconMd" />
+      {{ 'historial.volver' | translate }}
+    </button>
+
+    <!-- Hero paciente -->
+    <div class="hd__hero">
+      <div class="hd__hero-avatar">{{ pacienteNom()[0] }}</div>
+      <div class="hd__hero-info">
+        <h1 class="hd__hero-name">{{ pacienteNom() }}</h1>
+        @if (pacienteMeta()) {
+          <p class="hd__hero-meta">{{ pacienteMeta() }}</p>
+        }
+      </div>
+      <div class="hd__hero-badge">
+        {{ notas().length }} {{ (notas().length === 1 ? 'historial.consulta' : 'historial.consultas') | translate }}
+      </div>
+    </div>
+
+    <!-- Sin notas -->
+    @if (notas().length === 0) {
+      <div class="hd__empty">
+        <p>{{ 'historial.sin_consultas' | translate }}</p>
+      </div>
+    }
+
+    <!-- Barra de acciones del timeline -->
+    @if (notas().length > 1) {
+      <div class="hd__timeline-bar">
+        <button class="hd__expand-all" (click)="toggleAll()">
+          {{ (allExpanded() ? 'historial.colapsar_todo' : 'historial.expandir_todo') | translate }}
+        </button>
+      </div>
+    }
+
+    <!-- Timeline de notas -->
+    <div class="hd__timeline">
+      @for (n of notas(); track n.id; let i = $index) {
+        <div class="hd__entry">
+          <!-- Dot del timeline -->
+          <div class="hd__dot"></div>
+
+          <!-- Tarjeta de nota -->
+          <div class="hd__nota">
+
+            <!-- Cabecera colapsable -->
+            <button class="hd__nota-head" (click)="toggle(i)">
+              <div class="hd__nota-meta">
+                <span class="hd__nota-fecha">
+                  <ng-container [ngComponentOutlet]="icons['cal']" [ngComponentOutletInputs]="iconXs" />
+                  {{ formatFecha(n.cita_fecha) }}
+                  @if (n.cita_hora_inicio) { · {{ n.cita_hora_inicio }} }
+                </span>
+                @if (n.medico_nombre) {
+                  <span class="hd__nota-medico">
+                    Dr. {{ n.medico_nombre }} {{ n.medico_apellido }}
+                    @if (n.medico_especialidad) { — {{ n.medico_especialidad }} }
+                  </span>
+                }
+                @if (n.servicio_nombre) {
+                  <span class="hd__nota-servicio">{{ n.servicio_nombre }}</span>
+                }
+              </div>
+              <div class="hd__nota-right">
+                @if (n.diagnostico_principal && !n.expanded) {
+                  <span class="hd__nota-dx-preview">{{ n.diagnostico_principal }}</span>
+                }
+                <div class="hd__chevron" [class.hd__chevron--open]="n.expanded">
+                  <ng-container [ngComponentOutlet]="icons['chevron']" [ngComponentOutletInputs]="iconXs" />
+                </div>
+              </div>
+            </button>
+
+            <!-- Contenido animado -->
+            <div class="hd__collapse" [class.hd__collapse--open]="n.expanded">
+              <div class="hd__collapse-inner">
+              <div class="hd__nota-body">
+
+                <!-- Signos vitales -->
+                @if (tieneSignos(n)) {
+                  <div class="hd__bloque">
+                    <p class="hd__bloque-title">
+                      <ng-container [ngComponentOutlet]="icons['vitals']" [ngComponentOutletInputs]="iconXs" />
+                      {{ 'notas.sec_vitales' | translate }}
+                    </p>
+                    <div class="hd__vitals-grid">
+                      @if (n.sv_presion_sistolica) {
+                        <div class="hd__vcard">
+                          <span class="hd__vcard-label">{{ 'notas.pa' | translate }}</span>
+                          <span class="hd__vcard-val">{{ n.sv_presion_sistolica }}<span class="hd__vcard-sep">/</span>{{ n.sv_presion_diastolica ?? '—' }}</span>
+                          <span class="hd__vcard-unit">mmHg</span>
+                        </div>
+                      }
+                      @if (n.sv_frecuencia_cardiaca) {
+                        <div class="hd__vcard">
+                          <span class="hd__vcard-label">{{ 'notas.fc' | translate }}</span>
+                          <span class="hd__vcard-val">{{ n.sv_frecuencia_cardiaca }}</span>
+                          <span class="hd__vcard-unit">lpm</span>
+                        </div>
+                      }
+                      @if (n.sv_temperatura) {
+                        <div class="hd__vcard">
+                          <span class="hd__vcard-label">{{ 'notas.temperatura' | translate }}</span>
+                          <span class="hd__vcard-val">{{ n.sv_temperatura }}</span>
+                          <span class="hd__vcard-unit">°C</span>
+                        </div>
+                      }
+                      @if (n.sv_saturacion_o2) {
+                        <div class="hd__vcard">
+                          <span class="hd__vcard-label">{{ 'notas.sato2' | translate }}</span>
+                          <span class="hd__vcard-val">{{ n.sv_saturacion_o2 }}</span>
+                          <span class="hd__vcard-unit">%</span>
+                        </div>
+                      }
+                      @if (n.sv_peso) {
+                        <div class="hd__vcard">
+                          <span class="hd__vcard-label">{{ 'notas.peso' | translate }}</span>
+                          <span class="hd__vcard-val">{{ n.sv_peso }}</span>
+                          <span class="hd__vcard-unit">kg</span>
+                        </div>
+                      }
+                      @if (n.sv_talla) {
+                        <div class="hd__vcard">
+                          <span class="hd__vcard-label">{{ 'notas.talla' | translate }}</span>
+                          <span class="hd__vcard-val">{{ n.sv_talla }}</span>
+                          <span class="hd__vcard-unit">cm</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Consulta SOAP -->
+                @if (n.motivo_consulta) {
+                  <div class="hd__bloque">
+                    <p class="hd__bloque-title">{{ 'notas.motivo' | translate }}</p>
+                    <p class="hd__text">{{ n.motivo_consulta }}</p>
+                  </div>
+                }
+                @if (n.anamnesis) {
+                  <div class="hd__bloque">
+                    <p class="hd__bloque-title">{{ 'notas.anamnesis' | translate }}</p>
+                    <p class="hd__text">{{ n.anamnesis }}</p>
+                  </div>
+                }
+                @if (n.examen_fisico) {
+                  <div class="hd__bloque">
+                    <p class="hd__bloque-title">{{ 'notas.examen' | translate }}</p>
+                    <p class="hd__text">{{ n.examen_fisico }}</p>
+                  </div>
+                }
+
+                <!-- Diagnóstico -->
+                @if (n.diagnostico_principal || n.diagnosticos_secundarios.length) {
+                  <div class="hd__bloque hd__bloque--dx">
+                    <p class="hd__bloque-title">
+                      <ng-container [ngComponentOutlet]="icons['dx']" [ngComponentOutletInputs]="iconXs" />
+                      {{ 'notas.sec_diagnostico' | translate }}
+                    </p>
+                    @if (n.diagnostico_principal) {
+                      <p class="hd__dx-principal">{{ n.diagnostico_principal }}</p>
+                    }
+                    @for (dx of n.diagnosticos_secundarios; track $index) {
+                      <p class="hd__dx-sec">{{ dx }}</p>
+                    }
+                  </div>
+                }
+
+                <!-- Medicamentos -->
+                @if (n.medicamentos.length) {
+                  <div class="hd__bloque">
+                    <p class="hd__bloque-title">
+                      <ng-container [ngComponentOutlet]="icons['meds']" [ngComponentOutletInputs]="iconXs" />
+                      {{ 'notas.medicamentos' | translate }}
+                    </p>
+                    <div class="hd__med-chips">
+                      @for (m of n.medicamentos; track $index) {
+                        <div class="hd__med-chip">{{ medLabel(m) }}</div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Indicaciones y seguimiento -->
+                @if (n.indicaciones) {
+                  <div class="hd__bloque">
+                    <p class="hd__bloque-title">{{ 'notas.indicaciones' | translate }}</p>
+                    <p class="hd__text">{{ n.indicaciones }}</p>
+                  </div>
+                }
+                @if (n.proxima_consulta) {
+                  <div class="hd__bloque hd__bloque--followup">
+                    <p class="hd__bloque-title">{{ 'notas.proxima_consulta' | translate }}</p>
+                    <p class="hd__text">{{ n.proxima_consulta }}</p>
+                  </div>
+                }
+                @if (n.notas_adicionales) {
+                  <div class="hd__bloque">
+                    <p class="hd__bloque-title">{{ 'notas.notas_adicionales' | translate }}</p>
+                    <p class="hd__text hd__text--muted">{{ n.notas_adicionales }}</p>
+                  </div>
+                }
+
+                <!-- Acciones de la nota -->
+                <div class="hd__nota-actions">
+                  <button class="hd__action" (click)="exportarPdf(n)"
+                    [disabled]="exportandoPdfId() === n.id">
+                    @if (exportandoPdfId() === n.id) {
+                      <span class="hd__action-spinner"></span>
+                    } @else {
+                      <ng-container [ngComponentOutlet]="icons['download']" [ngComponentOutletInputs]="iconXs" />
+                    }
+                    {{ 'historial.descargar_pdf' | translate }}
+                  </button>
+                  <button class="hd__action hd__action--teal" (click)="irAgendar()">
+                    <ng-container [ngComponentOutlet]="icons['calendar']" [ngComponentOutletInputs]="iconXs" />
+                    {{ 'historial.agendar_seguimiento' | translate }}
+                  </button>
+                </div>
+
+              </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      }
+    </div>
+
+  }
+</div>

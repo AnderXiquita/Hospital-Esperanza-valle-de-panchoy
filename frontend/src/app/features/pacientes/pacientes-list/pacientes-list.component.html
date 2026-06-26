@@ -1,0 +1,242 @@
+<div class="pacientes">
+
+  <!-- Header -->
+  <div class="pacientes__header">
+    <div class="pacientes__heading">
+      <p class="pacientes__eyebrow">{{ 'pacientes.eyebrow' | translate }}</p>
+      <h1 class="pacientes__title">{{ 'pacientes.title' | translate }}</h1>
+      <p class="pacientes__subtitle">
+        {{ (total() === 1 ? 'pacientes.subtitle_one' : 'pacientes.subtitle_other') | translate:{ count: total() } }}
+      </p>
+    </div>
+    <button class="btn-primary" (click)="abrirCrear()">
+      <ng-container *ngComponentOutlet="icon('plus'); inputs: iconInputs" />
+      {{ 'pacientes.new' | translate }}
+    </button>
+  </div>
+
+  <!-- Banda de métricas -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container *ngComponentOutlet="icon('users'); inputs: iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.total ?? 0 }}</span>
+        <span class="metric__label">{{ 'pacientes.metric_total' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container *ngComponentOutlet="icon('user-check'); inputs: iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.activos ?? 0 }}</span>
+        <span class="metric__label">{{ 'pacientes.metric_active' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container *ngComponentOutlet="icon('user-plus'); inputs: iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.nuevos_mes ?? 0 }}</span>
+        <span class="metric__label">{{ 'pacientes.metric_new_month' | translate }}</span>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric__icon">
+        <ng-container *ngComponentOutlet="icon('mail'); inputs: iconMetric" />
+      </div>
+      <div class="metric__data">
+        <span class="metric__value">{{ stats()?.con_correo ?? 0 }}</span>
+        <span class="metric__label">{{ 'pacientes.metric_with_email' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <ng-container *ngComponentOutlet="icon('search'); inputs: iconInputs" />
+      <input
+        type="text"
+        autocomplete="off"
+        [placeholder]="'pacientes.search_placeholder' | translate"
+        [ngModel]="busqueda()"
+        (ngModelChange)="onBusquedaChange($event)"
+        (keyup.enter)="buscarInmediato()"
+      />
+      @if (busqueda()) {
+        <button class="search-box__clear" (click)="busqueda.set(''); buscarInmediato()" [title]="'common.clear' | translate">
+          <ng-container *ngComponentOutlet="icon('x'); inputs: iconInputs" />
+        </button>
+      }
+    </div>
+
+    <div class="toolbar__filters">
+      <div class="segmented">
+        <button class="segmented__opt" [class.active]="filtroEstado() === 'activos'" (click)="cambiarFiltro('activos')">{{ 'pacientes.filter_active' | translate }}</button>
+        <button class="segmented__opt" [class.active]="filtroEstado() === 'inactivos'" (click)="cambiarFiltro('inactivos')">{{ 'pacientes.filter_inactive' | translate }}</button>
+        <button class="segmented__opt" [class.active]="filtroEstado() === 'todos'" (click)="cambiarFiltro('todos')">{{ 'pacientes.filter_all' | translate }}</button>
+      </div>
+
+      <div class="viewtoggle">
+        <button class="viewtoggle__opt" [class.active]="vista() === 'tabla'" (click)="setVista('tabla')" [title]="'pacientes.view_table' | translate">
+          <ng-container *ngComponentOutlet="icon('list'); inputs: iconInputs" />
+        </button>
+        <button class="viewtoggle__opt" [class.active]="vista() === 'tarjetas'" (click)="setVista('tarjetas')" [title]="'pacientes.view_cards' | translate">
+          <ng-container *ngComponentOutlet="icon('grid'); inputs: iconInputs" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estados -->
+  @if (cargando()) {
+    <div class="panel">
+      <div class="state"><span class="spinner"></span><span>{{ 'pacientes.loading' | translate }}</span></div>
+    </div>
+  } @else if (errorLista()) {
+    <div class="panel">
+      <div class="state state--error">{{ errorLista() }}</div>
+    </div>
+  } @else if (pacientes().length === 0) {
+    <div class="panel">
+      <div class="state">
+        <div class="state__icon">
+          <ng-container *ngComponentOutlet="icon('users'); inputs: { size: 28, strokeWidth: 1.25 }" />
+        </div>
+        <span class="state__title">{{ 'pacientes.empty_title' | translate }}</span>
+        <span class="state__hint">{{ (busqueda() ? 'pacientes.empty_filtered' : 'pacientes.empty_create') | translate }}</span>
+      </div>
+    </div>
+  } @else {
+
+    <!-- Vista TABLA -->
+    @if (vista() === 'tabla') {
+      <div class="panel">
+        <div class="table-scroll-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ 'pacientes.col_patient' | translate }}</th>
+                <th>{{ 'pacientes.col_age' | translate }}</th>
+                <th>{{ 'pacientes.col_phone' | translate }}</th>
+                <th>{{ 'pacientes.col_status' | translate }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of pacientes(); track p.id) {
+                <tr [class.row--inactive]="!p.activo" (click)="abrirDetalle(p)">
+                  <td>
+                    <div class="cell-patient">
+                      <div class="avatar">{{ iniciales(p) }}</div>
+                      <div class="cell-patient__info">
+                        <span class="cell-patient__name">{{ p.nombre }} {{ p.apellido }}</span>
+                        <span class="cell-patient__dpi">{{ p.dpi }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="td-secondary">{{ edadLabel(p.fecha_nacimiento) }}</td>
+                  <td class="td-secondary">{{ p.telefono || ('pacientes.no_phone' | translate) }}</td>
+                  <td>
+                    <span class="status" [class.status--active]="p.activo">
+                      {{ (p.activo ? 'pacientes.status_active' : 'pacientes.status_inactive') | translate }}
+                    </span>
+                  </td>
+                  <td class="td-actions" (click)="$event.stopPropagation()">
+                    <button class="icon-btn" [title]="'btn.edit' | translate" (click)="abrirEditar(p)">
+                      <ng-container *ngComponentOutlet="icon('edit2'); inputs: iconInputsTable" />
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalPaginas() > 1) {
+          <div class="pagination">
+            <span class="pagination__info">{{ 'pacientes.page_of' | translate:{ current: pagina(), total: totalPaginas() } }}</span>
+            <div class="pagination__controls">
+              <button class="page-btn" [disabled]="pagina() === 1" (click)="cambiarPagina(pagina() - 1)" [title]="'common.previous' | translate">
+                <ng-container *ngComponentOutlet="icon('chevron-left'); inputs: iconInputsTable" />
+              </button>
+              @for (pg of paginasVisibles; track pg) {
+                <button class="page-btn" [class.active]="pg === pagina()" (click)="cambiarPagina(pg)">{{ pg }}</button>
+              }
+              <button class="page-btn" [disabled]="pagina() === totalPaginas()" (click)="cambiarPagina(pagina() + 1)" [title]="'common.next' | translate">
+                <ng-container *ngComponentOutlet="icon('chevron-right'); inputs: iconInputsTable" />
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Vista TARJETAS -->
+    @if (vista() === 'tarjetas') {
+      <div class="cards">
+        @for (p of pacientes(); track p.id) {
+          <article class="pcard" [class.pcard--inactive]="!p.activo" (click)="abrirDetalle(p)">
+            <div class="pcard__top">
+              <div class="avatar avatar--lg">{{ iniciales(p) }}</div>
+              <span class="status" [class.status--active]="p.activo">{{ (p.activo ? 'pacientes.status_active' : 'pacientes.status_inactive') | translate }}</span>
+            </div>
+            <div class="pcard__body">
+              <span class="pcard__name">{{ p.nombre }} {{ p.apellido }}</span>
+              <span class="pcard__dpi">{{ p.dpi }}</span>
+            </div>
+            <div class="pcard__foot">
+              <div class="pcard__metas">
+                <span class="pcard__meta">{{ edadLabel(p.fecha_nacimiento) }}</span>
+                <span class="pcard__meta">{{ p.telefono || ('pacientes.no_phone' | translate) }}</span>
+              </div>
+              <button class="icon-btn" [title]="'btn.edit' | translate" (click)="$event.stopPropagation(); abrirEditar(p)">
+                <ng-container *ngComponentOutlet="icon('edit2'); inputs: iconInputsTable" />
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+
+      @if (totalPaginas() > 1) {
+        <div class="pagination pagination--cards">
+          <span class="pagination__info">{{ 'pacientes.page_of' | translate:{ current: pagina(), total: totalPaginas() } }}</span>
+          <div class="pagination__controls">
+            <button class="page-btn" [disabled]="pagina() === 1" (click)="cambiarPagina(pagina() - 1)" [title]="'common.previous' | translate">
+              <ng-container *ngComponentOutlet="icon('chevron-left'); inputs: iconInputsTable" />
+            </button>
+            @for (pg of paginasVisibles; track pg) {
+              <button class="page-btn" [class.active]="pg === pagina()" (click)="cambiarPagina(pg)">{{ pg }}</button>
+            }
+            <button class="page-btn" [disabled]="pagina() === totalPaginas()" (click)="cambiarPagina(pagina() + 1)" [title]="'common.next' | translate">
+              <ng-container *ngComponentOutlet="icon('chevron-right'); inputs: iconInputsTable" />
+            </button>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
+
+<!-- Drawer: detalle -->
+@if (detailOpen() && detailPaciente(); as dp) {
+  <app-paciente-detail-drawer
+    [paciente]="dp"
+    (closed)="cerrarDetalle()"
+    (editar)="onDetailEditar($event)"
+    (changed)="onDetailChanged()"
+  />
+}
+
+<!-- Drawer: crear / editar -->
+@if (formOpen()) {
+  <app-paciente-form-drawer
+    [paciente]="formPaciente()"
+    (closed)="cerrarForm()"
+    (saved)="onFormSaved()"
+  />
+}

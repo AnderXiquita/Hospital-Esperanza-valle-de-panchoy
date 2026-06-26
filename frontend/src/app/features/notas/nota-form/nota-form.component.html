@@ -1,0 +1,329 @@
+<div class="nf">
+
+  <!-- Loading -->
+  @if (cargando()) {
+    <div class="nf__loading">
+      <div class="skeleton skeleton--nav"></div>
+      <div class="skeleton skeleton--hero"></div>
+      <div class="skeleton skeleton--card"></div>
+      <div class="skeleton skeleton--card"></div>
+    </div>
+  }
+
+  @if (!cargando()) {
+
+    <!-- Nav: back + save, flotante sobre el fondo -->
+    <div class="nf__nav">
+      <button class="nf__back" (click)="volver()">
+        <ng-container [ngComponentOutlet]="icons['back']" [ngComponentOutletInputs]="iconSm" />
+        {{ 'notas.back' | translate }}
+      </button>
+
+      <div class="nf__nav-right">
+        @if (draftRestored()) {
+          <span class="nf__draft-badge">{{ 'notas.draft_restored' | translate }}</span>
+        }
+        @if (draftSaved()) {
+          <span class="nf__draft-badge nf__draft-badge--auto">{{ 'notas.draft_saved' | translate }}</span>
+        }
+        @if (errorMsg()) {
+          <span class="nf__error-inline">{{ errorMsg() }}</span>
+        }
+        @if (saved()) {
+          <span class="nf__saved-badge">{{ 'notas.saved' | translate }}</span>
+        }
+        <button class="btn-primary" (click)="guardar()" [disabled]="guardando()">
+          @if (guardando()) {
+            <span class="btn-spinner"></span>
+          } @else {
+            <ng-container [ngComponentOutlet]="icons['save']" [ngComponentOutletInputs]="iconMd" />
+          }
+          {{ (notaId() ? 'notas.update' : 'notas.save') | translate }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Card de contexto del paciente -->
+    <div class="nf__patient-card">
+      <div class="nf__patient-info">
+        <div class="nf__patient-label">
+          <ng-container [ngComponentOutlet]="icons['consulta']" [ngComponentOutletInputs]="iconXs" />
+          {{ 'notas.nota_clinica' | translate }}
+        </div>
+        <p class="nf__patient-name">{{ pacienteNombre }}</p>
+        <p class="nf__patient-meta">{{ fechaHora }}</p>
+      </div>
+      <div class="nf__patient-tags">
+        <span class="nf__tag">{{ medicoNombre }}</span>
+        @if (cita()?.servicio_nombre) {
+          <span class="nf__tag nf__tag--service">{{ cita()!.servicio_nombre }}</span>
+        }
+        @if (notaId()) {
+          <span class="nf__tag nf__tag--editing">{{ 'notas.editing' | translate }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- ── SECCIÓN 1: Signos vitales ── -->
+    <div class="nf__section">
+      <div class="nf__section-head">
+        <ng-container [ngComponentOutlet]="icons['vitals']" [ngComponentOutletInputs]="iconSm" />
+        <span>{{ 'notas.sec_vitales' | translate }}</span>
+      </div>
+
+      <div class="nf__vitals-grid">
+        <label class="nf__field">
+          <span class="nf__label">{{ 'notas.pa_sistolica' | translate }}</span>
+          <div class="nf__input-wrap">
+            <input type="number" class="nf__input" placeholder="120"
+              [ngModel]="svSistolica()"
+              (ngModelChange)="svSistolica.set($event ? +$event : null)" />
+            <span class="nf__unit">mmHg</span>
+          </div>
+        </label>
+
+        <label class="nf__field">
+          <span class="nf__label">{{ 'notas.pa_diastolica' | translate }}</span>
+          <div class="nf__input-wrap">
+            <input type="number" class="nf__input" placeholder="80"
+              [ngModel]="svDiastolica()"
+              (ngModelChange)="svDiastolica.set($event ? +$event : null)" />
+            <span class="nf__unit">mmHg</span>
+          </div>
+        </label>
+
+        <label class="nf__field">
+          <span class="nf__label">{{ 'notas.fc' | translate }}</span>
+          <div class="nf__input-wrap">
+            <input type="number" class="nf__input" placeholder="72"
+              [ngModel]="svFC()"
+              (ngModelChange)="svFC.set($event ? +$event : null)" />
+            <span class="nf__unit">lpm</span>
+          </div>
+        </label>
+
+        <label class="nf__field">
+          <span class="nf__label">{{ 'notas.fr' | translate }}</span>
+          <div class="nf__input-wrap">
+            <input type="number" class="nf__input" placeholder="16"
+              [ngModel]="svFR()"
+              (ngModelChange)="svFR.set($event ? +$event : null)" />
+            <span class="nf__unit">rpm</span>
+          </div>
+        </label>
+
+        <label class="nf__field">
+          <span class="nf__label">{{ 'notas.temperatura' | translate }}</span>
+          <div class="nf__input-wrap">
+            <input type="number" step="0.1" class="nf__input" placeholder="36.6"
+              [ngModel]="svTemp()"
+              (ngModelChange)="svTemp.set($event ? +$event : null)" />
+            <span class="nf__unit">°C</span>
+          </div>
+        </label>
+
+        <label class="nf__field">
+          <span class="nf__label">{{ 'notas.sato2' | translate }}</span>
+          <div class="nf__input-wrap">
+            <input type="number" class="nf__input" placeholder="98"
+              [ngModel]="svSatO2()"
+              (ngModelChange)="svSatO2.set($event ? +$event : null)" />
+            <span class="nf__unit">%</span>
+          </div>
+        </label>
+
+        <label class="nf__field">
+          <span class="nf__label">{{ 'notas.peso' | translate }}</span>
+          <div class="nf__input-wrap">
+            <input type="number" step="0.1" class="nf__input" placeholder="70"
+              [ngModel]="svPeso()"
+              (ngModelChange)="svPeso.set($event ? +$event : null)" />
+            <span class="nf__unit">kg</span>
+          </div>
+        </label>
+
+        <label class="nf__field">
+          <span class="nf__label">{{ 'notas.talla' | translate }}</span>
+          <div class="nf__input-wrap">
+            <input type="number" class="nf__input" placeholder="170"
+              [ngModel]="svTalla()"
+              (ngModelChange)="svTalla.set($event ? +$event : null)" />
+            <span class="nf__unit">cm</span>
+          </div>
+        </label>
+      </div>
+
+      @if (imc() !== null) {
+        <div class="nf__imc">
+          <span class="nf__imc-label">IMC</span>
+          <span class="nf__imc-value">{{ imc() }}</span>
+          <span class="nf__imc-cat">{{ imcCategoria() }}</span>
+        </div>
+      }
+    </div>
+
+    <!-- ── SECCIÓN 2: Consulta ── -->
+    <div class="nf__section">
+      <div class="nf__section-head">
+        <ng-container [ngComponentOutlet]="icons['consulta']" [ngComponentOutletInputs]="iconSm" />
+        <span>{{ 'notas.sec_consulta' | translate }}</span>
+      </div>
+
+      <label class="nf__field nf__field--full">
+        <span class="nf__label">{{ 'notas.motivo' | translate }}</span>
+        <textarea class="nf__textarea nf__textarea--sm" rows="2"
+          [placeholder]="'notas.motivo_ph' | translate"
+          [ngModel]="motivoConsulta()"
+          (ngModelChange)="motivoConsulta.set($event)"
+          (input)="programarDraft()">
+        </textarea>
+      </label>
+
+      <label class="nf__field nf__field--full">
+        <span class="nf__label">{{ 'notas.anamnesis' | translate }}</span>
+        <textarea class="nf__textarea" rows="4"
+          [placeholder]="'notas.anamnesis_ph' | translate"
+          [ngModel]="anamnesis()"
+          (ngModelChange)="anamnesis.set($event)"
+          (input)="programarDraft()">
+        </textarea>
+      </label>
+
+      <label class="nf__field nf__field--full">
+        <span class="nf__label">{{ 'notas.examen' | translate }}</span>
+        <textarea class="nf__textarea" rows="4"
+          [placeholder]="'notas.examen_ph' | translate"
+          [ngModel]="examenFisico()"
+          (ngModelChange)="examenFisico.set($event)"
+          (input)="programarDraft()">
+        </textarea>
+      </label>
+    </div>
+
+    <!-- ── SECCIÓN 3: Diagnóstico ── -->
+    <div class="nf__section">
+      <div class="nf__section-head">
+        <ng-container [ngComponentOutlet]="icons['dx']" [ngComponentOutletInputs]="iconSm" />
+        <span>{{ 'notas.sec_diagnostico' | translate }}</span>
+      </div>
+
+      <label class="nf__field nf__field--full">
+        <span class="nf__label">{{ 'notas.dx_principal' | translate }}</span>
+        <input type="text" class="nf__input nf__input--full"
+          [placeholder]="'notas.dx_principal_ph' | translate"
+          [ngModel]="diagnosticoPrincipal()"
+          (ngModelChange)="diagnosticoPrincipal.set($event)"
+          (input)="programarDraft()" />
+      </label>
+
+      <div class="nf__field nf__field--full">
+        <span class="nf__label">{{ 'notas.dx_secundarios' | translate }}</span>
+
+        @for (dx of diagnosticosSecundarios(); track $index) {
+          <div class="nf__dx-chip">
+            <span>{{ dx }}</span>
+            <button class="nf__chip-x" (click)="quitarDx($index)">
+              <ng-container [ngComponentOutlet]="icons['x']" [ngComponentOutletInputs]="iconXs" />
+            </button>
+          </div>
+        }
+
+        <div class="nf__dx-add">
+          <input type="text" class="nf__input"
+            [placeholder]="'notas.dx_secundario_ph' | translate"
+            [ngModel]="nuevoDx()"
+            (ngModelChange)="nuevoDx.set($event)"
+            (keydown.enter)="agregarDx()" />
+          <button class="btn-outline-sm" (click)="agregarDx()">
+            <ng-container [ngComponentOutlet]="icons['plus']" [ngComponentOutletInputs]="iconXs" />
+            {{ 'notas.agregar' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECCIÓN 4: Plan de tratamiento ── -->
+    <div class="nf__section">
+      <div class="nf__section-head">
+        <ng-container [ngComponentOutlet]="icons['meds']" [ngComponentOutletInputs]="iconSm" />
+        <span>{{ 'notas.sec_plan' | translate }}</span>
+      </div>
+
+      <div class="nf__field nf__field--full">
+        <span class="nf__label">{{ 'notas.medicamentos' | translate }}</span>
+
+        @for (med of medicamentos(); track trackByIdx($index)) {
+          <div class="nf__med-row">
+            <input type="text" class="nf__input nf__med-nombre"
+              [placeholder]="'notas.med_nombre' | translate"
+              [ngModel]="med.nombre"
+              (ngModelChange)="updateMed($index, 'nombre', $event)" />
+            <input type="text" class="nf__input nf__med-dosis"
+              [placeholder]="'notas.med_dosis' | translate"
+              [ngModel]="med.dosis"
+              (ngModelChange)="updateMed($index, 'dosis', $event)" />
+            <input type="text" class="nf__input nf__med-freq"
+              [placeholder]="'notas.med_frecuencia' | translate"
+              [ngModel]="med.frecuencia"
+              (ngModelChange)="updateMed($index, 'frecuencia', $event)" />
+            <input type="text" class="nf__input nf__med-dur"
+              [placeholder]="'notas.med_duracion' | translate"
+              [ngModel]="med.duracion"
+              (ngModelChange)="updateMed($index, 'duracion', $event)" />
+            <button class="nf__med-del" (click)="quitarMed($index)">
+              <ng-container [ngComponentOutlet]="icons['x']" [ngComponentOutletInputs]="iconXs" />
+            </button>
+          </div>
+        }
+
+        <button class="btn-outline-sm nf__add-med" (click)="agregarMed()">
+          <ng-container [ngComponentOutlet]="icons['plus']" [ngComponentOutletInputs]="iconXs" />
+          {{ 'notas.agregar_medicamento' | translate }}
+        </button>
+      </div>
+
+      <label class="nf__field nf__field--full">
+        <span class="nf__label">{{ 'notas.indicaciones' | translate }}</span>
+        <textarea class="nf__textarea" rows="3"
+          [placeholder]="'notas.indicaciones_ph' | translate"
+          [ngModel]="indicaciones()"
+          (ngModelChange)="indicaciones.set($event)"
+          (input)="programarDraft()">
+        </textarea>
+      </label>
+
+      <label class="nf__field nf__field--half">
+        <span class="nf__label">{{ 'notas.proxima_consulta' | translate }}</span>
+        <input type="text" class="nf__input nf__input--full"
+          [placeholder]="'notas.proxima_consulta_ph' | translate"
+          [ngModel]="proximaConsulta()"
+          (ngModelChange)="proximaConsulta.set($event)" />
+      </label>
+
+      <label class="nf__field nf__field--full">
+        <span class="nf__label">{{ 'notas.notas_adicionales' | translate }}</span>
+        <textarea class="nf__textarea nf__textarea--sm" rows="2"
+          [placeholder]="'notas.notas_adicionales_ph' | translate"
+          [ngModel]="notasAdicionales()"
+          (ngModelChange)="notasAdicionales.set($event)">
+        </textarea>
+      </label>
+    </div>
+
+    <!-- Footer -->
+    <div class="nf__footer">
+      @if (errorMsg()) {
+        <span class="nf__error-inline">{{ errorMsg() }}</span>
+      }
+      <button class="btn-primary" (click)="guardar()" [disabled]="guardando()">
+        @if (guardando()) {
+          <span class="btn-spinner"></span>
+        } @else {
+          <ng-container [ngComponentOutlet]="icons['save']" [ngComponentOutletInputs]="iconMd" />
+        }
+        {{ (notaId() ? 'notas.update' : 'notas.save') | translate }}
+      </button>
+    </div>
+
+  }
+</div>

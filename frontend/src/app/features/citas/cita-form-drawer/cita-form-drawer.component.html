@@ -1,0 +1,140 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <header class="drawer__head">
+    <div>
+      <p class="drawer__eyebrow">{{ 'citas.form_eyebrow' | translate }}</p>
+      <h2 class="drawer__title">{{ 'citas.form_title' | translate }}</h2>
+    </div>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  <div class="drawer__body">
+
+    <!-- Paciente (autocompletado) -->
+    <div class="field">
+      <label>{{ 'citas.label_patient' | translate }} <span>*</span></label>
+      @if (pacienteSel(); as p) {
+        <div class="paciente-sel">
+          <div class="paciente-sel__avatar">{{ (p.nombre[0] + p.apellido[0]).toUpperCase() }}</div>
+          <div class="paciente-sel__info">
+            <span class="paciente-sel__name">{{ p.nombre }} {{ p.apellido }}</span>
+            <span class="paciente-sel__dpi">{{ p.dpi }}</span>
+          </div>
+          <button class="icon-btn" type="button" (click)="limpiarPaciente()" [title]="'common.clear' | translate">
+            <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="iconSm" />
+          </button>
+        </div>
+      } @else {
+        <div class="ac">
+          <div class="ac__input" [class.invalid]="submitted() && !pacienteSel()">
+            <ng-container [ngComponentOutlet]="icons.search" [ngComponentOutletInputs]="iconSm" />
+            <input
+              type="text"
+              [placeholder]="'citas.search_patient' | translate"
+              [ngModel]="pacienteQuery()"
+              (ngModelChange)="onPacienteInput($event)"
+            />
+            @if (buscandoPaciente()) { <span class="spinner spinner--xs"></span> }
+          </div>
+          @if (pacienteOpen()) {
+            <div class="ac__panel">
+              @if (pacienteResults().length === 0) {
+                <div class="ac__empty">{{ 'citas.no_patients' | translate }}</div>
+              } @else {
+                @for (p of pacienteResults(); track p.id) {
+                  <button type="button" class="ac__opt" (click)="seleccionarPaciente(p)">
+                    <span class="ac__opt-name">{{ p.nombre }} {{ p.apellido }}</span>
+                    <span class="ac__opt-dpi">{{ p.dpi }}</span>
+                  </button>
+                }
+              }
+            </div>
+          }
+        </div>
+        @if (submitted() && !pacienteSel()) { <span class="field__err">{{ 'citas.err_patient' | translate }}</span> }
+      }
+    </div>
+
+    <!-- Fecha — primero para filtrar médicos por día -->
+    <div class="field">
+      <label>{{ 'citas.label_date' | translate }} <span>*</span></label>
+      <app-date-field
+        [ngModel]="fecha()"
+        (ngModelChange)="onFechaChange($event)"
+        [placeholder]="'common.select_date' | translate"
+        [minDate]="minDate"
+        [unavailableDaysOfWeek]="doctorUnavailableDays()"
+      />
+      @if (submitted() && !fecha()) { <span class="field__err">{{ 'citas.err_required' | translate }}</span> }
+    </div>
+
+    <!-- Médico — filtrado por día seleccionado -->
+    <div class="field">
+      <label>{{ 'citas.label_doctor' | translate }} <span>*</span></label>
+      <app-dropdown
+        [options]="filteredMedicoOptions()"
+        [ngModel]="medicoId()"
+        (ngModelChange)="onMedicoChange($event)"
+        [isDisabled]="medicoFijo()"
+        [placeholder]="fecha() ? ('citas.select_doctor' | translate) : ('citas.select_date_first' | translate)"
+      />
+      @if (submitted() && !medicoId()) { <span class="field__err">{{ 'citas.err_required' | translate }}</span> }
+    </div>
+
+    <!-- Servicio -->
+    <div class="field">
+      <label>{{ 'citas.label_service' | translate }} <span>*</span></label>
+      <app-dropdown [options]="servicioOptions()" [ngModel]="servicioId()" (ngModelChange)="onServicioChange($event)"
+        [placeholder]="'citas.select_service' | translate" />
+      @if (submitted() && !servicioId()) { <span class="field__err">{{ 'citas.err_required' | translate }}</span> }
+    </div>
+
+    <!-- Hora — slots disponibles -->
+    <div class="field">
+      <label>{{ 'citas.label_time' | translate }} <span>*</span></label>
+      <app-dropdown
+        [options]="availableHoraOptions()"
+        [ngModel]="horaInicio()"
+        (ngModelChange)="horaInicio.set($event)"
+        [isDisabled]="!medicoId() || !fecha() || !servicioId() || loadingSlots()"
+        [placeholder]="loadingSlots() ? ('citas.loading_slots' | translate) : (medicoId() && fecha() && servicioId() ? ('citas.select_time' | translate) : ('citas.select_fields_first' | translate))"
+      />
+      @if (noSlots()) {
+        <span class="field__hint field__hint--warn">{{ 'citas.no_slots' | translate }}</span>
+      }
+      @if (submitted() && !horaInicio()) { <span class="field__err">{{ 'citas.err_required' | translate }}</span> }
+    </div>
+
+    @if (horaFinPreview(); as hf) {
+      <div class="ends-at">
+        <ng-container [ngComponentOutlet]="icons.clock" [ngComponentOutletInputs]="iconSm" />
+        {{ 'citas.ends_at' | translate:{ time: hf } }}
+      </div>
+    }
+
+    <!-- Motivo -->
+    <div class="field">
+      <label>{{ 'citas.label_reason' | translate }}</label>
+      <textarea [ngModel]="motivo()" (ngModelChange)="motivo.set($event)" rows="3" [placeholder]="'citas.ph_reason' | translate"></textarea>
+    </div>
+
+    @if (errorMsg()) {
+      <div class="form-error">{{ errorMsg() }}</div>
+    }
+  </div>
+
+  <footer class="drawer__foot">
+    <button class="btn-secondary" type="button" (click)="cerrar()">{{ 'btn.cancel' | translate }}</button>
+    <button class="btn-primary" type="button" [disabled]="guardando()" (click)="guardar()">
+      @if (guardando()) {
+        <span class="spinner spinner--light"></span> {{ 'citas.saving' | translate }}
+      } @else {
+        {{ 'citas.book' | translate }}
+      }
+    </button>
+  </footer>
+</aside>

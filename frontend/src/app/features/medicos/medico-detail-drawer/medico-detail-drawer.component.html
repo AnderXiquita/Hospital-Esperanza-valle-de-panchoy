@@ -1,0 +1,137 @@
+<div class="backdrop" [class.is-closing]="cerrando()" (click)="cerrar()"></div>
+
+<aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <span class="topbar__label">{{ 'medicos.detail_eyebrow' | translate }}</span>
+    <button class="icon-btn" type="button" (click)="cerrar()" [title]="'common.close' | translate">
+      <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="{ size: 20, strokeWidth: 1.5 }" />
+    </button>
+  </header>
+
+  @if (cargando()) {
+    <div class="state"><span class="spinner"></span><span>{{ 'medicos.loading_record' | translate }}</span></div>
+  } @else if (error()) {
+    <div class="state state--error">{{ error() }}</div>
+  } @else if (medico()) {
+    @if (medico(); as m) {
+
+    <div class="drawer__body">
+
+      <!-- Hero identidad -->
+      <div class="hero">
+        <div class="hero__avatar">{{ avatarIniciales }}</div>
+        <h2 class="hero__name">{{ m.nombre }} {{ m.apellido }}</h2>
+        <p class="hero__role">
+          {{ m.especialidad }}{{ m.subespecialidad ? ' · ' + m.subespecialidad : '' }}
+        </p>
+        <span class="status" [class.status--active]="m.activo">
+          {{ (m.activo ? 'medicos.status_active' : 'medicos.status_inactive') | translate }}
+        </span>
+      </div>
+
+      <!-- Quick stats -->
+      <div class="quickstats">
+        <div class="quickstat">
+          <span class="quickstat__label">{{ 'medicos.quick_license' | translate }}</span>
+          <span class="quickstat__value">{{ m.numero_colegiado }}</span>
+        </div>
+        <div class="quickstat">
+          <span class="quickstat__label">{{ 'medicos.quick_office' | translate }}</span>
+          <span class="quickstat__value">{{ m.consultorio || '—' }}</span>
+        </div>
+        <div class="quickstat">
+          <span class="quickstat__label">{{ 'medicos.quick_fee' | translate }}</span>
+          <span class="quickstat__value">{{ m.tarifa_consulta ? 'Q ' + m.tarifa_consulta : '—' }}</span>
+        </div>
+      </div>
+
+      <!-- Contacto -->
+      <section class="block">
+        <p class="block__title">{{ 'medicos.block_contact' | translate }}</p>
+        <div class="info-list">
+          <div class="info-row">
+            <ng-container [ngComponentOutlet]="icons.mail" [ngComponentOutletInputs]="iconField" />
+            <span class="info-row__text">{{ m.email }}</span>
+          </div>
+          <div class="info-row">
+            <ng-container [ngComponentOutlet]="icons.phone" [ngComponentOutletInputs]="iconField" />
+            <span class="info-row__text">{{ m.telefono || ('medicos.no_phone' | translate) }}</span>
+            @if (m.telefono_emergencia) {
+              <span class="info-row__tag">{{ 'medicos.emergency_prefix' | translate }}: {{ m.telefono_emergencia }}</span>
+            }
+          </div>
+          <div class="info-row">
+            <ng-container [ngComponentOutlet]="icons.mapPin" [ngComponentOutletInputs]="iconField" />
+            <span class="info-row__text">{{ m.direccion || ('medicos.no_address' | translate) }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Datos personales / profesionales -->
+      <section class="block">
+        <p class="block__title">{{ 'medicos.block_info' | translate }}</p>
+        <div class="data-grid">
+          <div class="data-item">
+            <span class="data-item__label">{{ 'medicos.field_dpi' | translate }}</span>
+            <span class="data-item__value">{{ m.dpi || '—' }}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-item__label">{{ 'medicos.field_gender' | translate }}</span>
+            <span class="data-item__value">{{ generoLabel(m.genero) }}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-item__label">{{ 'medicos.field_birthdate' | translate }}</span>
+            <span class="data-item__value">
+              {{ formatFecha(m.fecha_nacimiento) }}{{ edad !== null ? ' (' + edad + ' ' + ('medicos.years' | translate) + ')' : '' }}
+            </span>
+          </div>
+          <div class="data-item">
+            <span class="data-item__label">{{ 'medicos.field_hiredate' | translate }}</span>
+            <span class="data-item__value">{{ formatFecha(m.fecha_ingreso) }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Biografía -->
+      @if (m.biografia) {
+        <section class="block">
+          <p class="block__title">{{ 'medicos.block_bio' | translate }}</p>
+          <p class="bio">{{ m.biografia }}</p>
+        </section>
+      }
+
+      <!-- Horarios -->
+      <section class="block">
+        <p class="block__title">{{ 'medicos.block_schedule' | translate }}</p>
+        <div class="schedule">
+          @for (d of horarioPorDia(); track d.dia) {
+            <div class="schedule__day" [class.schedule__day--empty]="d.bloques.length === 0">
+              <span class="schedule__name">{{ d.label }}</span>
+              @if (d.bloques.length === 0) {
+                <span class="schedule__off">{{ 'medicos.unavailable' | translate }}</span>
+              } @else {
+                <div class="schedule__blocks">
+                  @for (b of d.bloques; track $index) {
+                    <span class="schedule__chip">{{ b.hora_inicio }} – {{ b.hora_fin }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="drawer__foot">
+      <button class="btn-secondary" type="button" (click)="cerrar()">{{ 'common.close' | translate }}</button>
+      <button class="btn-primary" type="button" (click)="pedirEditar()">
+        <ng-container [ngComponentOutlet]="icons.pencil" [ngComponentOutletInputs]="{ size: 15, strokeWidth: 1.5 }" />
+        {{ 'medicos.edit_record' | translate }}
+      </button>
+    </footer>
+    }
+  }
+</aside>
