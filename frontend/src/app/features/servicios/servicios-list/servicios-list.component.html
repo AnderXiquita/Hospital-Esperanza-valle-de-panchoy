@@ -222,7 +222,7 @@
 
 <!-- Drawer: detalle -->
 @if (detailOpen() && detailServicio(); as ds) {
-  <app-servicio-detail-drawer appBodyPortal
+  <app-servicio-detail-drawer
     [servicio]="ds"
     (closed)="cerrarDetalle()"
     (editar)="onDetailEditar($event)"
@@ -232,7 +232,7 @@
 
 <!-- Drawer: crear / editar -->
 @if (formOpen()) {
-  <app-servicio-form-drawer appBodyPortal
+  <app-servicio-form-drawer
     [servicio]="formServicio()"
     (closed)="cerrarForm()"
     (saved)="onFormSaved()"

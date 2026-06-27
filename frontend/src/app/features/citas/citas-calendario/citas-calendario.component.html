@@ -322,7 +322,7 @@
 
 <!-- Drawer: detalle -->
 @if (detailOpen() && detailCita(); as dc) {
-  <app-cita-detail-drawer appBodyPortal
+  <app-cita-detail-drawer
     [cita]="dc"
     (closed)="cerrarDetalle()"
     (changed)="onDetailChanged()"
@@ -331,7 +331,7 @@
 
 <!-- Drawer: agendar -->
 @if (formOpen()) {
-  <app-cita-form-drawer appBodyPortal
+  <app-cita-form-drawer
     [prefill]="formPrefill()"
     (closed)="cerrarForm()"
     (saved)="onFormSaved()"

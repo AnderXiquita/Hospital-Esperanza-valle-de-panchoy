@@ -151,15 +151,15 @@
           <div class="cfg__fields">
             <div class="cfg__field">
               <label class="cfg__label">{{ 'cfg.hospital_name_label' | translate }}</label>
-              <input class="cfg__input" type="text" [(ngModel)]="sysForm.hospitalNombre" [placeholder]="'cfg.hospital_name_ph' | translate" />
+              <input class="cfg__input" type="text" [(ngModel)]="sysForm.hospitalNombre" (ngModelChange)="onSysChange()" [placeholder]="'cfg.hospital_name_ph' | translate" />
             </div>
             <div class="cfg__field">
               <label class="cfg__label">{{ 'cfg.hospital_phone_label' | translate }}</label>
-              <input class="cfg__input" type="tel" [(ngModel)]="sysForm.hospitalTelefono" [placeholder]="'cfg.hospital_phone_ph' | translate" />
+              <input class="cfg__input" type="tel" [(ngModel)]="sysForm.hospitalTelefono" (ngModelChange)="onSysChange()" [placeholder]="'cfg.hospital_phone_ph' | translate" />
             </div>
             <div class="cfg__field">
               <label class="cfg__label">{{ 'cfg.hospital_address_label' | translate }}</label>
-              <input class="cfg__input" type="text" [(ngModel)]="sysForm.hospitalDireccion" [placeholder]="'cfg.hospital_address_ph' | translate" />
+              <input class="cfg__input" type="text" [(ngModel)]="sysForm.hospitalDireccion" (ngModelChange)="onSysChange()" [placeholder]="'cfg.hospital_address_ph' | translate" />
             </div>
           </div>
         </div>
@@ -180,15 +180,15 @@
           <div class="cfg__fields">
             <div class="cfg__field">
               <label class="cfg__label">{{ 'cfg.duration_label' | translate }}</label>
-              <app-dropdown [options]="duracionOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.citaDuracion" />
+              <app-dropdown [options]="duracionOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.citaDuracion" (ngModelChange)="onSysChange()" />
             </div>
             <div class="cfg__field">
               <label class="cfg__label">{{ 'cfg.open_label' | translate }}</label>
-              <app-dropdown [options]="timeOptions" placeholder="HH:MM" [(ngModel)]="sysForm.horarioApertura" />
+              <app-dropdown [options]="timeOptions" placeholder="HH:MM" [(ngModel)]="sysForm.horarioApertura" (ngModelChange)="onSysChange()" />
             </div>
             <div class="cfg__field">
               <label class="cfg__label">{{ 'cfg.close_label' | translate }}</label>
-              <app-dropdown [options]="timeOptions" placeholder="HH:MM" [(ngModel)]="sysForm.horarioCierre" />
+              <app-dropdown [options]="timeOptions" placeholder="HH:MM" [(ngModel)]="sysForm.horarioCierre" (ngModelChange)="onSysChange()" />
             </div>
           </div>
         </div>
@@ -209,11 +209,11 @@
           <div class="cfg__fields">
             <div class="cfg__field">
               <label class="cfg__label">{{ 'cfg.timezone_label' | translate }}</label>
-              <app-dropdown [options]="zonaOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.zonaHoraria" />
+              <app-dropdown [options]="zonaOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.zonaHoraria" (ngModelChange)="onSysChange()" />
             </div>
             <div class="cfg__field">
               <label class="cfg__label">{{ 'cfg.currency_label' | translate }}</label>
-              <app-dropdown [options]="monedaOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.moneda" />
+              <app-dropdown [options]="monedaOpciones" placeholder="Selecciona" [(ngModel)]="sysForm.moneda" (ngModelChange)="onSysChange()" />
             </div>
           </div>
         </div>
@@ -222,12 +222,9 @@
 
       <!-- Guardar sistema -->
       <div class="cfg__save-row">
-        <button class="cfg__btn cfg__btn--primary" (click)="guardarSistema()">
+        <button class="cfg__btn cfg__btn--primary" (click)="guardarSistema()" [disabled]="!sysModified()">
           {{ 'cfg.save_btn' | translate }}
         </button>
-        @if (sysSaved()) {
-          <span class="cfg__saved-msg">{{ 'cfg.saved_msg' | translate }}</span>
-        }
       </div>
 
     </section>

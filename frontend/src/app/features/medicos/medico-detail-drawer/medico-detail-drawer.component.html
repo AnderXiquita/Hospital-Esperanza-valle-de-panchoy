@@ -122,16 +122,26 @@
           }
         </div>
       </section>
-    </div>
 
-    <!-- Footer -->
-    <footer class="drawer__foot">
-      <button class="btn-secondary" type="button" (click)="cerrar()">{{ 'common.close' | translate }}</button>
-      <button class="btn-primary" type="button" (click)="pedirEditar()">
-        <ng-container [ngComponentOutlet]="icons.pencil" [ngComponentOutletInputs]="{ size: 15, strokeWidth: 1.5 }" />
-        {{ 'medicos.edit_record' | translate }}
-      </button>
-    </footer>
+      <!-- Acciones -->
+      <section class="actions">
+        <button class="action" type="button" (click)="pedirEditar()">
+          <ng-container [ngComponentOutlet]="icons.pencil" [ngComponentOutletInputs]="iconAction" />
+          {{ 'medicos.edit_record' | translate }}
+        </button>
+        @if (medico()?.activo) {
+          <button class="action action--danger" type="button" (click)="pedirToggle()">
+            <ng-container [ngComponentOutlet]="icons.powerOff" [ngComponentOutletInputs]="iconAction" />
+            {{ 'medicos.deactivate' | translate }}
+          </button>
+        } @else {
+          <button class="action action--activate" type="button" (click)="pedirToggle()">
+            <ng-container [ngComponentOutlet]="icons.power" [ngComponentOutletInputs]="iconAction" />
+            {{ 'medicos.activate' | translate }}
+          </button>
+        }
+      </section>
+    </div>
     }
   }
 </aside>

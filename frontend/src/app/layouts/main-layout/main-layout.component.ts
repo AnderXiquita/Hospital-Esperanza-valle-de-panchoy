@@ -112,8 +112,8 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly HOLD_MS = 160;
   private readonly REVEAL_MS = 180;
 
-  readonly navIconInputs = { size: 20, strokeWidth: 1 };
-  readonly bottomNavIconInputs = { size: 22, strokeWidth: 1 };
+  readonly navIconInputs = { size: 22, strokeWidth: 1 };
+  readonly bottomNavIconInputs = { size: 24, strokeWidth: 1 };
 
   bottomNavHidden = signal(false);
   private bottomNavForceHidden = signal(false);

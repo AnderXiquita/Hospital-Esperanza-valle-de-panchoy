@@ -251,7 +251,7 @@
 
 <!-- Drawer: detalle -->
 @if (detailOpen() && detailUsuario(); as du) {
-  <app-usuario-detail-drawer appBodyPortal
+  <app-usuario-detail-drawer
     [usuario]="du"
     (closed)="cerrarDetalle()"
     (editar)="onDetailEditar($event)"
@@ -261,7 +261,7 @@
 
 <!-- Drawer: crear / editar -->
 @if (formOpen()) {
-  <app-usuario-form-drawer appBodyPortal
+  <app-usuario-form-drawer
     [usuario]="formUsuario()"
     (closed)="cerrarForm()"
     (saved)="onFormSaved()"

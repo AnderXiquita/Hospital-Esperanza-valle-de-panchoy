@@ -207,7 +207,7 @@
 
 <!-- Drawer: detalle -->
 @if (detailOpen() && detailPago(); as dp) {
-  <app-pago-detail-drawer appBodyPortal
+  <app-pago-detail-drawer
     [pago]="dp"
     (closed)="cerrarDetalle()"
     (changed)="onDetailChanged()"
@@ -216,7 +216,7 @@
 
 <!-- Drawer: registrar pago -->
 @if (formOpen()) {
-  <app-pago-form-drawer appBodyPortal
+  <app-pago-form-drawer
     (closed)="cerrarForm()"
     (saved)="onFormSaved()"
   />

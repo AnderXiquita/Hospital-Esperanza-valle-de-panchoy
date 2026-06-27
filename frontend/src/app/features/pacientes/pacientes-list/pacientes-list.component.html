@@ -224,7 +224,7 @@
 
 <!-- Drawer: detalle -->
 @if (detailOpen() && detailPaciente(); as dp) {
-  <app-paciente-detail-drawer appBodyPortal
+  <app-paciente-detail-drawer
     [paciente]="dp"
     (closed)="cerrarDetalle()"
     (editar)="onDetailEditar($event)"
@@ -234,7 +234,7 @@
 
 <!-- Drawer: crear / editar -->
 @if (formOpen()) {
-  <app-paciente-form-drawer appBodyPortal
+  <app-paciente-form-drawer
     [paciente]="formPaciente()"
     (closed)="cerrarForm()"
     (saved)="onFormSaved()"

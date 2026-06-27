@@ -76,10 +76,10 @@ $ink:  #0f1117;
 .drawer__body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-8);
+  padding: var(--space-5) var(--space-8) var(--space-4) var(--space-8);
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-6);
 }
 
 .identity {

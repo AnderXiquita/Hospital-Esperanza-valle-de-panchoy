@@ -13,7 +13,6 @@ import { PagosService, Pago, PagoStats, EstadoPago } from '../pagos.service';
 import { PagoFormDrawerComponent } from '../pago-form-drawer/pago-form-drawer.component';
 import { PagoDetailDrawerComponent } from '../pago-detail-drawer/pago-detail-drawer.component';
 import { DropdownComponent, DropdownOption } from '../../../shared/dropdown/dropdown.component';
-import { BodyPortalDirective } from '../../../shared/body-portal.directive';
 import { LocaleService } from '../../../shared/locale.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,7 +39,7 @@ type Vista = 'tabla' | 'tarjetas';
   standalone: true,
   imports: [
     NgComponentOutlet, FormsModule, TranslateModule, DropdownComponent,
-    PagoFormDrawerComponent, PagoDetailDrawerComponent, BodyPortalDirective,
+    PagoFormDrawerComponent, PagoDetailDrawerComponent,
     LucideSearch, LucideX, LucideChevronLeft, LucideChevronRight,
     LucideLayoutGrid, LucideList, LucideWallet, LucideTrendingUp, LucideReceipt, LucideCreditCard,
     LucidePlus,

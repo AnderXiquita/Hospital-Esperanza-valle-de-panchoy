@@ -435,7 +435,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 52px;
+  height: 60px;
   z-index: 60;
   align-items: center;
   justify-content: space-between;
@@ -462,7 +462,7 @@
 }
 
 .mobile-nav__logo {
-  height: 22px;
+  height: 24px;
   width: auto;
 }
 
@@ -487,7 +487,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 56px;
+  height: 64px;
   z-index: 60;
   align-items: center;
   justify-content: space-around;
@@ -508,7 +508,7 @@
   align-items: center;
   justify-content: center;
   width: 52px;
-  height: 44px;
+  height: 52px;
   border-radius: var(--radius-sm);
   text-decoration: none;
   color: rgba(15, 17, 23, 0.38);
@@ -775,8 +775,8 @@
 
   .content-area {
     padding: var(--space-4);
-    padding-top: calc(52px + var(--space-4));
-    padding-bottom: calc(56px + var(--space-4));
+    padding-top: calc(60px + var(--space-4));
+    padding-bottom: calc(64px + var(--space-4));
   }
 
   // Ocultar del menú hamburguesa los items que ya están en el bottom nav

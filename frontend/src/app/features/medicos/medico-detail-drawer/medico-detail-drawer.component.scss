@@ -343,47 +343,38 @@ $ink:  #0f1117;
   white-space: nowrap;
 }
 
-// ── Footer ────────────────────────────────────────────────────────────────────
-.drawer__foot {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-8);
-  border-top: 1px solid var(--color-border);
-  flex-shrink: 0;
-}
+// ── Acciones ──────────────────────────────────────────────────────────────────
+.actions { display: flex; flex-direction: column; gap: var(--space-2); }
 
-.btn-primary {
+.action {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  background: $ink;
-  color: #fff;
-  border: 1px solid $ink;
+  width: 100%;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-5);
+  padding: var(--space-3) var(--space-4);
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
   font-family: inherit;
-  cursor: pointer;
-  transition: background var(--transition-fast);
-
-  &:hover { background: #20242e; }
-
-  ng-component { display: inline-flex; }
-}
-
-.btn-secondary {
-  background: transparent;
   color: var(--color-text-primary);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-5);
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  font-family: inherit;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 
-  &:hover { background: var(--color-bg-subtle); }
+  ng-component { display: inline-flex; color: var(--color-text-secondary); }
+
+  &:hover { background: var(--color-bg-subtle); border-color: var(--color-border-strong); }
+
+  &--activate {
+    color: $teal;
+    ng-component { color: $teal; }
+    &:hover { background: rgba(21, 76, 86, 0.06); border-color: $teal; }
+  }
+
+  &--danger {
+    color: var(--color-error);
+    ng-component { color: var(--color-error); }
+    &:hover { background: var(--color-error-bg); border-color: var(--color-error); }
+  }
 }

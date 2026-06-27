@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   LucideX, LucidePencil, LucidePhone, LucideMail, LucideMapPin,
   LucideBadgeCheck, LucideCalendar, LucideBanknote, LucideDoorOpen,
+  LucidePowerOff, LucidePower,
 } from '@lucide/angular';
 import { MedicosService, MedicoConHorarios, Genero } from '../medicos.service';
 import { DIAS_ORDEN, iniciales, calcularEdad } from '../medicos.constants';
@@ -29,6 +30,7 @@ interface DiaHorario {
     NgComponentOutlet, TranslateModule,
     LucideX, LucidePencil, LucidePhone, LucideMail, LucideMapPin,
     LucideBadgeCheck, LucideCalendar, LucideBanknote, LucideDoorOpen,
+    LucidePowerOff, LucidePower,
   ],
   templateUrl: './medico-detail-drawer.component.html',
   styleUrl: './medico-detail-drawer.component.scss',
@@ -41,13 +43,16 @@ export class MedicoDetailDrawerComponent implements OnInit {
   medicoId = input.required<number>();
   closed = output<void>();
   editar = output<MedicoConHorarios>();
+  toggle = output<MedicoConHorarios>();
 
   readonly icons = {
     x: LucideX, pencil: LucidePencil, phone: LucidePhone, mail: LucideMail,
     mapPin: LucideMapPin, badge: LucideBadgeCheck, calendar: LucideCalendar,
     money: LucideBanknote, door: LucideDoorOpen,
+    powerOff: LucidePowerOff, power: LucidePower,
   };
-  readonly iconField = { size: 15, strokeWidth: 1.5 };
+  readonly iconField  = { size: 15, strokeWidth: 1.5 };
+  readonly iconAction = { size: 16, strokeWidth: 1.5 };
 
   medico = signal<MedicoConHorarios | null>(null);
   cargando = signal(true);
@@ -105,5 +110,10 @@ export class MedicoDetailDrawerComponent implements OnInit {
   pedirEditar(): void {
     const m = this.medico();
     if (m) this.editar.emit(m);
+  }
+
+  pedirToggle(): void {
+    const m = this.medico();
+    if (m) this.toggle.emit(m);
   }
 }

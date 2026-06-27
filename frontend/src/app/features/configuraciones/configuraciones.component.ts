@@ -85,7 +85,7 @@ export class ConfiguracionesComponent implements OnInit {
 
   // ── Config sistema ───────────────────────────────────────────────────────
   sys = signal<SystemConfig>(loadSys());
-  sysSaved = signal(false);
+  sysModified = signal(false);
 
   // Copia editable para el formulario de sistema
   sysForm: SystemConfig = { ...loadSys() };
@@ -153,12 +153,15 @@ export class ConfiguracionesComponent implements OnInit {
   }
 
   // ── Sistema ──────────────────────────────────────────────────────────────
+  onSysChange(): void {
+    this.sysModified.set(true);
+  }
+
   guardarSistema(): void {
     const config = { ...this.sysForm };
     this.sys.set(config);
     localStorage.setItem(SYS_KEY, JSON.stringify(config));
-    this.sysSaved.set(true);
-    setTimeout(() => this.sysSaved.set(false), 2500);
+    this.sysModified.set(false);
     this.http.post(`${environment.apiUrl}/api/notificaciones/config-changed`, {}).subscribe({ error: () => {} });
   }
 

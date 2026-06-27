@@ -387,7 +387,8 @@ $teal: #154C56;
     background: $ink;
     color: #fff;
     border: none;
-    &:hover { background: #20242e; }
+    &:hover:not(:disabled) { background: #20242e; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
   }
 
   &--outline {

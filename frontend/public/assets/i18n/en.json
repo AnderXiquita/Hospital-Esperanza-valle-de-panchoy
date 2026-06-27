@@ -682,7 +682,7 @@
   "cfg.card_regional_sub": "Time zone and currency format",
   "cfg.timezone_label": "Time zone",
   "cfg.currency_label": "Currency",
-  "cfg.save_btn": "Save system settings",
+  "cfg.save_btn": "Save",
   "cfg.saved_msg": "Changes saved",
   "cfg.rol_admin": "Administrator",
   "cfg.rol_recepcionista": "Receptionist",
