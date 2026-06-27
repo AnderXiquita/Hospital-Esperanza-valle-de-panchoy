@@ -5,7 +5,7 @@ import { getConfigHandler, updateConfigHandler } from './config.controller';
 
 const router: Router = Router();
 
-router.get('/', authenticate, getConfigHandler);
+router.get('/', getConfigHandler);
 router.put('/', authenticate, authorize('admin'), updateConfigHandler);
 
 export default router;
