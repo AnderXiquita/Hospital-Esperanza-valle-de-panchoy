@@ -2,6 +2,7 @@ import { Component, inject, OnInit, OnDestroy, ElementRef } from '@angular/core'
 import { RouterOutlet, Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { ConfiguracionService } from './core/services/configuracion.service';
 
 const isAuthUrl = (url: string) => url.startsWith('/auth/login') || url === '/';
 const FADE_MS = 180;
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private router = inject(Router);
   private elRef = inject(ElementRef);
+  private configSvc = inject(ConfiguracionService);
 
   private sub?: Subscription;
   private fadeTimer?: ReturnType<typeof setTimeout>;
@@ -26,6 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const saved = localStorage.getItem('lang') ?? 'es';
     this.translate.use(saved);
+    this.configSvc.init();
 
     this.sub = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {

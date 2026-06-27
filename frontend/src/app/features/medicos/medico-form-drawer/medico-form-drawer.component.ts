@@ -17,6 +17,7 @@ import { DropdownComponent, DropdownOption } from '../../../shared/dropdown/drop
 import { DateFieldComponent } from '../../../shared/date-field/date-field.component';
 import { BodyPortalDirective } from '../../../shared/body-portal.directive';
 import { LocaleService } from '../../../shared/locale.service';
+import { ConfiguracionService } from '../../../core/services/configuracion.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Icon = Type<any>;
@@ -63,6 +64,7 @@ export class MedicoFormDrawerComponent implements OnInit {
   private svc = inject(MedicosService);
   private translate = inject(TranslateService);
   private locale = inject(LocaleService);
+  private configSvc = inject(ConfiguracionService);
 
   // null => modo crear ; objeto => modo editar
   medico = input<MedicoConHorarios | null>(null);
@@ -93,7 +95,10 @@ export class MedicoFormDrawerComponent implements OnInit {
     this.locale.locale();
     return DIAS_ORDEN.map((d) => ({ value: d, label: this.locale.weekdayLong(d) }));
   });
-  readonly horaOptions: DropdownOption[] = generarHoras().map((h) => ({ value: h, label: h }));
+  readonly horaOptions = computed<DropdownOption[]>(() => {
+    const cfg = this.configSvc.config();
+    return generarHoras(cfg.horarioApertura, cfg.horarioCierre).map((h) => ({ value: h, label: h }));
+  });
 
   form: FormState = this.emptyForm();
   horarios: HorarioForm[] = [];

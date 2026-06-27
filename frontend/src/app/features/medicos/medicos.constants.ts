@@ -1,22 +1,12 @@
 // Orden de presentación de días: lunes a domingo (0=domingo .. 6=sábado)
 export const DIAS_ORDEN = [1, 2, 3, 4, 5, 6, 0];
 
-const SYS_KEY = 'hospital_system_config';
-
-// Genera los slots de 30 min basados en el horario configurado del hospital
-export function generarHoras(): string[] {
-  let startMin = 6 * 60;      // default 06:00
-  let endMin   = 19 * 60 + 30; // default 19:30
-  try {
-    const raw = localStorage.getItem(SYS_KEY);
-    if (raw) {
-      const cfg = JSON.parse(raw) as { horarioApertura?: string; horarioCierre?: string };
-      const [sh, sm] = (cfg.horarioApertura ?? '06:00').split(':').map(Number);
-      const [eh, em] = (cfg.horarioCierre  ?? '19:30').split(':').map(Number);
-      if (!isNaN(sh) && !isNaN(sm)) startMin = sh * 60 + sm;
-      if (!isNaN(eh) && !isNaN(em)) endMin   = eh * 60 + em;
-    }
-  } catch { /* fallback a defaults */ }
+// Genera los slots de 30 min entre horarioApertura y horarioCierre
+export function generarHoras(horarioApertura = '07:00', horarioCierre = '19:30'): string[] {
+  const [sh, sm] = horarioApertura.split(':').map(Number);
+  const [eh, em] = horarioCierre.split(':').map(Number);
+  const startMin = (isNaN(sh) || isNaN(sm)) ? 7 * 60 : sh * 60 + sm;
+  const endMin   = (isNaN(eh) || isNaN(em)) ? 19 * 60 + 30 : eh * 60 + em;
   const slots: string[] = [];
   for (let m = startMin; m <= endMin; m += 30) {
     const h = Math.floor(m / 60) % 24;

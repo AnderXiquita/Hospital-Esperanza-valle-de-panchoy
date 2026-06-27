@@ -201,9 +201,9 @@
         @for (h of horarios; track $index; let i = $index) {
           <div class="schedule-row">
             <app-dropdown class="dd-day" [options]="diaOptions()" [(ngModel)]="h.dia_semana" />
-            <app-dropdown class="dd-hora" [options]="horaOptions" [(ngModel)]="h.hora_inicio" />
+            <app-dropdown class="dd-hora" [options]="horaOptions()" [(ngModel)]="h.hora_inicio" />
             <span class="schedule-row__sep">{{ 'medicos.schedule_to' | translate }}</span>
-            <app-dropdown class="dd-hora" [options]="horaOptions" [(ngModel)]="h.hora_fin" />
+            <app-dropdown class="dd-hora" [options]="horaOptions()" [(ngModel)]="h.hora_fin" />
             <button class="icon-btn icon-btn--danger" type="button" (click)="quitarHorario(i)" [title]="'common.remove' | translate">
               <ng-container [ngComponentOutlet]="icons.x" [ngComponentOutletInputs]="iconSm" />
             </button>

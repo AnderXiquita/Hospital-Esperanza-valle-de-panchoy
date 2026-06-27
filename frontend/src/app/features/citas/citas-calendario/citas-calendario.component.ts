@@ -9,6 +9,7 @@ import { LucideChevronLeft, LucideChevronRight, LucideCalendarDays, LucidePlus }
 import { CitasService, Cita, EstadoCita } from '../citas.service';
 import { MedicosService } from '../../medicos/medicos.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ConfiguracionService } from '../../../core/services/configuracion.service';
 import { DropdownComponent, DropdownOption } from '../../../shared/dropdown/dropdown.component';
 import { CitaFormDrawerComponent, CitaPrefill } from '../cita-form-drawer/cita-form-drawer.component';
 import { CitaDetailDrawerComponent } from '../cita-detail-drawer/cita-detail-drawer.component';
@@ -18,19 +19,14 @@ import { LocaleService } from '../../../shared/locale.service';
 type Icon = Type<any>;
 
 const HOUR_PX = 72;
-const SYS_KEY = 'hospital_system_config';
 
-function loadHorario(): { start: number; end: number } {
-  try {
-    const raw = localStorage.getItem(SYS_KEY);
-    if (!raw) return { start: 7, end: 20 };
-    const cfg = JSON.parse(raw) as { horarioApertura?: string; horarioCierre?: string };
-    const [sh] = (cfg.horarioApertura ?? '07:00').split(':').map(Number);
-    const [eh, em] = (cfg.horarioCierre ?? '20:00').split(':').map(Number);
-    const start = isNaN(sh) ? 7 : sh;
-    const end = isNaN(eh) ? 20 : (em > 0 ? eh + 1 : eh);
-    return { start, end };
-  } catch { return { start: 7, end: 20 }; }
+function parseHorario(apertura: string, cierre: string): { start: number; end: number } {
+  const [sh] = apertura.split(':').map(Number);
+  const [eh, em] = cierre.split(':').map(Number);
+  return {
+    start: isNaN(sh) ? 7  : sh,
+    end:   isNaN(eh) ? 20 : (em > 0 ? eh + 1 : eh),
+  };
 }
 const ESTADOS: EstadoCita[] = [
   'agendada', 'confirmada', 'atendida', 'reprogramada', 'cancelada', 'no_presentado',
@@ -82,6 +78,7 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
   private svc = inject(CitasService);
   private medicosSvc = inject(MedicosService);
   private auth = inject(AuthService);
+  private configSvc = inject(ConfiguracionService);
   private translate = inject(TranslateService);
   private locale = inject(LocaleService);
   private route = inject(ActivatedRoute);
@@ -111,7 +108,10 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
   private tooltipTimer: ReturnType<typeof setTimeout> | null = null;
   private closingTimer: ReturnType<typeof setTimeout> | null = null;
 
-  private readonly _horario = loadHorario();
+  private readonly _horario = parseHorario(
+    this.configSvc.config().horarioApertura,
+    this.configSvc.config().horarioCierre,
+  );
   readonly startHour = this._horario.start;
   private readonly endH = this._horario.end;
   readonly gridHeight = (this._horario.end - this._horario.start) * HOUR_PX;

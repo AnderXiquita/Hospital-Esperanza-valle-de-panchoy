@@ -10,41 +10,11 @@ import {
 } from '@lucide/angular';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificacionesService } from '../../core/services/notificaciones.service';
+import { ConfiguracionService, SystemConfig } from '../../core/services/configuracion.service';
 import { CambiarPasswordDrawerComponent } from './cambiar-password-drawer/cambiar-password-drawer.component';
 import { EditarPerfilDrawerComponent } from './editar-perfil-drawer/editar-perfil-drawer.component';
 import { BodyPortalDirective } from '../../shared/body-portal.directive';
 import { environment } from '../../../environments/environment';
-
-const SYS_KEY = 'hospital_system_config';
-
-interface SystemConfig {
-  hospitalNombre:   string;
-  hospitalTelefono: string;
-  hospitalDireccion: string;
-  citaDuracion:     number;
-  horarioApertura:  string;
-  horarioCierre:    string;
-  zonaHoraria:      string;
-  moneda:           string;
-}
-
-const DEFAULT_SYS: SystemConfig = {
-  hospitalNombre:    'Hospital Esperanza Valle de Panchoy',
-  hospitalTelefono:  '',
-  hospitalDireccion: 'Antigua Guatemala, Guatemala',
-  citaDuracion:      30,
-  horarioApertura:   '07:00',
-  horarioCierre:     '20:00',
-  zonaHoraria:       'America/Guatemala',
-  moneda:            'GTQ',
-};
-
-function loadSys(): SystemConfig {
-  try {
-    const raw = localStorage.getItem(SYS_KEY);
-    return raw ? { ...DEFAULT_SYS, ...JSON.parse(raw) } : { ...DEFAULT_SYS };
-  } catch { return { ...DEFAULT_SYS }; }
-}
 
 @Component({
   selector: 'app-configuraciones',
@@ -59,10 +29,11 @@ function loadSys(): SystemConfig {
   styleUrl:    './configuraciones.component.scss',
 })
 export class ConfiguracionesComponent implements OnInit {
-  private auth      = inject(AuthService);
-  private translate = inject(TranslateService);
-  private http      = inject(HttpClient);
-  private notifSvc  = inject(NotificacionesService);
+  private auth       = inject(AuthService);
+  private translate  = inject(TranslateService);
+  private http       = inject(HttpClient);
+  private notifSvc   = inject(NotificacionesService);
+  private configSvc  = inject(ConfiguracionService);
 
   readonly iconSm = { size: 18, strokeWidth: 1.5 };
 
@@ -84,11 +55,10 @@ export class ConfiguracionesComponent implements OnInit {
   notifications = signal<boolean>(localStorage.getItem('notifications_enabled') !== 'false');
 
   // ── Config sistema ───────────────────────────────────────────────────────
-  sys = signal<SystemConfig>(loadSys());
   sysModified = signal(false);
 
-  // Copia editable para el formulario de sistema
-  sysForm: SystemConfig = { ...loadSys() };
+  // Copia editable para el formulario de sistema (inicia desde el servicio/caché)
+  sysForm: SystemConfig = { ...this.configSvc.config() };
 
   readonly duracionOpciones: DropdownOption[] = [
     { value: 15,  label: '15 minutos' },
@@ -157,10 +127,8 @@ export class ConfiguracionesComponent implements OnInit {
     this.sysModified.set(true);
   }
 
-  guardarSistema(): void {
-    const config = { ...this.sysForm };
-    this.sys.set(config);
-    localStorage.setItem(SYS_KEY, JSON.stringify(config));
+  async guardarSistema(): Promise<void> {
+    await this.configSvc.guardar({ ...this.sysForm });
     this.sysModified.set(false);
     this.http.post(`${environment.apiUrl}/api/notificaciones/config-changed`, {}).subscribe({ error: () => {} });
   }
