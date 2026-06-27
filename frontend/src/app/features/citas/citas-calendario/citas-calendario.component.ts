@@ -17,9 +17,21 @@ import { LocaleService } from '../../../shared/locale.service';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Icon = Type<any>;
 
-const START_HOUR = 7;
-const END_HOUR = 20;
 const HOUR_PX = 72;
+const SYS_KEY = 'hospital_system_config';
+
+function loadHorario(): { start: number; end: number } {
+  try {
+    const raw = localStorage.getItem(SYS_KEY);
+    if (!raw) return { start: 7, end: 20 };
+    const cfg = JSON.parse(raw) as { horarioApertura?: string; horarioCierre?: string };
+    const [sh] = (cfg.horarioApertura ?? '07:00').split(':').map(Number);
+    const [eh, em] = (cfg.horarioCierre ?? '20:00').split(':').map(Number);
+    const start = isNaN(sh) ? 7 : sh;
+    const end = isNaN(eh) ? 20 : (em > 0 ? eh + 1 : eh);
+    return { start, end };
+  } catch { return { start: 7, end: 20 }; }
+}
 const ESTADOS: EstadoCita[] = [
   'agendada', 'confirmada', 'atendida', 'reprogramada', 'cancelada', 'no_presentado',
 ];
@@ -99,9 +111,14 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
   private tooltipTimer: ReturnType<typeof setTimeout> | null = null;
   private closingTimer: ReturnType<typeof setTimeout> | null = null;
 
-  readonly startHour = START_HOUR;
-  readonly gridHeight = (END_HOUR - START_HOUR) * HOUR_PX;
-  readonly horas = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
+  private readonly _horario = loadHorario();
+  readonly startHour = this._horario.start;
+  private readonly endH = this._horario.end;
+  readonly gridHeight = (this._horario.end - this._horario.start) * HOUR_PX;
+  readonly horas = Array.from(
+    { length: this._horario.end - this._horario.start },
+    (_, i) => this._horario.start + i
+  );
 
   // ── Desktop week state ────────────────────────────────────────────────────────
   weekStart = signal(this.mondayOf(new Date()));
@@ -317,8 +334,8 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     const h = now.getHours();
     const m = now.getMinutes();
     const totalMin = h * 60 + m;
-    const startMin = START_HOUR * 60;
-    const endMin = END_HOUR * 60;
+    const startMin = this.startHour * 60;
+    const endMin = this.endH * 60;
     if (totalMin < startMin || totalMin > endMin) {
       this.currentTimeTop.set(null);
       return;
@@ -417,9 +434,9 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     const rect = el.getBoundingClientRect();
     const y = ev.clientY - rect.top;
     const minOffset = Math.round(y / HOUR_PX * 60 / 15) * 15;
-    let min = START_HOUR * 60 + minOffset;
-    min = Math.max(min, START_HOUR * 60);
-    min = Math.min(min, END_HOUR * 60 - 15);
+    let min = this.startHour * 60 + minOffset;
+    min = Math.max(min, this.startHour * 60);
+    min = Math.min(min, this.endH * 60 - 15);
     const hora = `${pad(Math.floor(min / 60))}:${pad(min % 60)}`;
     this.abrirCrear({ fecha: iso, horaInicio: hora, medicoId: this.medicoFiltro() ? Number(this.medicoFiltro()) : undefined });
   }
@@ -481,9 +498,9 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     const rect = el.getBoundingClientRect();
     const y = ev.clientY - rect.top;
     const minOffset = Math.round(y / HOUR_PX * 60 / 15) * 15;
-    let min = START_HOUR * 60 + minOffset;
-    const minLimit = START_HOUR * 60;
-    const maxLimit = END_HOUR * 60 - 15;
+    let min = this.startHour * 60 + minOffset;
+    const minLimit = this.startHour * 60;
+    const maxLimit = this.endH * 60 - 15;
     if (min < minLimit) min = minLimit;
     if (min > maxLimit) min = maxLimit;
     const hora = `${pad(Math.floor(min / 60))}:${pad(min % 60)}`;
@@ -535,7 +552,7 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
         const lane = laneOf.get(c) ?? 0;
         result.push({
           cita: c,
-          top: Math.round((s - START_HOUR * 60) * HOUR_PX / 60),
+          top: Math.round((s - this.startHour * 60) * HOUR_PX / 60),
           height: Math.max(Math.round((e - s) * HOUR_PX / 60), 42),
           left: (lane / total) * 100,
           width: (1 / total) * 100,

@@ -12,7 +12,7 @@ import {
   MedicosService, MedicoConHorarios, Genero,
   CrearMedicoPayload, ActualizarMedicoPayload,
 } from '../medicos.service';
-import { HORAS, DIAS_ORDEN, iniciales } from '../medicos.constants';
+import { generarHoras, DIAS_ORDEN, iniciales } from '../medicos.constants';
 import { DropdownComponent, DropdownOption } from '../../../shared/dropdown/dropdown.component';
 import { DateFieldComponent } from '../../../shared/date-field/date-field.component';
 import { BodyPortalDirective } from '../../../shared/body-portal.directive';
@@ -78,8 +78,6 @@ export class MedicoFormDrawerComponent implements OnInit {
   readonly iconSm = { size: 16, strokeWidth: 1.5 };
   readonly iconSection = { size: 17, strokeWidth: 1.5 };
 
-  readonly horas = HORAS;
-
   // Opciones para los dropdowns personalizados (reaccionan al idioma)
   readonly generoOptions = computed<DropdownOption[]>(() => {
     this.locale.locale();
@@ -95,7 +93,7 @@ export class MedicoFormDrawerComponent implements OnInit {
     this.locale.locale();
     return DIAS_ORDEN.map((d) => ({ value: d, label: this.locale.weekdayLong(d) }));
   });
-  readonly horaOptions: DropdownOption[] = HORAS.map((h) => ({ value: h, label: h }));
+  readonly horaOptions: DropdownOption[] = generarHoras().map((h) => ({ value: h, label: h }));
 
   form: FormState = this.emptyForm();
   horarios: HorarioForm[] = [];

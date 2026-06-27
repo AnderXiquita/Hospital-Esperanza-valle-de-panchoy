@@ -101,7 +101,7 @@ export class ConfiguracionesComponent implements OnInit {
 
   readonly timeOptions: DropdownOption[] = (() => {
     const opts: DropdownOption[] = [];
-    for (let h = 5; h <= 23; h++) {
+    for (let h = 0; h <= 23; h++) {
       for (const m of [0, 30]) {
         const label = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
         opts.push({ value: label, label });
