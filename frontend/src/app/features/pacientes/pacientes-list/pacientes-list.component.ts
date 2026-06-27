@@ -13,6 +13,7 @@ import { PacientesService, Paciente, PacienteStats } from '../pacientes.service'
 import { PacienteFormDrawerComponent } from '../paciente-form-drawer/paciente-form-drawer.component';
 import { PacienteDetailDrawerComponent } from '../paciente-detail-drawer/paciente-detail-drawer.component';
 import { LocaleService } from '../../../shared/locale.service';
+import { BodyPortalDirective } from '../../../shared/body-portal.directive';
 import { calcularEdad } from '../../medicos/medicos.constants';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,7 +41,7 @@ type Vista = 'tabla' | 'tarjetas';
   standalone: true,
   imports: [
     NgComponentOutlet, FormsModule, TranslateModule,
-    PacienteFormDrawerComponent, PacienteDetailDrawerComponent,
+    PacienteFormDrawerComponent, PacienteDetailDrawerComponent, BodyPortalDirective,
     LucideSearch, LucideX, LucideChevronLeft, LucideChevronRight,
     LucideLayoutGrid, LucideList, LucideUsers, LucideUserCheck, LucideUserPlus, LucideMail,
     LucidePlus, LucideEdit2,

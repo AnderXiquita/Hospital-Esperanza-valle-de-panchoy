@@ -13,6 +13,7 @@ import { MedicosService, Medico, MedicoConHorarios, MedicoStats } from '../medic
 import { MedicoFormDrawerComponent } from '../medico-form-drawer/medico-form-drawer.component';
 import { MedicoDetailDrawerComponent } from '../medico-detail-drawer/medico-detail-drawer.component';
 import { DropdownComponent, DropdownOption } from '../../../shared/dropdown/dropdown.component';
+import { BodyPortalDirective } from '../../../shared/body-portal.directive';
 import { LocaleService } from '../../../shared/locale.service';
 import { DIAS_ORDEN } from '../medicos.constants';
 
@@ -43,7 +44,7 @@ type Vista = 'tabla' | 'tarjetas';
   standalone: true,
   imports: [
     NgComponentOutlet, FormsModule, TranslateModule,
-    MedicoFormDrawerComponent, MedicoDetailDrawerComponent, DropdownComponent,
+    MedicoFormDrawerComponent, MedicoDetailDrawerComponent, DropdownComponent, BodyPortalDirective,
     LucideSearch, LucidePlus, LucideEdit2, LucidePower, LucidePowerOff, LucideX,
     LucideChevronLeft, LucideChevronRight, LucideStethoscope,
     LucideActivity, LucideLayers, LucideClock, LucideLayoutGrid, LucideList,

@@ -13,6 +13,7 @@ import { DropdownComponent, DropdownOption } from '../../../shared/dropdown/drop
 import { CitaFormDrawerComponent, CitaPrefill } from '../cita-form-drawer/cita-form-drawer.component';
 import { CitaDetailDrawerComponent } from '../cita-detail-drawer/cita-detail-drawer.component';
 import { LocaleService } from '../../../shared/locale.service';
+import { BodyPortalDirective } from '../../../shared/body-portal.directive';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Icon = Type<any>;
@@ -60,7 +61,7 @@ function parseMin(hhmm: string): number {
   standalone: true,
   imports: [
     NgComponentOutlet, FormsModule, TranslateModule, DropdownComponent,
-    CitaFormDrawerComponent, CitaDetailDrawerComponent,
+    CitaFormDrawerComponent, CitaDetailDrawerComponent, BodyPortalDirective,
     LucideChevronLeft, LucideChevronRight, LucideCalendarDays, LucidePlus,
   ],
   templateUrl: './citas-calendario.component.html',

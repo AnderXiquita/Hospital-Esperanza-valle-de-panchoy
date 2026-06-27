@@ -4,7 +4,7 @@ $ink:  #0f1117;
 :host { position: fixed; inset: 0; z-index: 1000; display: block; }
 
 .backdrop {
-  position: absolute; inset: 0; background: rgba(15, 17, 23, 0.5); animation: fade 60ms ease backwards;
+  position: absolute; inset: 0; background: rgba(15, 17, 23, 0.5);
   &.is-closing { animation: fadeOut 240ms ease forwards; }
 }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }

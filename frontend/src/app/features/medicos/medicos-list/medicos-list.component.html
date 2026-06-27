@@ -291,7 +291,7 @@
 
 <!-- Drawer: detalle -->
 @if (detailOpen() && detailId() !== null) {
-  <app-medico-detail-drawer
+  <app-medico-detail-drawer appBodyPortal
     [medicoId]="detailId()!"
     (closed)="cerrarDetalle()"
     (editar)="onDetailEditar($event)"
@@ -300,7 +300,7 @@
 
 <!-- Drawer: crear / editar -->
 @if (formOpen()) {
-  <app-medico-form-drawer
+  <app-medico-form-drawer appBodyPortal
     [medico]="formMedico()"
     (closed)="cerrarForm()"
     (saved)="onFormSaved()"

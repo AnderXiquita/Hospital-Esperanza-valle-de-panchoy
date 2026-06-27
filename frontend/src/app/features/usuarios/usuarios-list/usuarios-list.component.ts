@@ -13,6 +13,7 @@ import { UsuariosService, Usuario, UsuarioStats, Rol } from '../usuarios.service
 import { UsuarioFormDrawerComponent } from '../usuario-form-drawer/usuario-form-drawer.component';
 import { UsuarioDetailDrawerComponent } from '../usuario-detail-drawer/usuario-detail-drawer.component';
 import { DropdownComponent, DropdownOption } from '../../../shared/dropdown/dropdown.component';
+import { BodyPortalDirective } from '../../../shared/body-portal.directive';
 import { LocaleService } from '../../../shared/locale.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,7 +49,7 @@ type Vista = 'tabla' | 'tarjetas';
   standalone: true,
   imports: [
     NgComponentOutlet, FormsModule, TranslateModule, DropdownComponent,
-    UsuarioFormDrawerComponent, UsuarioDetailDrawerComponent,
+    UsuarioFormDrawerComponent, UsuarioDetailDrawerComponent, BodyPortalDirective,
     LucideSearch, LucidePlus, LucideX, LucideChevronLeft, LucideChevronRight,
     LucideLayoutGrid, LucideList, LucideUsers, LucideUserCheck, LucideShield, LucideUserCog,
     LucideStethoscope, LucideHeadset, LucideEdit2,

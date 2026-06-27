@@ -13,6 +13,7 @@ import { ServiciosService, Servicio, ServicioStats } from '../servicios.service'
 import { ServicioFormDrawerComponent } from '../servicio-form-drawer/servicio-form-drawer.component';
 import { ServicioDetailDrawerComponent } from '../servicio-detail-drawer/servicio-detail-drawer.component';
 import { LocaleService } from '../../../shared/locale.service';
+import { BodyPortalDirective } from '../../../shared/body-portal.directive';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Icon = Type<any>;
@@ -39,7 +40,7 @@ type Vista = 'tabla' | 'tarjetas';
   standalone: true,
   imports: [
     NgComponentOutlet, FormsModule, TranslateModule,
-    ServicioFormDrawerComponent, ServicioDetailDrawerComponent,
+    ServicioFormDrawerComponent, ServicioDetailDrawerComponent, BodyPortalDirective,
     LucideSearch, LucideX, LucideChevronLeft, LucideChevronRight,
     LucideLayoutGrid, LucideList, LucideLayers, LucideActivity, LucideBanknote, LucideClock,
     LucidePlus, LucideEdit2,
