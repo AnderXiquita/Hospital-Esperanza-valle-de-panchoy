@@ -3,7 +3,7 @@ import { authenticate } from '../../middleware/authenticate';
 import { authorize } from '../../middleware/authorize';
 import { getConfigHandler, updateConfigHandler } from './config.controller';
 
-const router = Router();
+const router: Router = Router();
 
 router.get('/', authenticate, getConfigHandler);
 router.put('/', authenticate, authorize('admin'), updateConfigHandler);
