@@ -50,16 +50,30 @@ export class AuthService {
     }
   }
 
-  async refreshToken(): Promise<string | null> {
+  // Refresh tokens are single-use: concurrent callers must share one request,
+  // otherwise the backend sees a reused token and revokes the whole session
+  private refreshInFlight: Promise<string | null> | null = null;
+
+  refreshToken(): Promise<string | null> {
+    if (!this.refreshInFlight) {
+      this.refreshInFlight = this.doRefresh().finally(() => {
+        this.refreshInFlight = null;
+      });
+    }
+    return this.refreshInFlight;
+  }
+
+  private async doRefresh(): Promise<string | null> {
     try {
       const response = await firstValueFrom(
-        this.http.post<{ accessToken: string }>(
+        this.http.post<LoginResponse>(
           `${this.api}/auth/refresh`,
           {},
           { withCredentials: true }
         )
       );
       this._accessToken = response.accessToken;
+      this._user.set(response.user);
       return response.accessToken;
     } catch {
       this._accessToken = null;

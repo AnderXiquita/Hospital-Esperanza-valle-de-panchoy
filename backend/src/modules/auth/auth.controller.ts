@@ -1,13 +1,20 @@
 import { Request, Response } from 'express';
 import * as authService from './auth.service';
+import { REFRESH_EXPIRY_HOURS } from './auth.service';
 import { JWTPayload } from './auth.types';
 
-const COOKIE_OPTIONS = {
+const IS_PROD = process.env['NODE_ENV'] === 'production';
+
+const CLEAR_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env['NODE_ENV'] === 'production',
-  sameSite: 'strict' as const,
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  secure: IS_PROD,
+  sameSite: (IS_PROD ? 'none' : 'lax') as 'none' | 'lax',
   path: '/',
+};
+
+const COOKIE_OPTIONS = {
+  ...CLEAR_COOKIE_OPTIONS,
+  maxAge: REFRESH_EXPIRY_HOURS * 60 * 60 * 1000,
 };
 
 export async function login(req: Request, res: Response): Promise<void> {
@@ -34,11 +41,11 @@ export async function refresh(req: Request, res: Response): Promise<void> {
   }
 
   try {
-    const { accessToken, refreshToken } = await authService.refresh(rawToken);
+    const { response, refreshToken } = await authService.refresh(rawToken);
     res.cookie('refresh_token', refreshToken, COOKIE_OPTIONS);
-    res.status(200).json({ accessToken });
+    res.status(200).json(response);
   } catch {
-    res.clearCookie('refresh_token');
+    res.clearCookie('refresh_token', CLEAR_COOKIE_OPTIONS);
     res.status(401).json({ message: 'Sesion expirada' });
   }
 }
@@ -82,6 +89,6 @@ export async function logout(req: Request, res: Response): Promise<void> {
   if (rawToken) {
     await authService.logout(rawToken);
   }
-  res.clearCookie('refresh_token');
+  res.clearCookie('refresh_token', CLEAR_COOKIE_OPTIONS);
   res.status(200).json({ message: 'Sesion cerrada' });
 }

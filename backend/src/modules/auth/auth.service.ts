@@ -6,7 +6,8 @@ import logger from '../../utils/logger';
 import { LoginInput, ChangePasswordInput, UpdateProfileInput } from './auth.schema';
 import { LoginResponse } from './auth.types';
 
-const REFRESH_EXPIRY_DAYS = 7;
+// Sliding window: each refresh issues a new token, so the session only ends after this much inactivity
+export const REFRESH_EXPIRY_HOURS = 8;
 
 function generateAccessToken(userId: number, rol: string): string {
   const expiry = process.env['JWT_ACCESS_EXPIRY'] ?? '15m';
@@ -18,7 +19,7 @@ async function saveRefreshToken(userId: number): Promise<string> {
   const raw = crypto.randomBytes(64).toString('hex');
   const hash = crypto.createHash('sha256').update(raw).digest('hex');
   const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + REFRESH_EXPIRY_DAYS);
+  expiresAt.setHours(expiresAt.getHours() + REFRESH_EXPIRY_HOURS);
 
   await prisma.refresh_tokens.create({
     data: { usuario_id: userId, token_hash: hash, expires_at: expiresAt },
@@ -72,7 +73,7 @@ export async function login(
 
 export async function refresh(
   rawToken: string
-): Promise<{ accessToken: string; refreshToken: string }> {
+): Promise<{ response: LoginResponse; refreshToken: string }> {
   const hash = crypto.createHash('sha256').update(rawToken).digest('hex');
   const record = await prisma.refresh_tokens.findUnique({ where: { token_hash: hash } });
 
@@ -93,7 +94,19 @@ export async function refresh(
   const accessToken = generateAccessToken(user.id, user.rol);
   const newRefreshToken = await saveRefreshToken(user.id);
 
-  return { accessToken, refreshToken: newRefreshToken };
+  return {
+    response: {
+      accessToken,
+      user: {
+        id: user.id,
+        nombre: user.nombre,
+        apellido: user.apellido,
+        email: user.email,
+        rol: user.rol,
+      },
+    },
+    refreshToken: newRefreshToken,
+  };
 }
 
 export async function updateProfile(
