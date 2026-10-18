@@ -530,6 +530,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  // layout-dashboard is built only from axis-aligned rects: on 1x screens its 1px
+  // strokes fall between pixels and render as 2px gray lines unlike the other icons
+  @media (max-resolution: 1.49dppx) {
+    ::ng-deep .lucide-layout-dashboard { shape-rendering: crispEdges; }
+  }
 }
 
 .bottom-nav__dot {

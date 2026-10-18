@@ -15,6 +15,11 @@ export const routes: Routes = [
       import('./layouts/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
     children: [
       {
+        path: 'inicio',
+        loadChildren: () =>
+          import('./features/inicio/inicio.routes').then(m => m.INICIO_ROUTES),
+      },
+      {
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),

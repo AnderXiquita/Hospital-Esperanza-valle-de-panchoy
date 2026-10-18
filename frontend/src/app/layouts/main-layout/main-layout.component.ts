@@ -7,7 +7,7 @@ import {
   LucideHome, LucideStethoscope, LucideLayers, LucideUsers,
   LucideCalendarDays, LucideCreditCard, LucideUserCog, LucideBarChart3,
   LucidePanelLeft, LucideLogOut, LucideMenu, LucideBell, LucideSettings, LucideX,
-  LucideClipboardList, LucideMessageSquare,
+  LucideClipboardList, LucideMessageSquare, LucideLayoutDashboard,
 } from '@lucide/angular';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificacionesService } from '../../core/services/notificaciones.service';
@@ -38,7 +38,8 @@ const NAV: NavSection[] = [
   {
     titleKey: 'nav.section.main',
     items: [
-      { labelKey: 'nav.dashboard',    icon: 'home',             route: '/dashboard', roles: ['admin', 'recepcionista', 'medico'] },
+      { labelKey: 'nav.home',         icon: 'home',             route: '/inicio',    roles: ['admin', 'recepcionista', 'medico'] },
+      { labelKey: 'nav.dashboard',    icon: 'layout-dashboard', route: '/dashboard', roles: ['admin', 'recepcionista', 'medico'] },
       { labelKey: 'nav.doctors',      icon: 'stethoscope',      route: '/medicos',   roles: ['admin'] },
       { labelKey: 'nav.services',     icon: 'layers',           route: '/servicios', roles: ['admin'] },
       { labelKey: 'nav.patients',     icon: 'users',            route: '/pacientes', roles: ['admin', 'recepcionista', 'medico'] },
@@ -61,6 +62,7 @@ const NAV: NavSection[] = [
 
 const ICON_MAP: Record<string, IconComponent> = {
   'home':              LucideHome,
+  'layout-dashboard':  LucideLayoutDashboard,
   'stethoscope':       LucideStethoscope,
   'layers':            LucideLayers,
   'users':             LucideUsers,
@@ -87,7 +89,7 @@ const ICON_MAP: Record<string, IconComponent> = {
     LucideHome, LucideStethoscope, LucideLayers, LucideUsers,
     LucideCalendarDays, LucideCreditCard, LucideUserCog, LucideBarChart3,
     LucidePanelLeft, LucideLogOut, LucideMenu, LucideBell, LucideSettings, LucideX,
-    LucideClipboardList, LucideMessageSquare,
+    LucideClipboardList, LucideMessageSquare, LucideLayoutDashboard,
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
@@ -139,13 +141,14 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!rol) return [];
     if (rol === 'admin') {
       return [
-        { icon: 'home',         route: '/dashboard' },
-        { icon: 'user-cog',     route: '/usuarios' },
-        { icon: 'bell',         route: '/notificaciones' },
+        { icon: 'home',             route: '/inicio' },
+        { icon: 'layout-dashboard', route: '/dashboard' },
+        { icon: 'user-cog',         route: '/usuarios' },
+        { icon: 'bell',             route: '/notificaciones' },
       ];
     }
     return [
-      { icon: 'home',          route: '/dashboard' },
+      { icon: 'home',          route: '/inicio' },
       { icon: 'calendar-days', route: '/citas' },
       { icon: 'bell',          route: '/notificaciones' },
     ];

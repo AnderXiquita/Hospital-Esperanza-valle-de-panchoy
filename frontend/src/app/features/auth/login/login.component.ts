@@ -97,7 +97,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     try {
       await this.authService.login(this.form.value.email!, this.form.value.password!);
-      void this.router.navigate(['/dashboard']);
+      void this.router.navigate(['/inicio']);
     } catch {
       this.error.set(this.translate.instant('auth.login_error'));
     } finally {
