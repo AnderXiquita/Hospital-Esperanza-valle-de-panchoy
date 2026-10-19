@@ -1,10 +1,292 @@
 <div class="inicio">
 
-  <div class="inicio__header">
-    <div class="inicio__heading">
-      <p class="inicio__eyebrow">{{ 'inicio.eyebrow' | translate }}</p>
-      <h1 class="inicio__title">{{ 'inicio.title' | translate }}</h1>
+  <!-- ── 1. Hero ─────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero__content">
+      <p class="eyebrow">{{ 'inicio.hero_eyebrow' | translate: { year: foundedYear } }}</p>
+
+      <h1 class="hero__title">
+        Hospital Esperanza
+        <span class="hero__title-sub">Valle de Panchoy</span>
+      </h1>
+
+      <p class="hero__tagline">{{ 'inicio.hero_tagline' | translate }}</p>
+
+      <dl class="hero__facts">
+        <div class="fact">
+          <dt class="fact__label">
+            <ng-container [ngComponentOutlet]="icons.siren" [ngComponentOutletInputs]="iconInputsSm" />
+            {{ 'inicio.hero_meta_emergencias' | translate }}
+          </dt>
+          <dd class="fact__value">{{ 'inicio.hero_meta_emergencias_det' | translate }}</dd>
+        </div>
+        <div class="fact">
+          <dt class="fact__label">
+            <ng-container [ngComponentOutlet]="icons.mapPin" [ngComponentOutletInputs]="iconInputsSm" />
+            {{ 'inicio.hero_meta_ubicacion' | translate }}
+          </dt>
+          <dd class="fact__value">{{ 'inicio.hero_meta_ubicacion_det' | translate }}</dd>
+        </div>
+      </dl>
     </div>
-  </div>
+
+    <figure class="hero__media">
+      <img src="/assets/images/login/img3.jpg" alt="{{ 'inicio.hero_img_alt' | translate }}" class="hero__img">
+      <figcaption class="hero__caption">{{ 'inicio.hero_img_caption' | translate }}</figcaption>
+    </figure>
+  </section>
+
+  <!-- ── 2. Cifras ───────────────────────────────────────────────────────── -->
+  <section class="stats" [attr.aria-busy]="loading()">
+    <div class="stat">
+      <span class="stat__value">{{ yearsOfService }}</span>
+      <span class="stat__label">{{ 'inicio.stat_anios' | translate }}</span>
+    </div>
+    <div class="stat">
+      @if (loading()) { <span class="skeleton skeleton--value"></span> }
+      @else { <span class="stat__value">{{ stats()?.medicos ?? '—' }}</span> }
+      <span class="stat__label">{{ 'inicio.stat_medicos' | translate }}</span>
+    </div>
+    <div class="stat">
+      @if (loading()) { <span class="skeleton skeleton--value"></span> }
+      @else { <span class="stat__value">{{ stats()?.especialidades ?? '—' }}</span> }
+      <span class="stat__label">{{ 'inicio.stat_especialidades' | translate }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat__value">{{ 'inicio.stat_consultas_value' | translate }}</span>
+      <span class="stat__label">{{ 'inicio.stat_consultas' | translate }}</span>
+    </div>
+  </section>
+
+  <!-- ── 3. Quiénes somos ────────────────────────────────────────────────── -->
+  <section class="block">
+    <header class="block__aside">
+      <p class="eyebrow">{{ 'inicio.about_eyebrow' | translate }}</p>
+      <h2 class="block__title">{{ 'inicio.about_title' | translate }}</h2>
+    </header>
+
+    <div class="block__body">
+      <p class="block__lead">{{ 'inicio.about_text' | translate: { year: foundedYear } }}</p>
+
+      <div class="mv">
+        <article class="mv__item">
+          <span class="mv__num">01</span>
+          <h3 class="mv__label">{{ 'inicio.mision_title' | translate }}</h3>
+          <p class="mv__text">{{ 'inicio.mision_text' | translate }}</p>
+        </article>
+        <article class="mv__item">
+          <span class="mv__num">02</span>
+          <h3 class="mv__label">{{ 'inicio.vision_title' | translate }}</h3>
+          <p class="mv__text">{{ 'inicio.vision_text' | translate }}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4. Valores ──────────────────────────────────────────────────────── -->
+  <section class="block">
+    <header class="block__aside">
+      <p class="eyebrow">{{ 'inicio.valores_eyebrow' | translate }}</p>
+      <h2 class="block__title">{{ 'inicio.valores_title' | translate }}</h2>
+      <p class="block__note">{{ 'inicio.valores_lead' | translate }}</p>
+    </header>
+
+    <div class="block__body valores-wrap">
+      <ul class="valores">
+        @for (v of valores; track v.key) {
+          <li class="valor">
+            <span class="valor__icon">
+              <ng-container [ngComponentOutlet]="v.icon" [ngComponentOutletInputs]="iconInputs" />
+            </span>
+            <span class="valor__name">{{ 'inicio.valor_' + v.key | translate }}</span>
+            <span class="valor__desc">{{ 'inicio.valor_' + v.key + '_desc' | translate }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── 5. Equipo médico ────────────────────────────────────────────────── -->
+  <!-- Full-width spotlight on a soft panel: deliberately breaks the title-left rhythm of the other sections -->
+  <section class="team">
+    <header class="team__header">
+      <div>
+        <p class="eyebrow">{{ 'inicio.equipo_eyebrow' | translate }}</p>
+        <h2 class="team__title">{{ 'inicio.equipo_title' | translate }}</h2>
+      </div>
+      <p class="team__lead">
+        @if (stats(); as st) {
+          {{ 'inicio.equipo_lead' | translate: { medicos: st.medicos, especialidades: st.especialidades } }}
+        } @else {
+          {{ 'inicio.equipo_lead_generic' | translate }}
+        }
+      </p>
+    </header>
+
+    @if (loading()) {
+      <div class="spotlight spotlight--skeleton">
+        <span class="skeleton portrait"></span>
+        <div class="spotlight__story">
+          <span class="skeleton skeleton--line"></span>
+          <span class="skeleton skeleton--line skeleton--short"></span>
+        </div>
+      </div>
+    } @else {
+      @if (destacado(); as d) {
+        <!-- @for over a single item re-creates the node on change, which replays the fade-in -->
+        @for (m of [d]; track m.id) {
+          <article class="spotlight" aria-live="polite">
+            <figure class="portrait">
+              @if (m.foto_url) {
+                <img [src]="m.foto_url" [alt]="shortName(m)" class="portrait__img">
+              } @else {
+                <span class="portrait__initials" aria-hidden="true">{{ initials(m) }}</span>
+              }
+            </figure>
+
+            <div class="spotlight__story">
+              <p class="spotlight__spec">{{ m.especialidad }}</p>
+              <h3 class="spotlight__name">{{ titleKey(m) | translate }} {{ shortName(m) }}</h3>
+
+              @if (m.biografia) {
+                <p class="spotlight__bio">{{ m.biografia }}</p>
+              }
+
+              <dl class="spotlight__facts">
+                @if (m.subespecialidad) {
+                  <div class="fact">
+                    <dt class="fact__label">{{ 'inicio.equipo_enfoque' | translate }}</dt>
+                    <dd class="fact__value">{{ m.subespecialidad }}</dd>
+                  </div>
+                }
+                @if (m.dias_atencion.length) {
+                  <div class="fact">
+                    <dt class="fact__label">{{ 'inicio.equipo_atiende' | translate }}</dt>
+                    <dd class="fact__value">{{ diasTexto(m, ('inicio.y' | translate)) }}</dd>
+                  </div>
+                }
+              </dl>
+            </div>
+          </article>
+        }
+
+        <ul class="roster" [attr.aria-label]="'inicio.equipo_title' | translate">
+          @for (m of equipo(); track m.id) {
+            <li>
+              <button
+                type="button"
+                class="roster__item"
+                [class.roster__item--active]="m.id === d.id"
+                [attr.aria-pressed]="m.id === d.id"
+                (click)="seleccionar(m)"
+              >
+                <span class="roster__photo">
+                  @if (m.foto_url) {
+                    <img [src]="m.foto_url" alt="" class="portrait__img">
+                  } @else {
+                    <span class="roster__initials" aria-hidden="true">{{ initials(m) }}</span>
+                  }
+                </span>
+                <span class="roster__name">{{ titleKey(m) | translate }} {{ shortName(m) }}</span>
+                <span class="roster__spec">{{ m.especialidad }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    }
+  </section>
+
+  <!-- ── 6. Especialidades y servicios ───────────────────────────────────── -->
+  <section class="block">
+    <header class="block__aside">
+      <p class="eyebrow">{{ 'inicio.servicios_eyebrow' | translate }}</p>
+      <h2 class="block__title">{{ 'inicio.servicios_title' | translate }}</h2>
+      <p class="block__note">
+        @if (!loading() && !error()) {
+          {{ 'inicio.servicios_lead' | translate: { n: servicios().length } }}
+        } @else {
+          {{ 'inicio.servicios_lead_generic' | translate }}
+        }
+      </p>
+
+      @if (emergencia(); as em) {
+        <div class="emergency">
+          <div class="emergency__top">
+            <span class="emergency__eyebrow">
+              <ng-container [ngComponentOutlet]="icons.siren" [ngComponentOutletInputs]="iconInputsSm" />
+              {{ 'inicio.emergencia_eyebrow' | translate }}
+            </span>
+            <span class="emergency__badge">24/7</span>
+          </div>
+          <h3 class="emergency__name">{{ em.nombre }}</h3>
+          @if (em.descripcion) {
+            <p class="emergency__desc">{{ em.descripcion }}</p>
+          }
+          <div class="emergency__phone">
+            <span class="emergency__phone-label">{{ 'inicio.emergencia_linea' | translate }}</span>
+            <span class="emergency__phone-num">+502 7832 4511</span>
+          </div>
+        </div>
+      }
+    </header>
+
+    <div class="block__body">
+      @if (loading()) {
+        <ul class="svc-list">
+          @for (s of skeletonRows; track $index) {
+            <li class="svc svc--skeleton">
+              <span class="skeleton skeleton--icon"></span>
+              <span class="skeleton skeleton--line"></span>
+            </li>
+          }
+        </ul>
+      } @else if (error()) {
+        <p class="empty">{{ 'inicio.error' | translate }}</p>
+      } @else {
+        <div class="catalog">
+          <div class="cat cat--main">
+            <div class="cat__head">
+              <h3 class="cat__title">{{ 'inicio.cat_especialidades' | translate }}</h3>
+              <span class="cat__count">{{ pad2(especialidades().length) }}</span>
+            </div>
+            <ul class="svc-list svc-list--two">
+              @for (s of especialidades(); track s.id) {
+                <li class="svc">
+                  <span class="svc__icon">
+                    <ng-container [ngComponentOutlet]="servicioIcon(s)" [ngComponentOutletInputs]="iconInputs" />
+                  </span>
+                  <span class="svc__name">{{ s.nombre }}</span>
+                  @if (s.descripcion) { <span class="svc__desc">{{ s.descripcion }}</span> }
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div class="cat-stack">
+            @for (c of otrasCategorias(); track c.key) {
+              <div class="cat">
+                <div class="cat__head">
+                  <h3 class="cat__title">{{ 'inicio.cat_' + c.key | translate }}</h3>
+                  <span class="cat__count">{{ pad2(c.servicios.length) }}</span>
+                </div>
+                <ul class="svc-list">
+                  @for (s of c.servicios; track s.id) {
+                    <li class="svc">
+                      <span class="svc__icon">
+                        <ng-container [ngComponentOutlet]="servicioIcon(s)" [ngComponentOutletInputs]="iconInputs" />
+                      </span>
+                      <span class="svc__name">{{ s.nombre }}</span>
+                      @if (s.descripcion) { <span class="svc__desc">{{ s.descripcion }}</span> }
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
 
 </div>

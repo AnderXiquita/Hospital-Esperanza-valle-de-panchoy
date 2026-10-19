@@ -24,6 +24,7 @@ import reportesRoutes from './modules/reportes/reportes.routes';
 import notificacionesRoutes from './modules/notificaciones/notificaciones.routes';
 import notasRoutes from './modules/notas/notas.routes';
 import configRoutes from './modules/config/config.routes';
+import inicioRoutes from './modules/inicio/inicio.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 const app: Express = express();
@@ -67,6 +68,7 @@ app.use('/api/reportes', reportesRoutes);
 app.use('/api/notificaciones', notificacionesRoutes);
 app.use('/api/notas', notasRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api/inicio', inicioRoutes);
 
 app.use(errorHandler);
 
