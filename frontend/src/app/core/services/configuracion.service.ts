@@ -31,7 +31,8 @@ const LS_KEY = 'hospital_system_config';
 export class ConfiguracionService {
   private http = inject(HttpClient);
 
-  // Inicia desde localStorage como caché inmediata; se reemplaza con el valor de la API
+  // Start from the cached copy so the screen does not flash the defaults; the API value
+  // replaces it.
   readonly config = signal<SystemConfig>(this.fromStorage());
 
   private fromStorage(): SystemConfig {
@@ -41,7 +42,6 @@ export class ConfiguracionService {
     } catch { return { ...DEFAULT_SYS_CONFIG }; }
   }
 
-  // Llamar al iniciar la app — carga la config real desde la BD
   async init(): Promise<void> {
     try {
       const cfg = await firstValueFrom(

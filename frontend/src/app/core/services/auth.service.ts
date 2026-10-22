@@ -50,8 +50,9 @@ export class AuthService {
     }
   }
 
-  // Refresh tokens are single-use: concurrent callers must share one request,
-  // otherwise the backend sees a reused token and revokes the whole session
+  // Refresh tokens are single use. If two requests refresh at the same time the second
+  // one looks like a reused token and the backend ends the session, so they all share one
+  // request.
   private refreshInFlight: Promise<string | null> | null = null;
 
   refreshToken(): Promise<string | null> {

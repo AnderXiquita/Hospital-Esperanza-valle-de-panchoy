@@ -9,7 +9,6 @@ import { LocaleService } from '../locale.service';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Icon = Type<any>;
 
-// Orden de la tira de días: lunes a domingo
 const DIAS_ORDEN = [1, 2, 3, 4, 5, 6, 0];
 
 interface DayCell {
@@ -81,7 +80,7 @@ export class DateFieldComponent implements ControlValueAccessor {
     const year = this.viewYear();
     const month = this.viewMonth();
     const first = new Date(year, month, 1);
-    const offset = (first.getDay() + 6) % 7; // lunes primero
+    const offset = (first.getDay() + 6) % 7;
     const selected = this.value();
     const todayIso = this.iso(
       this.todayDate.getFullYear(), this.todayDate.getMonth(), this.todayDate.getDate()
@@ -116,7 +115,6 @@ export class DateFieldComponent implements ControlValueAccessor {
     return arr;
   });
 
-  // --- interacción ---
   toggle(): void {
     if (this.open()) {
       this.open.set(false);
@@ -201,7 +199,6 @@ export class DateFieldComponent implements ControlValueAccessor {
     }
   }
 
-  // --- ControlValueAccessor ---
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};

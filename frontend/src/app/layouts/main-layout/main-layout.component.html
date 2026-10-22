@@ -1,25 +1,20 @@
 <div class="app-shell" [class.sidebar-collapsed]="collapsed()" [class.mobile-open]="mobileOpen()">
 
-  <!-- Blobs detrás del sidebar -->
   <div class="app-blobs" aria-hidden="true">
     <div class="app-blob app-blob--1"></div>
     <div class="app-blob app-blob--2"></div>
     <div class="app-blob app-blob--3"></div>
   </div>
 
-  <!-- Overlay oscuro al abrir menú mobile (toca fuera para cerrar) -->
   @if (mobileOpen()) {
     <div class="mobile-overlay" (click)="closeMobileMenu()" aria-hidden="true"></div>
   }
 
-  <!-- Overlay para el arrastre — siempre en DOM, opacidad manejada por JS durante el drag -->
   <div class="drag-overlay" aria-hidden="true"></div>
 
-  <!-- ── Sidebar ──────────────────────────────────────────────────────────── -->
   <aside class="sidebar">
 
     <div class="sidebar__header">
-      <!-- Desktop: logo + toggle -->
       <div class="sidebar__brand">
         <img src="/assets/Logo/LogoNegro.png" alt="Hospital Esperanza" class="sidebar__icon">
       </div>
@@ -29,7 +24,6 @@
           [ngComponentOutletInputs]="navIconInputs">
         </ng-container>
       </button>
-      <!-- Mobile: solo botón X para cerrar -->
       <button class="sidebar__close-mobile" (click)="closeMobileMenu()" aria-label="Cerrar menú">
         <ng-container
           [ngComponentOutlet]="icon('x')"
@@ -38,7 +32,6 @@
       </button>
     </div>
 
-    <!-- Mobile only: perfil en la parte superior del drawer -->
     <div class="sidebar__pm">
       <div class="sidebar__pm-avatar">{{ userInitials }}</div>
       <div class="sidebar__pm-info">
@@ -110,7 +103,7 @@
 
   </aside>
 
-  <!-- Navbar mobile — solo visible en <600px, fuera del main-content para que el blur actúe sobre los blobs -->
+  <!-- Outside .main-content on purpose so its blur picks up the blobs. -->
   <div class="mobile-nav">
     <button class="mobile-nav__menu" (click)="toggleMobileMenu()" aria-label="Abrir menú">
       <ng-container [ngComponentOutlet]="icon('menu')" [ngComponentOutletInputs]="navIconInputs"></ng-container>
@@ -118,7 +111,6 @@
     <img src="/assets/Logo/LogoNegro.png" class="mobile-nav__logo" alt="Hospital Esperanza">
   </div>
 
-  <!-- Bottom nav mobile — solo visible en <600px -->
   <nav class="bottom-nav" [class.bottom-nav--hidden]="bottomNavShouldHide()">
     @for (item of bottomNavItems(); track item.route) {
       <a
@@ -139,7 +131,6 @@
     }
   </nav>
 
-  <!-- ── Contenido ─────────────────────────────────────────────────────────── -->
   <div class="main-content">
     <main class="content-area">
       <router-outlet></router-outlet>

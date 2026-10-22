@@ -76,7 +76,6 @@ export class CitaDetailDrawerComponent implements OnInit {
   saving = signal(false);
   errorMsg = signal('');
 
-  // reprogramar
   reprogOpen = signal(false);
   reprogFecha = signal('');
   reprogHora = signal('');
@@ -89,7 +88,6 @@ export class CitaDetailDrawerComponent implements OnInit {
     !!(this.reprogFecha() && !this.reprogLoadingSlots() && this.reprogAvailableHoras().length === 0)
   );
 
-  // cancelar confirm
   confirmCancel = signal(false);
 
   ngOnInit(): void {
@@ -99,7 +97,6 @@ export class CitaDetailDrawerComponent implements OnInit {
   estadoLabel(e: EstadoCita): string { return this.translate.instant('citas.estado_' + e); }
   formatFecha(iso: string): string { return this.locale.formatLong(iso); }
 
-  // disponibilidad de acciones según estado
   get esTerminal(): boolean {
     const e = this.u()?.estado;
     return e === 'atendida' || e === 'cancelada';
@@ -163,7 +160,6 @@ export class CitaDetailDrawerComponent implements OnInit {
     this.confirmCancel.set(false);
   }
 
-  // --- reprogramar ---
   abrirReprog(): void {
     const c = this.u();
     if (!c) return;
@@ -206,7 +202,6 @@ export class CitaDetailDrawerComponent implements OnInit {
         duracion: c.servicio_duracion,
         excludeId: c.id,
       });
-      // Filtrar horas pasadas si es hoy
       const filtered = fec === localIsoDate()
         ? slots.filter((s) => s > localTime())
         : slots;

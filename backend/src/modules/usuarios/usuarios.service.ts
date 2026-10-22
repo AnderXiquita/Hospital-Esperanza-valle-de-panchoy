@@ -7,7 +7,7 @@ import { CrearUsuarioInput, ActualizarUsuarioInput } from './usuarios.schema';
 
 const SALT_ROUNDS = 12;
 
-// Campos públicos: nunca exponer password_hash
+// Never add password_hash here.
 const publicSelect = {
   id: true,
   nombre: true,
@@ -109,8 +109,7 @@ export async function actualizarUsuario(
   if (input.apellido !== undefined) data.apellido = input.apellido;
   if (input.email !== undefined) data.email = input.email;
 
-  // El rol solo cambia si: viene en el input, el usuario NO es médico
-  // (su rol se gestiona en Médicos) y no es uno mismo (evita auto-degradarse).
+  // Doctors' roles are managed in Médicos, and nobody can change their own role.
   if (input.rol !== undefined && user.rol !== 'medico' && id !== currentUserId) {
     data.rol = input.rol;
   }
@@ -139,10 +138,8 @@ export async function toggleActivo(
 
   const desactivando = user.activo;
 
-  // No puedes desactivar tu propia cuenta
   if (desactivando && id === currentUserId) throw new Error('SELF');
 
-  // No puedes desactivar al último administrador activo
   if (desactivando && user.rol === 'admin') {
     const adminsActivos = await prisma.usuarios.count({
       where: { rol: 'admin', activo: true },
@@ -150,7 +147,6 @@ export async function toggleActivo(
     if (adminsActivos <= 1) throw new Error('LAST_ADMIN');
   }
 
-  // Si es médico, no se puede desactivar si tiene citas vigentes
   if (desactivando && user.rol === 'medico') {
     const medico = await prisma.medicos.findFirst({ where: { usuario_id: id } });
     if (medico) {
@@ -192,7 +188,6 @@ export async function resetPassword(id: number, newPassword: string): Promise<bo
 
   const password_hash = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
-  // Cambia la contraseña e invalida las sesiones activas del usuario
   await prisma.$transaction([
     prisma.usuarios.update({ where: { id }, data: { password_hash } }),
     prisma.refresh_tokens.deleteMany({ where: { usuario_id: id } }),

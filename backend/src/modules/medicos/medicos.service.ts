@@ -94,7 +94,7 @@ function includeAll() {
   };
 }
 
-// Convierte 'YYYY-MM-DD' a Date (medianoche UTC) para columnas @db.Date
+// @db.Date columns: parse as UTC midnight so the day does not shift with the server timezone.
 function parseFecha(value: string | null | undefined): Date | null | undefined {
   if (value === undefined) return undefined;
   if (value === null) return null;

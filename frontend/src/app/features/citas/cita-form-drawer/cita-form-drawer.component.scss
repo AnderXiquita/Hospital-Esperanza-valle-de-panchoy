@@ -115,7 +115,6 @@ $ink:  #0f1117;
   @media (max-width: 460px) { grid-template-columns: 1fr; }
 }
 
-// ── Autocompletado paciente ───────────────────────────────────────────────────
 .ac { position: relative; }
 
 .ac__input {
@@ -210,7 +209,6 @@ $ink:  #0f1117;
 .paciente-sel__name { font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--color-text-primary); }
 .paciente-sel__dpi { font-size: var(--text-xs); color: var(--color-text-tertiary); font-variant-numeric: tabular-nums; }
 
-// ── Hora fin preview ──────────────────────────────────────────────────────────
 .ends-at {
   display: flex;
   align-items: center;

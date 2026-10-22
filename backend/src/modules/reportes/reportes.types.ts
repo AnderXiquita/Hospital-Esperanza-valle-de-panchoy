@@ -1,4 +1,3 @@
-// ── Resumen (dashboard de métricas) ──────────────────────────────────────────
 
 export interface ReporteKpis {
   total_citas: number;
@@ -46,8 +45,6 @@ export interface ResumenReporte {
   evolucion: EvolucionDia[];
   periodo: { desde: string; hasta: string };
 }
-
-// ── Reportes descargables (datos de detalle) ─────────────────────────────────
 
 export interface CitaDetalle {
   fecha: string;

@@ -7,7 +7,6 @@ const adapter = new PrismaPg({ connectionString: process.env['DATABASE_URL']! })
 const prisma = new PrismaClient({ adapter } as any);
 
 const pacientes = [
-  // ── Femenino ──────────────────────────────────────────────────────────────
   {
     nombre: 'María', apellido: 'García López',
     dpi: '1001000000101', fecha_nacimiento: new Date('1988-03-15'),
@@ -288,7 +287,6 @@ const pacientes = [
     tipo_sangre: 'B+',
   },
 
-  // ── Masculino ─────────────────────────────────────────────────────────────
   {
     nombre: 'José', apellido: 'González García',
     dpi: '1001000000131', fecha_nacimiento: new Date('1982-06-28'),

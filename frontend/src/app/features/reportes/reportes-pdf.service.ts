@@ -4,15 +4,12 @@ import {
   CitaDetalle, IngresoDetalle, MedicoDetalleReporte, PacienteDetalle,
 } from './reportes.service';
 
-// ── Colores del hospital ───────────────────────────────────────────────────────
 const INK    = [15,  17,  23]  as [number, number, number];
 const TEAL   = [21,  76,  86]  as [number, number, number];
 const WHITE  = [255, 255, 255] as [number, number, number];
 const GRAY50 = [248, 249, 250] as [number, number, number];
 const GRAY4  = [156, 163, 175] as [number, number, number];
 const GRAY6  = [107, 114, 128] as [number, number, number];
-
-// ── Utilidades ─────────────────────────────────────────────────────────────────
 
 function formatFecha(iso: string): string {
   if (!iso || iso === '—') return '—';
@@ -35,8 +32,6 @@ function formatQ(n: number): string {
 function nombreArchivo(tipo: string, desde: string, hasta: string): string {
   return `reporte-${tipo}-${desde}-al-${hasta}.pdf`;
 }
-
-// ── Construcción del documento (doc tipado como any para evitar import estático) ──
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function agregarEncabezado(doc: any, titulo: string, desde: string, hasta: string): number {
@@ -153,8 +148,6 @@ function opcionesTabla(startY: number, head: string[][], body: (string | number)
   };
 }
 
-// ── Abrir en nueva pestaña + descargar ─────────────────────────────────────────
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function publicarPDF(doc: any, filename: string): void {
   const blob = doc.output('blob');
@@ -172,7 +165,6 @@ function publicarPDF(doc: any, filename: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
-// ── Carga dinámica de dependencias PDF ────────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cachedDeps: { jsPDF: any; autoTable: any } | null = null;
 
@@ -185,7 +177,7 @@ async function getPdfDeps(): Promise<{ jsPDF: any; autoTable: any }> {
     import('jspdf-autotable'),
   ]);
 
-  // jspdf-autotable v5 puede tener default export o named export
+  // jspdf-autotable v5 sometimes comes as a default export and sometimes as a named one.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const autoTable = (autoTableMod as any).default ?? autoTableMod;
 
@@ -193,13 +185,9 @@ async function getPdfDeps(): Promise<{ jsPDF: any; autoTable: any }> {
   return cachedDeps;
 }
 
-// ── Servicio ───────────────────────────────────────────────────────────────────
-
 @Injectable({ providedIn: 'root' })
 export class ReportesPdfService {
   private svc = inject(ReportesService);
-
-  // ── Reporte de Citas ──────────────────────────────────────────────────
 
   async generarCitas(desde: string, hasta: string): Promise<void> {
     const { jsPDF, autoTable } = await getPdfDeps();
@@ -244,8 +232,6 @@ export class ReportesPdfService {
     agregarPiePagina(doc);
     publicarPDF(doc, nombreArchivo('citas', desde, hasta));
   }
-
-  // ── Reporte de Ingresos ───────────────────────────────────────────────
 
   async generarIngresos(desde: string, hasta: string): Promise<void> {
     const { jsPDF, autoTable } = await getPdfDeps();
@@ -310,8 +296,6 @@ export class ReportesPdfService {
     publicarPDF(doc, nombreArchivo('ingresos', desde, hasta));
   }
 
-  // ── Reporte de Médicos ────────────────────────────────────────────────
-
   async generarMedicos(desde: string, hasta: string): Promise<void> {
     const { jsPDF, autoTable } = await getPdfDeps();
     const res = await this.svc.medicos(desde, hasta);
@@ -355,8 +339,6 @@ export class ReportesPdfService {
     agregarPiePagina(doc);
     publicarPDF(doc, nombreArchivo('medicos', desde, hasta));
   }
-
-  // ── Reporte de Pacientes ──────────────────────────────────────────────
 
   async generarPacientes(desde: string, hasta: string): Promise<void> {
     const { jsPDF, autoTable } = await getPdfDeps();

@@ -175,8 +175,8 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         this.navEndFired = false;
         this.minHoldReached = false;
 
-        // Hide instantáneo: evita el flash del nuevo componente renderizándose
-        // con opacity ~0.97 antes de que el fade-out del CSS llegue a 0
+        // Hide right away, otherwise the new page flashes at ~0.97 opacity before the CSS
+        // fade reaches 0.
         const area = this.getContentArea();
         if (area) {
           area.style.transition = 'none';
@@ -184,8 +184,7 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
           area.style.transform = 'translateY(6px)';
         }
 
-        // Esperar HOLD_MS antes de revelar, sin importar si NavigationEnd ya llegó.
-        // Garantiza el mismo timing para módulos en caché y con lazy loading.
+        // Always wait HOLD_MS before revealing, so cached and lazy-loaded pages feel the same.
         this.holdTimer = setTimeout(() => {
           this.minHoldReached = true;
           if (this.navEndFired) this.revealContent();
@@ -201,8 +200,8 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private revealContent(): void {
     const area = this.getContentArea();
     if (!area) return;
-    // Primer rAF: activa la transición para el reveal
-    // Segundo rAF: elimina el override de opacity para que la transición la anime
+    // Two frames: the first turns the transition on, the second clears the opacity so it
+    // actually animates.
     requestAnimationFrame(() => {
       area.style.transition = `opacity ${this.REVEAL_MS}ms ease, transform ${this.REVEAL_MS}ms ease`;
       requestAnimationFrame(() => {
@@ -219,7 +218,6 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     const shell = this.elRef.nativeElement as HTMLElement;
 
-    // Scroll-hide para el bottom nav
     const contentArea = this.getContentArea();
     if (contentArea) {
       this.scrollListenerEl = contentArea;
@@ -237,7 +235,6 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       contentArea.addEventListener('scroll', this.boundScrollHandler, { passive: true });
     }
 
-    // Drag-to-open/close sidebar
     this.dragSidebarEl = shell.querySelector('.sidebar');
     this.dragOverlayEl = shell.querySelector('.drag-overlay');
 
@@ -250,7 +247,6 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     shell.addEventListener('touchend',   this.boundDragEnd,   { passive: true });
     shell.addEventListener('touchcancel',this.boundDragEnd,   { passive: true });
 
-    // Ocultar bottom nav 500ms después de que se abra cualquier drawer
     this.drawerObserver = new MutationObserver(() => {
       const hasDrawer = !!document.body.querySelector('.backdrop');
       if (hasDrawer && !this.drawerWantsHide) {
@@ -339,7 +335,6 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateForceHide();
   }
 
-  // ── Drag-to-open / drag-to-close sidebar ─────────────────────────────────────
   private dragSidebarEl: HTMLElement | null = null;
   private dragOverlayEl: HTMLElement | null = null;
   private dragMobileOverlayEl: HTMLElement | null = null;
@@ -360,7 +355,6 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private dragSnapTimer?: ReturnType<typeof setTimeout>;
   private dragRAF: number | null = null;
 
-  // Devuelve true si el elemento (o algún ancestro) tiene scroll horizontal activo
   private isInsideHScrollable(target: EventTarget | null): boolean {
     let node = target as HTMLElement | null;
     while (node && node !== document.body) {
@@ -385,7 +379,7 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dragSidebarW = Math.min(360, window.innerWidth * 0.85);
 
     if (!this.mobileOpen()) {
-      // No interceptar si el dedo empezó dentro de un elemento con scroll horizontal
+      // Don't hijack the swipe if it started on something that scrolls sideways.
       if (!this.isInsideHScrollable(e.target)) this.dragIntent = 'open';
     } else {
       this.dragIntent = 'close';
@@ -399,7 +393,6 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     const dx = t.clientX - this.dragStartX;
     const dy = t.clientY - this.dragStartY;
 
-    // Determinar eje tras el primer movimiento significativo
     if (this.dragAxis === 'undecided') {
       if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
       this.dragAxis = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
@@ -423,9 +416,8 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     const tx = this.dragIntent === 'open'
       ? Math.min(0, Math.max(-sw, -sw + dx))
       : Math.min(0, Math.max(-sw, dx));
-    const progress = 1 - Math.abs(tx) / sw; // 0=cerrado, 1=abierto
+    const progress = 1 - Math.abs(tx) / sw;
 
-    // Batching en rAF — sincroniza las mutaciones de estilo con el ciclo de render
     if (this.dragRAF !== null) cancelAnimationFrame(this.dragRAF);
     const intent = this.dragIntent;
     const overlayEl = this.dragOverlayEl;
@@ -462,13 +454,11 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.dragSidebarEl) this.dragSidebarEl.style.willChange = '';
 
-    // Animar sidebar al destino con spring
     if (this.dragSidebarEl) {
       this.dragSidebarEl.style.transition = 'transform 280ms cubic-bezier(0.22, 1, 0.36, 1)';
       this.dragSidebarEl.style.transform = `translate3d(${finalTx}px, 0, 0)`;
     }
 
-    // Limpiar overlays
     if (this.dragOverlayEl) {
       this.dragOverlayEl.style.opacity = '0';
       this.dragOverlayEl.style.pointerEvents = 'none';
@@ -479,10 +469,8 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dragMobileOverlayEl = null;
     }
 
-    // Actualizar estado Angular
     this.mobileOpen.set(willBeOpen);
 
-    // Ocultar/mostrar bottom nav igual que al pulsar el botón hamburguesa
     clearTimeout(this.sidebarHideTimer);
     if (willBeOpen) {
       this.sidebarHideTimer = setTimeout(() => { this.sidebarWantsHide = true;  this.updateForceHide(); }, 500);
@@ -491,7 +479,6 @@ export class MainLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       this.updateForceHide();
     }
 
-    // Tras la animación, quitar estilos inline para ceder control al CSS
     this.dragSnapTimer = setTimeout(() => {
       if (this.dragSidebarEl) {
         this.dragSidebarEl.style.transition = '';

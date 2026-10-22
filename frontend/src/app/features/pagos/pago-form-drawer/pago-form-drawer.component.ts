@@ -45,7 +45,6 @@ export class PagoFormDrawerComponent implements OnInit {
     { value: 'transferencia', label: 'pagos.method_transferencia', icon: LucideArrowRightLeft },
   ];
 
-  // autocompletado de cita
   query = signal('');
   resultados = signal<CitaPendiente[]>([]);
   abierto = signal(false);
@@ -136,7 +135,6 @@ export class PagoFormDrawerComponent implements OnInit {
     this.errorMsg.set('');
     if (!this.valido()) return;
 
-    // Simulación de procesamiento de pago
     this.procesando.set(true);
     await new Promise((r) => setTimeout(r, 1400));
 

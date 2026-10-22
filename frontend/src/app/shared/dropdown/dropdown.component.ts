@@ -82,7 +82,6 @@ export class DropdownComponent implements ControlValueAccessor {
     this.open.set(false);
   }
 
-  // --- ControlValueAccessor ---
   writeValue(value: string | number | null): void {
     this.value.set(value);
   }

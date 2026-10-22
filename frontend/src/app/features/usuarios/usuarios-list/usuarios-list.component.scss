@@ -9,7 +9,6 @@ $ink:  #0f1117;
   @media (max-width: 600px) { gap: var(--space-4); }
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
 .usuarios__header {
   display: flex;
   align-items: flex-end;
@@ -63,7 +62,6 @@ $ink:  #0f1117;
   &:active { background: #000; }
 }
 
-// ── Banda de métricas (negras, estilo dashboard) ──────────────────────────────
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -110,7 +108,6 @@ $ink:  #0f1117;
 
 .metric__label { font-size: var(--text-xs); color: rgba(255, 255, 255, 0.5); }
 
-// ── Toolbar ───────────────────────────────────────────────────────────────────
 .toolbar {
   display: flex;
   align-items: center;
@@ -238,7 +235,6 @@ $ink:  #0f1117;
   &.active { background: var(--color-bg-surface); color: $ink; box-shadow: var(--shadow-xs); }
 }
 
-// ── Panel / tabla ─────────────────────────────────────────────────────────────
 .panel {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
@@ -330,7 +326,6 @@ $ink:  #0f1117;
   &:hover { color: var(--color-text-primary); background: var(--color-bg-subtle); }
 }
 
-// Rol: chip neutro con ícono (sin color de estado)
 .role-chip {
   display: inline-flex;
   align-items: center;
@@ -347,7 +342,6 @@ $ink:  #0f1117;
   ng-component { display: inline-flex; color: var(--color-text-tertiary); }
 }
 
-// "Nunca" inició sesión: chip sutil con borde punteado (cuenta sin estrenar)
 .never-chip {
   display: inline-flex;
   align-items: center;
@@ -382,7 +376,6 @@ $ink:  #0f1117;
   }
 }
 
-// ── Estados ───────────────────────────────────────────────────────────────────
 .state {
   display: flex;
   flex-direction: column;
@@ -424,7 +417,6 @@ $ink:  #0f1117;
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ── Paginación ────────────────────────────────────────────────────────────────
 .pagination {
   display: flex;
   align-items: center;
@@ -461,7 +453,6 @@ $ink:  #0f1117;
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-// ── Tarjetas ──────────────────────────────────────────────────────────────────
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -506,7 +497,6 @@ $ink:  #0f1117;
 
 .ucard__actions { display: flex; gap: 2px; flex-shrink: 0; }
 
-// ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 420px) {
   .toolbar { flex-direction: column; align-items: stretch; }
   .search-box { max-width: none; }

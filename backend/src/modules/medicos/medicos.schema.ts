@@ -16,7 +16,6 @@ export const horarioSchema = z
     path: ['hora_fin'],
   });
 
-// Campos opcionales del expediente, reutilizados en crear y actualizar
 const expedienteFields = {
   subespecialidad: z.string().trim().max(150).optional(),
   dpi: z.string().trim().regex(/^\d{13}$/, 'El DPI debe tener 13 dígitos').optional(),
@@ -49,7 +48,6 @@ export const actualizarMedicoSchema = z
     apellido: z.string().trim().min(2).max(100).optional(),
     especialidad: z.string().trim().min(2).max(150).optional(),
     numero_colegiado: z.string().trim().min(2).max(50).optional(),
-    // Campos del expediente; nullable para poder limpiarlos
     subespecialidad: z.string().trim().max(150).nullable().optional(),
     dpi: z.string().trim().regex(/^\d{13}$/, 'El DPI debe tener 13 dígitos').nullable().optional(),
     fecha_nacimiento: z.string().regex(fechaRegex).nullable().optional(),

@@ -9,7 +9,8 @@ import { AuthService } from './core/services/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // The access token lives only in memory, so restore the session from the refresh cookie before the first route guard runs
+    // The access token only lives in memory, so after a reload we get a new one from the
+    // refresh cookie before any guard runs.
     provideAppInitializer(() => inject(AuthService).refreshToken().then(() => undefined)),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

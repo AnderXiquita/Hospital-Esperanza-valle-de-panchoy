@@ -1,7 +1,6 @@
 $ink:  #0f1117;
 $teal: #154C56;
 
-// ── Shell ─────────────────────────────────────────────────────────────────────
 .cfg {
   display: flex;
   flex-direction: column;
@@ -9,7 +8,6 @@ $teal: #154C56;
   max-width: 680px;
 }
 
-// ── Header simple ─────────────────────────────────────────────────────────────
 .cfg__header {
   display: flex;
   flex-direction: column;
@@ -41,7 +39,6 @@ $teal: #154C56;
   margin: 0;
 }
 
-// ── Sección ───────────────────────────────────────────────────────────────────
 .cfg__section {
   display: flex;
   flex-direction: column;
@@ -63,14 +60,12 @@ $teal: #154C56;
   margin: -8px 0 0;
 }
 
-// ── Grid de cards — siempre columna única (diseño de página de ajustes) ───────
 .cfg__grid {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-// ── Card ──────────────────────────────────────────────────────────────────────
 .cfg__card {
   display: flex;
   flex-direction: column;
@@ -119,7 +114,6 @@ $teal: #154C56;
   margin: 0 -20px;
 }
 
-// ── Perfil usuario ────────────────────────────────────────────────────────────
 .cfg__profile {
   display: flex;
   align-items: center;
@@ -197,7 +191,6 @@ $teal: #154C56;
   margin-top: 2px;
 }
 
-// ── Fila de preferencia ───────────────────────────────────────────────────────
 .cfg__row {
   display: flex;
   align-items: center;
@@ -223,7 +216,6 @@ $teal: #154C56;
   color: var(--color-text-tertiary);
 }
 
-// ── Segmented control idioma ──────────────────────────────────────────────────
 .cfg__seg {
   display: flex;
   border: 1px solid var(--color-border);
@@ -256,7 +248,6 @@ $teal: #154C56;
   }
 }
 
-// ── Toggle switch ─────────────────────────────────────────────────────────────
 .cfg__toggle {
   position: relative;
   width: 44px;
@@ -288,7 +279,6 @@ $teal: #154C56;
   .cfg__toggle--on & { transform: translateX(20px); }
 }
 
-// ── Campos del sistema ────────────────────────────────────────────────────────
 .cfg__fields {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 340px));
@@ -338,7 +328,6 @@ $teal: #154C56;
   cursor: pointer;
 }
 
-// ── Fila de guardado ──────────────────────────────────────────────────────────
 .cfg__save-row {
   display: flex;
   align-items: center;
@@ -354,7 +343,6 @@ $teal: #154C56;
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-// ── Acciones del perfil ───────────────────────────────────────────────────────
 .cfg__profile-actions {
   display: flex;
   align-items: center;
@@ -367,7 +355,6 @@ $teal: #154C56;
   color: var(--color-text-tertiary);
 }
 
-// ── Botones ───────────────────────────────────────────────────────────────────
 .cfg__btn {
   display: inline-flex;
   align-items: center;

@@ -66,7 +66,6 @@ export class MedicoFormDrawerComponent implements OnInit {
   private locale = inject(LocaleService);
   private configSvc = inject(ConfiguracionService);
 
-  // null => modo crear ; objeto => modo editar
   medico = input<MedicoConHorarios | null>(null);
   closed = output<void>();
   saved = output<void>();
@@ -80,7 +79,6 @@ export class MedicoFormDrawerComponent implements OnInit {
   readonly iconSm = { size: 16, strokeWidth: 1.5 };
   readonly iconSection = { size: 17, strokeWidth: 1.5 };
 
-  // Opciones para los dropdowns personalizados (reaccionan al idioma)
   readonly generoOptions = computed<DropdownOption[]>(() => {
     this.locale.locale();
     const t = this.translate;
@@ -160,7 +158,6 @@ export class MedicoFormDrawerComponent implements OnInit {
     this.horarios.splice(i, 1);
   }
 
-  // --- validación ---
   passwordValida(): boolean {
     return this.form.password.length > 0;
   }
@@ -258,7 +255,6 @@ export class MedicoFormDrawerComponent implements OnInit {
     }
   }
 
-  // --- helpers ---
   private emptyForm(): FormState {
     return {
       nombre: '', apellido: '', email: '', password: '',
@@ -269,20 +265,18 @@ export class MedicoFormDrawerComponent implements OnInit {
     };
   }
 
-  // string a string|null (trim, vacío => null)
   private s(v: string): string | null {
     const t = v.trim();
     return t.length ? t : null;
   }
 
-  // tarifa a number|null (el input type=number puede dar number, string o null)
+  // A number input can hand back a number, a string or null.
   private toNum(v: string | number | null): number | null {
     if (v === null || v === undefined || v === '') return null;
     const n = typeof v === 'number' ? v : Number(String(v).trim());
     return isNaN(n) ? null : n;
   }
 
-  // construye { key: value } solo si value no está vacío (para create)
   private opt(key: string, v: string): Record<string, string> {
     const t = v.trim();
     return t.length ? { [key]: t } : {};

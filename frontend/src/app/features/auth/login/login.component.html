@@ -1,6 +1,5 @@
 <div class="login-layout">
 
-  <!-- ── Panel izquierdo (slideshow) ───────────────── -->
   <div class="panel-left">
     @for (slide of slides; track $index) {
       <div
@@ -11,7 +10,6 @@
     }
     <div class="panel-left__overlay"></div>
 
-    <!-- Bienvenida + tip (esquina superior izquierda) -->
     <div class="panel-left__tip">
       <h2 class="panel-left__welcome">{{ 'login.welcome_line1' | translate }}<br>{{ 'login.welcome_line2' | translate }}</h2>
       <div class="panel-left__tip-body">
@@ -35,7 +33,6 @@
     </div>
   </div>
 
-  <!-- ── Panel derecho (formulario) ────────────────── -->
   <div class="panel-right">
     <div class="panel-right__inner">
 
@@ -141,7 +138,6 @@
       </div>
     </div>
 
-    <!-- Tips — solo mobile, al final de todo -->
     <div class="mobile-tip-section">
       <span class="mobile-tip__badge">{{ 'login.tip_badge' | translate }}</span>
       <p class="mobile-tip__text" [class.is-hidden]="!tipVisible()">{{ currentTip() | translate }}</p>
@@ -150,7 +146,6 @@
 
 </div>
 
-<!-- ── Modal: Privacidad y Términos ──────────────────────────────────────── -->
 @if (privacyOpen()) {
   <div class="privacy-backdrop" (click)="privacyOpen.set(false)"></div>
   <div class="privacy-modal" role="dialog" aria-modal="true">

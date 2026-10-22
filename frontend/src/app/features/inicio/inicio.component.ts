@@ -16,7 +16,7 @@ type Icon = Type<any>;
 
 const FOUNDED_YEAR = 1998;
 
-// Services come from the database as free text, so the icon is picked by keyword
+// Services are free text in the database, so the icon is picked by keyword.
 const SERVICE_ICONS: { keywords: string[]; icon: Icon }[] = [
   { keywords: ['cardio'],                      icon: LucideHeartPulse },
   { keywords: ['pediatr'],                     icon: LucideBaby },
@@ -38,7 +38,6 @@ const SERVICE_ICONS: { keywords: string[]; icon: Icon }[] = [
 
 type CategoriaKey = 'especialidades' | 'diagnostico' | 'terapias' | 'prevencion';
 
-// Same keyword approach for grouping; anything unmatched is treated as a medical specialty
 const CATEGORY_KEYWORDS: { key: Exclude<CategoriaKey, 'especialidades'>; keywords: string[] }[] = [
   { key: 'diagnostico', keywords: ['rayos', 'laboratorio', 'imagen'] },
   { key: 'terapias',    keywords: ['fisioterapia', 'rehabilit', 'psicolog', 'odonto', 'nutricion', 'respirator'] },
@@ -48,7 +47,6 @@ const CATEGORY_KEYWORDS: { key: Exclude<CategoriaKey, 'especialidades'>; keyword
 const EMERGENCY_KEYWORD = 'emergencia';
 
 const TEAM_SIZE = 6;
-// Monday-first, matching the week strip used in the doctors module
 const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 0];
 
 interface Categoria {
@@ -100,7 +98,7 @@ export class InicioComponent implements OnInit {
   readonly especialidades = computed(() => this.agrupados().find(c => c.key === 'especialidades')?.servicios ?? []);
   readonly otrasCategorias = computed(() => this.agrupados().filter(c => c.key !== 'especialidades'));
 
-  // Featured profiles: the most complete biographies, one per specialty so the team looks varied
+  // Most complete bios first, one per specialty so the team looks varied.
   readonly equipo = computed((): InicioMedico[] => {
     const seen = new Set<string>();
     return [...(this.data()?.medicos ?? [])]
@@ -117,7 +115,6 @@ export class InicioComponent implements OnInit {
 
   private readonly selectedId = signal<number | null>(null);
 
-  // Spotlight: the doctor picked in the roster, or the first one by default
   readonly destacado = computed((): InicioMedico | null => {
     const team = this.equipo();
     return team.find(m => m.id === this.selectedId()) ?? team[0] ?? null;
@@ -171,7 +168,6 @@ export class InicioComponent implements OnInit {
     this.selectedId.set(m.id);
   }
 
-  // "los lunes, martes y jueves" / "Monday, Tuesday and Thursday", in the active language
   diasTexto(m: InicioMedico, conjunction: string): string {
     const isEs = this.localeSvc.locale().startsWith('es');
     const names = WEEK_DAYS
@@ -180,7 +176,7 @@ export class InicioComponent implements OnInit {
         const name = this.localeSvc.weekdayLong(d);
         if (!isEs) return name;
         const lower = name.toLowerCase();
-        // Spanish plural only changes for sábado/domingo; lunes–viernes are invariable
+        // In Spanish only sábado and domingo change in plural; lunes to viernes stay the same.
         return lower.endsWith('o') ? lower + 's' : lower;
       });
     if (names.length <= 1) return names.join('');
@@ -191,7 +187,6 @@ export class InicioComponent implements OnInit {
     return (m.nombre.charAt(0) + m.apellido.charAt(0)).toUpperCase();
   }
 
-  // Shows only the first given name and first surname: "Raúl Barrios" instead of the full legal name
   shortName(m: InicioMedico): string {
     return `${m.nombre.split(' ')[0]} ${m.apellido.split(' ')[0]}`;
   }

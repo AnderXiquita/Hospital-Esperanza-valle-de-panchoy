@@ -4,7 +4,6 @@
 
 <div [class]="'ep-drawer' + (open() ? ' ep-drawer--open' : '')">
 
-  <!-- Header -->
   <div class="ep-drawer__header">
     <div class="ep-drawer__header-left">
       <div class="ep-drawer__icon">
@@ -20,7 +19,6 @@
     </button>
   </div>
 
-  <!-- Body -->
   <div class="ep-drawer__body">
 
     @if (success()) {
@@ -29,7 +27,6 @@
         <span>Perfil actualizado correctamente</span>
       </div>
     } @else {
-
       @if (error()) {
         <div class="ep-error">{{ error() }}</div>
       }
@@ -54,7 +51,6 @@
 
   </div>
 
-  <!-- Footer -->
   @if (!success()) {
     <div class="ep-drawer__footer">
       <button class="ep-cancel" (click)="cerrar()">Cancelar</button>

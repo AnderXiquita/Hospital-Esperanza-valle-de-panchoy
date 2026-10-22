@@ -30,7 +30,6 @@ export class EditarPerfilDrawerComponent implements OnChanges {
   error   = signal<string | null>(null);
   success = signal(false);
 
-  // Getters/setters para ngModel ↔ signal
   get nombreModel()   { return this.nombre(); }
   set nombreModel(v)  { this.nombre.set(v);   this.error.set(null); }
   get apellidoModel() { return this.apellido(); }

@@ -40,7 +40,6 @@ $ink:  #0f1117;
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes slideOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
-// ── Top bar ───────────────────────────────────────────────────────────────────
 .topbar {
   display: flex;
   align-items: center;
@@ -73,7 +72,6 @@ $ink:  #0f1117;
   &:hover { color: var(--color-text-primary); background: var(--color-bg-subtle); }
 }
 
-// ── Body ──────────────────────────────────────────────────────────────────────
 .drawer__body {
   flex: 1;
   overflow-y: auto;
@@ -123,7 +121,6 @@ $ink:  #0f1117;
   &--active { color: var(--color-text-primary); &::before { background: $teal; } }
 }
 
-// ── Info ──────────────────────────────────────────────────────────────────────
 .block { display: flex; flex-direction: column; }
 
 .info-row {
@@ -142,7 +139,6 @@ $ink:  #0f1117;
 .info-row__label { color: var(--color-text-secondary); }
 .info-row__value { margin-left: auto; color: var(--color-text-primary); font-weight: var(--font-medium); text-align: right; }
 
-// ── Acciones ──────────────────────────────────────────────────────────────────
 .actions { display: flex; flex-direction: column; gap: var(--space-2); }
 
 .action {
@@ -186,7 +182,6 @@ $ink:  #0f1117;
 
 .actions__hint { font-size: var(--text-xs); color: var(--color-text-tertiary); margin: 0; }
 
-// ── Modales (toggle / reset) ──────────────────────────────────────────────────
 .overlay {
   position: fixed;
   inset: 0;
@@ -230,7 +225,6 @@ $ink:  #0f1117;
 
 .modal__actions { display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-2); }
 
-// Campo del reset
 .field { display: flex; flex-direction: column; gap: var(--space-1); }
 .field label { font-size: var(--text-xs); font-weight: var(--font-medium); color: var(--color-text-secondary); }
 .field input {
@@ -266,7 +260,6 @@ $ink:  #0f1117;
   ng-component { display: flex; }
 }
 
-// Botones
 .btn-primary, .btn-secondary, .btn-danger, .btn-activate {
   display: inline-flex;
   align-items: center;

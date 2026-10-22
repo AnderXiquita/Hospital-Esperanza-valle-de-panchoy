@@ -9,7 +9,6 @@ $ink:  #0f1117;
   @media (max-width: 600px) { gap: var(--space-4); }
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
 .pacientes__header {
   display: flex;
   align-items: flex-end;
@@ -59,7 +58,6 @@ $ink:  #0f1117;
   &:active { background: #000; }
 }
 
-// ── Métricas ──────────────────────────────────────────────────────────────────
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -106,7 +104,6 @@ $ink:  #0f1117;
 
 .metric__label { font-size: var(--text-xs); color: rgba(255, 255, 255, 0.5); }
 
-// ── Toolbar ───────────────────────────────────────────────────────────────────
 .toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .toolbar__filters { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 
@@ -214,7 +211,6 @@ $ink:  #0f1117;
   &.active { background: var(--color-bg-surface); color: $ink; box-shadow: var(--shadow-xs); }
 }
 
-// ── Panel / tabla ─────────────────────────────────────────────────────────────
 .panel {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
@@ -318,7 +314,6 @@ $ink:  #0f1117;
   &--active { color: var(--color-text-primary); &::before { background: $teal; } }
 }
 
-// ── Estados ───────────────────────────────────────────────────────────────────
 .state {
   display: flex;
   flex-direction: column;
@@ -360,7 +355,6 @@ $ink:  #0f1117;
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ── Paginación ────────────────────────────────────────────────────────────────
 .pagination {
   display: flex;
   align-items: center;
@@ -397,7 +391,6 @@ $ink:  #0f1117;
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-// ── Tarjetas ──────────────────────────────────────────────────────────────────
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -440,7 +433,6 @@ $ink:  #0f1117;
 .pcard__metas { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pcard__meta { font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; }
 
-// ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 420px) {
   .toolbar { flex-direction: column; align-items: stretch; }
   .search-box { max-width: none; }

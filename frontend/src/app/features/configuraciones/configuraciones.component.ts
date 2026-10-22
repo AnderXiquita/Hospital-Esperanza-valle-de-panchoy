@@ -50,14 +50,11 @@ export class ConfiguracionesComponent implements OnInit {
 
   readonly isAdmin = computed(() => this.user()?.rol === 'admin');
 
-  // ── Preferencias personales ──────────────────────────────────────────────
   lang          = signal<string>(localStorage.getItem('lang') ?? 'es');
   notifications = signal<boolean>(localStorage.getItem('notifications_enabled') !== 'false');
 
-  // ── Config sistema ───────────────────────────────────────────────────────
   sysModified = signal(false);
 
-  // Copia editable para el formulario de sistema (inicia desde el servicio/caché)
   sysForm: SystemConfig = { ...this.configSvc.config() };
 
   readonly duracionOpciones: DropdownOption[] = [
@@ -101,20 +98,17 @@ export class ConfiguracionesComponent implements OnInit {
     { value: 'COP', label: 'Peso colombiano (COP)' },
   ];
 
-  // ── Drawer contraseña ────────────────────────────────────────────────────
   drawerOpen       = signal(false);
   perfilDrawerOpen = signal(false);
 
   ngOnInit(): void {}
 
-  // ── Idioma ───────────────────────────────────────────────────────────────
   setLang(l: string): void {
     this.lang.set(l);
     localStorage.setItem('lang', l);
     this.translate.use(l);
   }
 
-  // ── Notificaciones ───────────────────────────────────────────────────────
   toggleNotifications(): void {
     const next = !this.notifications();
     this.notifications.set(next);
@@ -122,7 +116,6 @@ export class ConfiguracionesComponent implements OnInit {
     if (!next) this.notifSvc.clearToasts();
   }
 
-  // ── Sistema ──────────────────────────────────────────────────────────────
   onSysChange(): void {
     this.sysModified.set(true);
   }
@@ -133,7 +126,6 @@ export class ConfiguracionesComponent implements OnInit {
     this.http.post(`${environment.apiUrl}/api/notificaciones/config-changed`, {}).subscribe({ error: () => {} });
   }
 
-  // ── Rol display ──────────────────────────────────────────────────────────
   rolLabel = computed(() => {
     const r = this.user()?.rol;
     if (r === 'admin')         return 'cfg.rol_admin';

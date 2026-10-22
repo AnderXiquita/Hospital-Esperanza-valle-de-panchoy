@@ -1,7 +1,7 @@
 import prisma from '../../config/prisma';
 import { InicioMedico, InicioResponse, InicioServicio } from './inicio.types';
 
-// Specialty names were typed by hand ("Cardiologia" / "Cardiología"), so compare without accents or case
+// Specialties were typed by hand ("Cardiologia" vs "Cardiología"), so compare them without accents.
 function normalizeEspecialidad(value: string): string {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
 }

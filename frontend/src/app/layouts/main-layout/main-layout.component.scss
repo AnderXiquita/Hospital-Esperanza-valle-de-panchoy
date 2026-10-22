@@ -1,4 +1,3 @@
-// ── Shell ─────────────────────────────────────────────────────────────────────
 .app-shell {
   display: flex;
   height: 100vh;
@@ -10,8 +9,6 @@
   --sidebar-collapsed-width: 60px;
   --header-height: 56px;
 
-  // Capa de cristal unificada — cubre TODO el shell (sidebar + franjas arriba/abajo)
-  // Los blobs (z-index:0) quedan detrás; esta capa los difumina uniformemente
   &::before {
     content: '';
     position: absolute;
@@ -24,8 +21,6 @@
   }
 }
 
-// Blobs de color — cubre todo el shell para que los bordes redondeados de la card
-// no expongan fondo liso sin color
 .app-blobs {
   position: absolute;
   top: -60px;
@@ -92,7 +87,6 @@
   100% { transform: translate(25px, -40px) scale(0.92); }
 }
 
-// Opacidad desfasada: nunca las tres visibles al mismo tiempo
 @keyframes blob-fade-1 {
   0%   { opacity: 1; }
   25%  { opacity: 1; }
@@ -119,7 +113,6 @@
   100% { opacity: 0.5; }
 }
 
-// ── Sidebar — cristal sobre los blobs ────────────────────────────────────────
 .sidebar {
   width: var(--sidebar-width);
   height: 100vh;
@@ -139,7 +132,6 @@
   }
 }
 
-// Cabecera
 .sidebar__header {
   display: flex;
   align-items: center;
@@ -194,7 +186,6 @@
   }
 }
 
-// Navegación
 .sidebar__nav {
   flex: 1;
   overflow-y: auto;
@@ -252,7 +243,6 @@
   }
 }
 
-// Envoltorio del ícono — sin fondo
 .sidebar__item-icon-wrap {
   width: 20px;
   height: 20px;
@@ -265,8 +255,6 @@
   svg { color: #000; }
 }
 
-// Punto indicador sobre el ícono
-// Oculto en sidebar expandido; visible cuando sidebar está colapsado (JS o CSS)
 .sidebar__notif-dot {
   display: none;
   position: absolute;
@@ -281,7 +269,6 @@
   .sidebar-collapsed & { display: block; }
 }
 
-// Contador inline (sidebar expandido, a la derecha del label)
 .sidebar__notif-count {
   margin-left: auto;
   background: #0f1117;
@@ -298,7 +285,6 @@
   text-overflow: ellipsis;
 }
 
-// Footer del sidebar
 .sidebar__footer {
   padding: var(--space-2) var(--space-3) var(--space-4);
   flex-shrink: 0;
@@ -316,7 +302,6 @@
   white-space: nowrap;
 }
 
-// Logout — mismo estilo que un item de nav
 .sidebar__logout {
   display: flex;
   align-items: center;
@@ -354,7 +339,6 @@
 }
 
 
-// Perfil de usuario al fondo
 .sidebar__user {
   display: flex;
   align-items: center;
@@ -409,9 +393,7 @@
 }
 
 
-// ── Contenido principal — card flotante, encima de la capa glass del shell ────
-// z-index: 50 > sidebar (20) so form-drawer backdrops (fixed, inside this context)
-// are painted above the sidebar in the root stacking order.
+// Above the sidebar (20) so drawer backdrops rendered in here also cover it.
 .main-content {
   flex: 1;
   display: flex;
@@ -427,8 +409,6 @@
   margin-bottom: 10px;
 }
 
-// Navbar mobile — position:fixed fuera del main-content para que el blur vea los blobs
-// z-index: 60 > main-content (50) so it stays visible above content on mobile
 .mobile-nav {
   display: none;
   position: fixed;
@@ -466,9 +446,8 @@
   width: auto;
 }
 
-// ── Drag overlay (dimming durante el gesto de arrastre) ──────────────────────
-// Opacity manejada por JS en tiempo real; siempre en DOM para evitar
-// costos de creación durante el gesto (latencia de touch)
+// Always in the DOM and driven by JS during the drag; creating it mid-gesture made touch
+// feel laggy.
 .drag-overlay {
   position: fixed;
   inset: 0;
@@ -480,7 +459,6 @@
   @media (min-width: 601px) { display: none; }
 }
 
-// ── Bottom nav mobile ─────────────────────────────────────────────────────────
 .bottom-nav {
   display: none;
   position: fixed;
@@ -531,8 +509,8 @@
   align-items: center;
   justify-content: center;
 
-  // layout-dashboard is built only from axis-aligned rects: on 1x screens its 1px
-  // strokes fall between pixels and render as 2px gray lines unlike the other icons
+  // This icon is only straight rects, so on 1x screens its 1px lines land between pixels
+  // and look gray and thick next to the others.
   @media (max-resolution: 1.49dppx) {
     ::ng-deep .lucide-layout-dashboard { shape-rendering: crispEdges; }
   }
@@ -549,9 +527,8 @@
   box-shadow: 0 0 0 1.5px rgba(221, 228, 236, 0.7);
 }
 
-// Área de contenido
-// La transición de navegación (.content-fading) vive en styles.scss global
-// para que el classList.add/remove directo la active sin depender del scoping de Angular
+// The fade class lives in styles.scss because it is toggled with classList, outside
+// Angular style scoping.
 .content-area {
   flex: 1;
   overflow-y: auto;
@@ -559,7 +536,6 @@
   padding: var(--space-6);
 }
 
-// Botón X para cerrar en mobile — oculto en desktop
 .sidebar__close-mobile {
   display: none;
   background: none;
@@ -573,7 +549,6 @@
   margin-left: auto;
 }
 
-// ── Tablet (600px–1190px): sidebar auto-colapsado, sin hamburguesa ────────────
 @media (min-width: 601px) and (max-width: 1190px) {
   .sidebar {
     width: var(--sidebar-collapsed-width) !important;
@@ -619,12 +594,10 @@
     padding: calc(var(--space-3) + 30px) var(--space-2) var(--space-2);
   }
 
-  // En mini sidebar el dot se muestra y el contador inline se oculta
   .sidebar__notif-dot    { display: block !important; }
   .sidebar__notif-count  { display: none  !important; }
 }
 
-// ── Perfil mobile-only (oculto en desktop / tablet) ──────────────────────────
 .sidebar__pm {
   display: none;
 }
@@ -665,14 +638,11 @@
   color: var(--color-text-secondary);
 }
 
-// ── Responsive mobile (<600px) ────────────────────────────────────────────────
 @media (max-width: 600px) {
-
   .app-shell.mobile-open {
     overflow: hidden;
   }
 
-  // Overlay oscuro sobre el área derecha (mismo patrón que los drawers de formularios)
   .mobile-overlay {
     position: fixed;
     inset: 0;
@@ -680,7 +650,6 @@
     background: rgba(0, 0, 0, 0.38);
   }
 
-  // Sidebar: drawer parcial con esquinas redondeadas a la derecha (estilo Twitter)
   .sidebar {
     position: fixed !important;
     top: 0;
@@ -694,7 +663,6 @@
     border-radius: 0 16px 16px 0;
     box-shadow: 4px 0 32px rgba(0, 0, 0, 0.14);
 
-    // Blur translúcido igual al navbar mobile, sin gradiente de colores
     background: rgba(221, 228, 236, 0.45) !important;
     backdrop-filter: blur(24px) !important;
     -webkit-backdrop-filter: blur(24px) !important;
@@ -704,12 +672,10 @@
     }
   }
 
-  // Ocultar el header completo en mobile (no hay logo ni X — se cierra con swipe o overlay)
   .sidebar__header {
     display: none;
   }
 
-  // Mostrar la sección de perfil mobile: avatar arriba, nombre/rol debajo
   .sidebar__pm {
     display: flex;
     flex-direction: column;
@@ -720,17 +686,14 @@
     flex-shrink: 0;
   }
 
-  // Ocultar toggle de colapso (no aplica en mobile)
   .sidebar__toggle {
     display: none;
   }
 
-  // El botón X ya no se necesita en mobile
   .sidebar__close-mobile {
     display: none;
   }
 
-  // Items full-width con padding táctil generoso
   .sidebar__item {
     display: flex !important;
     width: 100% !important;
@@ -757,22 +720,18 @@
     display: block !important;
   }
 
-  // Nav con menos padding-top (la sección de perfil ya actúa de separador)
   .sidebar__nav {
     padding: var(--space-3) var(--space-3) var(--space-3) !important;
   }
 
-  // Ocultar el bloque de perfil en el footer (ya está arriba)
   .sidebar__user {
     display: none;
   }
 
-  // Ocultar el título "CUENTA" del footer en mobile
   .sidebar__footer-title {
     display: none;
   }
 
-  // main-content ocupa toda la pantalla en mobile
   .main-content {
     margin-top: 0;
     margin-bottom: 0;
@@ -785,7 +744,6 @@
     padding-bottom: calc(64px + var(--space-4));
   }
 
-  // Ocultar del menú hamburguesa los items que ya están en el bottom nav
   .sidebar__item--bottom-nav {
     display: none !important;
   }

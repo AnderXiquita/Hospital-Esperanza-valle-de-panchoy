@@ -17,7 +17,6 @@ $col-no-pres:      #D47A2A;
   @media (max-width: 600px) { gap: var(--space-3); }
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
 .cal__header {
   display: flex;
   align-items: flex-end;
@@ -63,7 +62,6 @@ $col-no-pres:      #D47A2A;
   line-height: 1.15;
 }
 
-// ── Week bar ──────────────────────────────────────────────────────────────────
 .cal__week-bar {
   display: flex;
   align-items: center;
@@ -114,7 +112,6 @@ $col-no-pres:      #D47A2A;
 
 .cal__filter { width: 220px; }
 
-// ── Pills de estado — estilo notificaciones ───────────────────────────────────
 .cal__pills {
   display: flex;
   align-items: center;
@@ -170,7 +167,6 @@ $col-no-pres:      #D47A2A;
   &.pill--active { background: rgba(212, 122, 42, 0.10); color: $col-no-pres; border-color: $col-no-pres; }
 }
 
-// ── Panel ─────────────────────────────────────────────────────────────────────
 .cal__panel {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
@@ -215,7 +211,6 @@ $col-no-pres:      #D47A2A;
   ng-component { display: inline-flex; }
 }
 
-// ── Grid ──────────────────────────────────────────────────────────────────────
 .cal__scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .cal__grid { min-width: 820px; }
 
@@ -285,7 +280,6 @@ $col-no-pres:      #D47A2A;
   border-top: 1px solid var(--color-divider);
 }
 
-// ── Indicador de hora actual ───────────────────────────────────────────────────
 .cal__now-line {
   position: absolute;
   left: 0;
@@ -316,7 +310,6 @@ $col-no-pres:      #D47A2A;
   border-radius: 1px;
 }
 
-// ── Tarjeta de cita ─────────────────────────────────────────────────────────
 .cal__cita {
   position: absolute;
   border-radius: var(--radius-sm);
@@ -381,7 +374,6 @@ $col-no-pres:      #D47A2A;
   flex-shrink: 0;
 }
 
-// ── Tooltip de cita ──────────────────────────────────────────────────────────
 .cal__tooltip {
   position: fixed;
   z-index: 200;
@@ -465,7 +457,6 @@ $col-no-pres:      #D47A2A;
   padding-top: var(--space-2);
 }
 
-// Colores del tooltip según estado (reutiliza .estado--*)
 .cal__tooltip {
   &.estado--agendada     .tooltip__status { color: $col-agendada; }
   &.estado--confirmada   .tooltip__status { color: $col-confirmada; }
@@ -475,7 +466,6 @@ $col-no-pres:      #D47A2A;
   &.estado--no_presentado .tooltip__status { color: $col-no-pres; }
 }
 
-// ── Colores por estado ────────────────────────────────────────────────────────
 .estado--agendada {
   background: #ECF0FF;
   &:hover { box-shadow: 0 2px 8px rgba(15,17,23,0.10); }
@@ -524,14 +514,11 @@ $col-no-pres:      #D47A2A;
   .cal__badge-dot  { background: $col-no-pres; }
 }
 
-// ── Mobile view (≤960px) ───────────────────────────────────────────────────────
-
 .cal__month-bar { display: none; }
 .cal__mobile-panel { display: none; }
 .cal__month-label { text-transform: capitalize; }
 
 @media (max-width: 960px) {
-
   .cal__month-bar {
     display: flex;
     flex-direction: column;
@@ -543,7 +530,6 @@ $col-no-pres:      #D47A2A;
     align-items: center;
   }
 
-  // Doctor dropdown full-width on mobile
   .cal__m-doc-filter {
     width: 100%;
   }
@@ -552,7 +538,7 @@ $col-no-pres:      #D47A2A;
     display: flex;
     flex-direction: column;
     gap: 0;
-    // Negative margin to reach content-area edges
+    // Stretch to the edges of the content area.
     margin-left: calc(-1 * var(--space-4));
     margin-right: calc(-1 * var(--space-4));
   }
@@ -568,7 +554,6 @@ $col-no-pres:      #D47A2A;
   }
 }
 
-// ── Mobile view transitions ───────────────────────────────────────────────────
 @keyframes slideInFromLeft {
   from { opacity: 0; transform: translateX(-18px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -579,7 +564,6 @@ $col-no-pres:      #D47A2A;
   to   { opacity: 1; transform: translateX(0); }
 }
 
-// ── Month grid ────────────────────────────────────────────────────────────────
 .cal__m-panel {
   background: var(--color-bg-surface);
   border-top: 1px solid var(--color-border);
@@ -657,7 +641,6 @@ $col-no-pres:      #D47A2A;
   }
 }
 
-// ── Event chips (month view) ──────────────────────────────────────────────────
 .cal__m-events {
   width: calc(100% - 4px);
   display: flex;
@@ -680,7 +663,6 @@ $col-no-pres:      #D47A2A;
   overflow: hidden;
   text-overflow: ellipsis;
 
-  // Outline style: colored text + border, white background
   &.ebar--agendada      { color: $col-agendada;     background: #fff; }
   &.ebar--confirmada    { color: $col-confirmada;   background: #fff; }
   &.ebar--atendida      { color: $col-atendida;     background: #fff; }
@@ -705,8 +687,6 @@ $col-no-pres:      #D47A2A;
 .ebar--cancelada     { background: $col-cancelada; }
 .ebar--no_presentado { background: $col-no-pres; }
 
-// ── Day view ──────────────────────────────────────────────────────────────────
-// Both header and body share the same entrance direction (right → left)
 .cal__m-dv-header {
   animation: slideInFromRight 220ms ease-out;
   display: flex;
@@ -716,7 +696,6 @@ $col-no-pres:      #D47A2A;
   padding: 0 var(--space-4);
   background: #fff;
   border-bottom: 2px solid rgba(15, 17, 23, 0.08);
-  // Edge-to-edge flush against the time grid
   margin-left: calc(-1 * var(--space-4));
   margin-right: calc(-1 * var(--space-4));
   margin-bottom: calc(-1 * var(--space-4));
@@ -750,7 +729,6 @@ $col-no-pres:      #D47A2A;
   letter-spacing: -0.01em;
 }
 
-// Time grid for the day view
 .cal__m-dv-body {
   display: flex;
   overflow-x: hidden;
@@ -779,7 +757,6 @@ $col-no-pres:      #D47A2A;
   cursor: pointer;
 }
 
-// Empty overlay inside the time column
 .cal__m-dv-empty {
   position: absolute;
   top: 50%;
@@ -797,7 +774,6 @@ $col-no-pres:      #D47A2A;
   ng-component { display: inline-flex; }
 }
 
-// ── Extra small: tighten month grid ──────────────────────────────────────────
 @media (max-width: 380px) {
   .cal__m-day { min-height: 80px; padding: 4px 1px 5px; }
   .cal__m-day-num { width: 22px; height: 22px; font-size: 11px; }

@@ -12,7 +12,6 @@
   @if (u(); as p) {
     <div class="drawer__body">
 
-      <!-- Hero monto -->
       <div class="hero">
         <span class="hero__amount">Q {{ money(p.monto) }}</span>
         <span class="estado-chip estado--{{ p.estado }}">
@@ -20,7 +19,6 @@
         </span>
       </div>
 
-      <!-- Datos -->
       <section class="block">
         <div class="info-row">
           <ng-container [ngComponentOutlet]="icons.user" [ngComponentOutletInputs]="iconField" />
@@ -68,7 +66,6 @@
   }
 </aside>
 
-<!-- Confirmar anulación -->
 @if (confirmVoid()) {
   <div class="overlay" (click)="cancelarAnular()">
     <div class="modal" (click)="$event.stopPropagation()">

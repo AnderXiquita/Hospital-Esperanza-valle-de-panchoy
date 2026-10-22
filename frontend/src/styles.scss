@@ -112,7 +112,6 @@
   scrollbar-color: rgba(15, 17, 23, 0.18) transparent;
 }
 
-// Webkit (Chrome, Edge, Safari)
 ::-webkit-scrollbar        { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track  { background: transparent; }
 ::-webkit-scrollbar-thumb  {
@@ -121,8 +120,7 @@
   &:hover { background: rgba(15, 17, 23, 0.30); }
 }
 
-// Ocultar el botón nativo de "mostrar contraseña" de Edge/Chrome
-// para que no choque con nuestro botón custom del pwd-wrap
+// Hide Edge/Chrome's built-in show-password button; we have our own.
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
@@ -132,18 +130,14 @@ input::-webkit-strong-password-auto-fill-button {
   display: none !important;
 }
 
-// El input dentro de pwd-wrap no debe mostrar su propio focus ring —
-// el foco lo maneja el contenedor pwd-wrap entero con :focus-within.
-// Chrome aplica :focus-visible con mayor especificidad que los estilos
-// encapsulados de Angular, por eso se necesita esta regla global.
+// The focus ring belongs to the whole pwd-wrap (:focus-within). This has to be global
+// because Chrome's :focus-visible beats Angular's scoped styles.
 .pwd-wrap input:focus,
 .pwd-wrap input:focus-visible {
   outline: none !important;
   box-shadow: none !important;
 }
 
-// El elemento raíz se usa directamente para fade login↔app.
-// La transición vive aquí (global) porque AppComponent ya no tiene wrapper div.
 app-root {
   display: block;
   min-height: 100vh;
@@ -152,7 +146,7 @@ app-root {
 }
 
 
-// Previene que el window haga scroll → la barra del navegador mobile no cambia nunca
+// Stop the window itself from scrolling so the mobile browser bar never jumps.
 html {
   height: 100%;
   overflow: hidden;
@@ -170,9 +164,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-// Evita el "rubber band" / overscroll bounce en todos los drawers:
-// sin esto, al llegar al límite del scroll el navegador mobile empuja
-// el contenido brevemente y se ve como si el diseño se rompiera.
+// No overscroll bounce in drawers; on mobile it made the layout look broken.
 .drawer__body {
   overscroll-behavior: none;
 }

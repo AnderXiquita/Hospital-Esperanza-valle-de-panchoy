@@ -9,7 +9,7 @@ function queryStr(raw: unknown): string {
   return typeof raw === 'string' ? raw : '';
 }
 
-// Mensaje específico para violación de constraint único de Prisma (P2002)
+// Prisma unique-constraint error (P2002): tell the user which field is duplicated.
 function mensajeDuplicado(err: Error): string | null {
   if (!err.message.includes('Unique constraint')) return null;
   const m = err.message.toLowerCase();

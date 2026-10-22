@@ -1,7 +1,6 @@
-// Orden de presentación de días: lunes a domingo (0=domingo .. 6=sábado)
+// Monday to Sunday, using getDay() numbers (0 is Sunday).
 export const DIAS_ORDEN = [1, 2, 3, 4, 5, 6, 0];
 
-// Genera los slots de 30 min entre horarioApertura y horarioCierre
 export function generarHoras(horarioApertura = '07:00', horarioCierre = '19:30'): string[] {
   const [sh, sm] = horarioApertura.split(':').map(Number);
   const [eh, em] = horarioCierre.split(':').map(Number);

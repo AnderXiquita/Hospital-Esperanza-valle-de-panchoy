@@ -12,7 +12,6 @@
   @if (u(); as p) {
     <div class="drawer__body">
 
-      <!-- Hero -->
       <div class="hero">
         <div class="hero__avatar">{{ iniciales }}</div>
         <h2 class="hero__name">{{ p.nombre }} {{ p.apellido }}</h2>
@@ -22,7 +21,6 @@
         </span>
       </div>
 
-      <!-- Quick stats -->
       <div class="quickstats">
         <div class="quickstat">
           <span class="quickstat__label">{{ 'pacientes.field_age' | translate }}</span>
@@ -38,7 +36,6 @@
         </div>
       </div>
 
-      <!-- Información clínica -->
       <section class="block">
         <p class="block__title">{{ 'pacientes.block_clinical' | translate }}</p>
         <div class="kv">
@@ -55,7 +52,6 @@
         </div>
       </section>
 
-      <!-- Contacto -->
       <section class="block">
         <p class="block__title">{{ 'pacientes.block_contact' | translate }}</p>
         <div class="info-list">
@@ -81,7 +77,6 @@
         </div>
       </section>
 
-      <!-- Datos personales -->
       <section class="block">
         <p class="block__title">{{ 'pacientes.section_personal' | translate }}</p>
         <div class="data-grid">
@@ -104,7 +99,6 @@
         </div>
       </section>
 
-      <!-- Seguro -->
       @if (tieneSeguro) {
         <section class="block">
           <p class="block__title">{{ 'pacientes.block_insurance' | translate }}</p>
@@ -121,7 +115,6 @@
         </section>
       }
 
-      <!-- Observaciones -->
       @if (p.observaciones) {
         <section class="block">
           <p class="block__title">{{ 'pacientes.block_notes' | translate }}</p>
@@ -129,7 +122,6 @@
         </section>
       }
 
-      <!-- Acciones -->
       <section class="actions">
         <button class="action" type="button" (click)="pedirEditar()">
           <ng-container [ngComponentOutlet]="icons.pencil" [ngComponentOutletInputs]="iconAction" />
@@ -151,7 +143,6 @@
   }
 </aside>
 
-<!-- Confirmación toggle -->
 @if (confirmToggle()) {
   <div class="overlay" (click)="cancelarToggle()">
     <div class="modal" (click)="$event.stopPropagation()">

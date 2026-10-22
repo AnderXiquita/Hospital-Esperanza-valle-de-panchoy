@@ -1,6 +1,5 @@
 <div class="servicios">
 
-  <!-- Header -->
   <div class="servicios__header">
     <div class="servicios__heading">
       <p class="servicios__eyebrow">{{ 'servicios.eyebrow' | translate }}</p>
@@ -15,7 +14,6 @@
     </button>
   </div>
 
-  <!-- Banda de métricas -->
   <div class="metrics">
     <div class="metric">
       <div class="metric__icon">
@@ -55,7 +53,6 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-box">
       <ng-container *ngComponentOutlet="icon('search'); inputs: iconInputs" />
@@ -91,7 +88,6 @@
     </div>
   </div>
 
-  <!-- Estados -->
   @if (cargando()) {
     <div class="panel">
       <div class="state"><span class="spinner"></span><span>{{ 'servicios.loading' | translate }}</span></div>
@@ -111,8 +107,6 @@
       </div>
     </div>
   } @else {
-
-    <!-- Vista TABLA -->
     @if (vista() === 'tabla') {
       <div class="panel">
         <div class="table-scroll-wrap">
@@ -174,7 +168,6 @@
       </div>
     }
 
-    <!-- Vista TARJETAS (catálogo) -->
     @if (vista() === 'tarjetas') {
       <div class="cards">
         @for (s of servicios(); track s.id) {
@@ -220,7 +213,6 @@
   }
 </div>
 
-<!-- Drawer: detalle -->
 @if (detailOpen() && detailServicio(); as ds) {
   <app-servicio-detail-drawer
     [servicio]="ds"
@@ -230,7 +222,6 @@
   />
 }
 
-<!-- Drawer: crear / editar -->
 @if (formOpen()) {
   <app-servicio-form-drawer
     [servicio]="formServicio()"

@@ -46,7 +46,6 @@ $ink:  #0f1117;
   to   { transform: translateX(100%); }
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
 .drawer__head {
   display: flex;
   align-items: flex-start;
@@ -89,7 +88,6 @@ $ink:  #0f1117;
   &--danger:hover { color: var(--color-error); background: var(--color-error-bg); }
 }
 
-// ── Body ──────────────────────────────────────────────────────────────────────
 .drawer__body {
   flex: 1;
   overflow-y: auto;
@@ -99,7 +97,6 @@ $ink:  #0f1117;
   gap: var(--space-8);
 }
 
-// Identidad (avatar + preview)
 .identity {
   display: flex;
   align-items: center;
@@ -141,7 +138,6 @@ $ink:  #0f1117;
   color: var(--color-text-secondary);
 }
 
-// ── Secciones ─────────────────────────────────────────────────────────────────
 .section {
   display: flex;
   flex-direction: column;
@@ -185,7 +181,6 @@ $ink:  #0f1117;
   margin: -4px 0 0;
 }
 
-// ── Campos ────────────────────────────────────────────────────────────────────
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -264,7 +259,6 @@ $ink:  #0f1117;
   ng-component { display: flex; }
 }
 
-// ── Horarios ──────────────────────────────────────────────────────────────────
 .schedule-list {
   display: flex;
   flex-direction: column;
@@ -306,7 +300,6 @@ $ink:  #0f1117;
   &--day { flex: 1; min-width: 0; width: auto; }
 }
 
-// ── Botones ───────────────────────────────────────────────────────────────────
 .btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -334,7 +327,6 @@ $ink:  #0f1117;
   padding: var(--space-3) var(--space-4);
 }
 
-// ── Footer ────────────────────────────────────────────────────────────────────
 .drawer__foot {
   display: flex;
   justify-content: flex-end;

@@ -11,7 +11,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const isApiRequest = req.url.startsWith(environment.apiUrl);
 
-  // Attach Bearer token and credentials to API requests
   let outReq = isApiRequest ? req.clone({ withCredentials: true }) : req;
   const token = authService.getAccessToken();
   if (token && isApiRequest) {
@@ -20,7 +19,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(outReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      // On 401 outside auth routes, try to refresh the token once
       if (error.status === 401 && !req.url.includes('/auth/')) {
         return from(authService.refreshToken()).pipe(
           switchMap(newToken => {

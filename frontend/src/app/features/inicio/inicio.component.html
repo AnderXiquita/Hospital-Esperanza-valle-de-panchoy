@@ -1,6 +1,5 @@
 <div class="inicio">
 
-  <!-- ── 1. Hero ─────────────────────────────────────────────────────────── -->
   <section class="hero">
     <div class="hero__content">
       <p class="eyebrow">{{ 'inicio.hero_eyebrow' | translate: { year: foundedYear } }}</p>
@@ -31,12 +30,11 @@
     </div>
 
     <figure class="hero__media">
-      <img src="/assets/images/login/img3.jpg" alt="{{ 'inicio.hero_img_alt' | translate }}" class="hero__img">
+      <img src="/assets/images/img-landing.jpg" alt="{{ 'inicio.hero_img_alt' | translate }}" class="hero__img">
       <figcaption class="hero__caption">{{ 'inicio.hero_img_caption' | translate }}</figcaption>
     </figure>
   </section>
 
-  <!-- ── 2. Cifras ───────────────────────────────────────────────────────── -->
   <section class="stats" [attr.aria-busy]="loading()">
     <div class="stat">
       <span class="stat__value">{{ yearsOfService }}</span>
@@ -58,7 +56,6 @@
     </div>
   </section>
 
-  <!-- ── 3. Quiénes somos ────────────────────────────────────────────────── -->
   <section class="block">
     <header class="block__aside">
       <p class="eyebrow">{{ 'inicio.about_eyebrow' | translate }}</p>
@@ -83,7 +80,6 @@
     </div>
   </section>
 
-  <!-- ── 4. Valores ──────────────────────────────────────────────────────── -->
   <section class="block">
     <header class="block__aside">
       <p class="eyebrow">{{ 'inicio.valores_eyebrow' | translate }}</p>
@@ -106,8 +102,6 @@
     </div>
   </section>
 
-  <!-- ── 5. Equipo médico ────────────────────────────────────────────────── -->
-  <!-- Full-width spotlight on a soft panel: deliberately breaks the title-left rhythm of the other sections -->
   <section class="team">
     <header class="team__header">
       <div>
@@ -133,7 +127,7 @@
       </div>
     } @else {
       @if (destacado(); as d) {
-        <!-- @for over a single item re-creates the node on change, which replays the fade-in -->
+        <!-- Looping over a single item recreates the node when it changes, which replays the fade-in. -->
         @for (m of [d]; track m.id) {
           <article class="spotlight" aria-live="polite">
             <figure class="portrait">
@@ -197,7 +191,6 @@
     }
   </section>
 
-  <!-- ── 6. Especialidades y servicios ───────────────────────────────────── -->
   <section class="block">
     <header class="block__aside">
       <p class="eyebrow">{{ 'inicio.servicios_eyebrow' | translate }}</p>

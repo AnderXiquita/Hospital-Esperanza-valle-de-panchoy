@@ -6,7 +6,7 @@ import logger from '../../utils/logger';
 import { LoginInput, ChangePasswordInput, UpdateProfileInput } from './auth.schema';
 import { LoginResponse } from './auth.types';
 
-// Sliding window: each refresh issues a new token, so the session only ends after this much inactivity
+// Each refresh issues a new token, so this is really 8h without using the app, not 8h total.
 export const REFRESH_EXPIRY_HOURS = 8;
 
 function generateAccessToken(userId: number, rol: string): string {
@@ -78,7 +78,8 @@ export async function refresh(
   const record = await prisma.refresh_tokens.findUnique({ where: { token_hash: hash } });
 
   if (!record || record.usado || record.expires_at < new Date()) {
-    // Posible reutilización de token robado — invalidar todos los del usuario
+    // A used token showing up again probably means it was stolen, so we kill every
+    // session for that user.
     if (record?.usado) {
       await prisma.refresh_tokens.deleteMany({ where: { usuario_id: record.usuario_id } });
       logger.warn({ event: 'REFRESH_TOKEN_REUSE', userId: record.usuario_id });
@@ -143,7 +144,7 @@ export async function changePassword(
   const hash = await bcrypt.hash(input.newPassword, 12);
   await prisma.usuarios.update({ where: { id: userId }, data: { password_hash: hash } });
 
-  // Invalidar todos los refresh tokens del usuario para forzar nuevo login
+  // Changing the password logs the user out everywhere else.
   await prisma.refresh_tokens.deleteMany({ where: { usuario_id: userId } });
 
   logger.info({ event: 'PASSWORD_CHANGED', userId });

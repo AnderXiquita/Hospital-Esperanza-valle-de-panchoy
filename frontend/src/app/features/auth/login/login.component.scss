@@ -1,11 +1,9 @@
-// ── Layout ───────────────────────────────────────────────────────────────────
 .login-layout {
   display: flex;
   min-height: 100vh;
   overflow: hidden;
 }
 
-// ── Panel izquierdo ──────────────────────────────────────────────────────────
 .panel-left {
   display: none;
   position: relative;
@@ -58,7 +56,6 @@
   filter: drop-shadow(0 1px 6px rgba(0,0,0,0.4));
 }
 
-// ── Bienvenida + tip ─────────────────────────────────────────────────────────
 .panel-left__tip {
   position: absolute;
   top: var(--space-8);
@@ -133,7 +130,6 @@
   }
 }
 
-// ── Panel derecho ────────────────────────────────────────────────────────────
 .panel-right {
   flex: 1;
   display: flex;
@@ -150,7 +146,6 @@
   max-width: 360px;
 }
 
-// ── Cabecera ─────────────────────────────────────────────────────────────────
 .form-header {
   position: absolute;
   top: var(--space-8);
@@ -184,7 +179,6 @@
   margin: 0;
 }
 
-// ── Error ────────────────────────────────────────────────────────────────────
 .form-error {
   display: flex;
   align-items: center;
@@ -199,7 +193,6 @@
   line-height: 1.5;
 }
 
-// ── Título y saludo ───────────────────────────────────────────────────────────
 .form-greeting-block {
   margin-bottom: var(--space-6);
   padding-bottom: var(--space-5);
@@ -228,7 +221,6 @@
   margin: 0;
 }
 
-// ── Campos ───────────────────────────────────────────────────────────────────
 .form-field {
   margin-bottom: var(--space-4);
 }
@@ -276,7 +268,6 @@
   }
 }
 
-// Wrapper solo para el campo password + ojo
 .password-wrapper {
   position: relative;
 
@@ -315,7 +306,6 @@
   padding-left: 2px;
 }
 
-// ── Botón submit ─────────────────────────────────────────────────────────────
 .btn-submit {
   width: 100%;
   background: #0f1117;
@@ -361,7 +351,6 @@
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ── Barra inferior ────────────────────────────────────────────────────────────
 .bottom-bar {
   position: absolute;
   bottom: var(--space-5);
@@ -393,7 +382,6 @@
   user-select: none;
 }
 
-// ── Selector de idioma ───────────────────────────────────────────────────────
 .lang-switcher {
   display: flex;
   align-items: center;
@@ -429,10 +417,8 @@
   user-select: none;
 }
 
-// ── Tips mobile (hidden on desktop) ──────────────────────────────────────────
 .mobile-tip-section { display: none; }
 
-// ── Mobile ────────────────────────────────────────────────────────────────────
 @media (max-width: 1023px) {
   .login-layout {
     flex-direction: column;
@@ -440,7 +426,7 @@
     min-height: unset;
   }
 
-  // Imagen fija cubriendo toda la pantalla — así el blur funciona en todo el card
+  // Fixed and full-screen so the blur behind the card has image everywhere, not just at the top.
   .panel-left {
     display: block;
     position: fixed;
@@ -451,7 +437,6 @@
     flex-shrink: 0;
   }
 
-  // Logo centrado verticalmente en el área visible de imagen (0 → 44vh)
   .panel-left__branding {
     bottom: auto;
     left: 50%;
@@ -466,7 +451,6 @@
 
   .panel-left__dots { display: none; }
 
-  // Card con glassmorphism — imagen visible por TODA la superficie del card
   .panel-right {
     position: relative;
     z-index: 10;
@@ -485,7 +469,6 @@
     max-width: 100%;
   }
 
-  // Inputs con tinte glass — sin borde azul de focus
   .form-field__input {
     background: rgba(255, 255, 255, 0.42);
     border: 1.5px solid rgba(0, 0, 0, 0.08);
@@ -506,7 +489,6 @@
     background: rgba(255, 255, 255, 0.50);
   }
 
-  // Texto del footer (privacidad, contacto, idioma)
   .panel-footer__link {
     color: var(--color-text-secondary);
     &:hover { color: var(--color-text-primary); }
@@ -530,7 +512,6 @@
     }
   }
 
-  // Tips con separación clara del selector de idioma
   .mobile-tip-section {
     display: flex;
     flex-direction: column;
@@ -560,7 +541,6 @@
     &.is-hidden { opacity: 0; }
   }
 
-  // Logo color y título ocultos en mobile
   .form-header { display: none; }
   .form-title { display: none; }
   .form-greeting-sub { display: none; }
@@ -578,7 +558,6 @@
     margin-bottom: var(--space-5);
   }
 
-  // Barra inferior: flujo normal, centrada
   .bottom-bar {
     position: static;
     flex-direction: column;
@@ -592,12 +571,10 @@
   .panel-footer { justify-content: center; }
 }
 
-// El logo blanco solo es visible en mobile (se oculta en desktop)
 @media (min-width: 1024px) {
   .panel-left__logo-img { display: none; }
 }
 
-// ── Modal Privacidad y Términos ───────────────────────────────────────────────
 .privacy-backdrop {
   position: fixed;
   inset: 0;
@@ -709,7 +686,6 @@
   &:hover { background: #20242e; }
 }
 
-// El link de footer también puede ser un button
 .panel-footer__link {
   background: none;
   border: none;

@@ -1,6 +1,5 @@
 <div class="nf">
 
-  <!-- Loading -->
   @if (cargando()) {
     <div class="nf__loading">
       <div class="skeleton skeleton--nav"></div>
@@ -11,8 +10,6 @@
   }
 
   @if (!cargando()) {
-
-    <!-- Nav: back + save, flotante sobre el fondo -->
     <div class="nf__nav">
       <button class="nf__back" (click)="volver()">
         <ng-container [ngComponentOutlet]="icons['back']" [ngComponentOutletInputs]="iconSm" />
@@ -43,7 +40,6 @@
       </div>
     </div>
 
-    <!-- Card de contexto del paciente -->
     <div class="nf__patient-card">
       <div class="nf__patient-info">
         <div class="nf__patient-label">
@@ -64,7 +60,6 @@
       </div>
     </div>
 
-    <!-- ── SECCIÓN 1: Signos vitales ── -->
     <div class="nf__section">
       <div class="nf__section-head">
         <ng-container [ngComponentOutlet]="icons['vitals']" [ngComponentOutletInputs]="iconSm" />
@@ -162,7 +157,6 @@
       }
     </div>
 
-    <!-- ── SECCIÓN 2: Consulta ── -->
     <div class="nf__section">
       <div class="nf__section-head">
         <ng-container [ngComponentOutlet]="icons['consulta']" [ngComponentOutletInputs]="iconSm" />
@@ -200,7 +194,6 @@
       </label>
     </div>
 
-    <!-- ── SECCIÓN 3: Diagnóstico ── -->
     <div class="nf__section">
       <div class="nf__section-head">
         <ng-container [ngComponentOutlet]="icons['dx']" [ngComponentOutletInputs]="iconSm" />
@@ -242,7 +235,6 @@
       </div>
     </div>
 
-    <!-- ── SECCIÓN 4: Plan de tratamiento ── -->
     <div class="nf__section">
       <div class="nf__section-head">
         <ng-container [ngComponentOutlet]="icons['meds']" [ngComponentOutletInputs]="iconSm" />
@@ -310,7 +302,6 @@
       </label>
     </div>
 
-    <!-- Footer -->
     <div class="nf__footer">
       @if (errorMsg()) {
         <span class="nf__error-inline">{{ errorMsg() }}</span>

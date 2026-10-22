@@ -10,7 +10,6 @@ $ink:  #0f1117;
   @media (max-width: 600px) { padding: 16px 0; gap: var(--space-4); }
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
 .hist__header {
   display: flex;
   align-items: flex-end;
@@ -39,7 +38,6 @@ $ink:  #0f1117;
 
 .hist__subtitle { font-size: var(--text-xs); color: var(--color-text-secondary); margin: 0; }
 
-// ── Métricas ──────────────────────────────────────────────────────────────────
 .metrics {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -87,7 +85,6 @@ $ink:  #0f1117;
 
 .metric__label { font-size: var(--text-xs); color: rgba(255, 255, 255, 0.5); }
 
-// ── Toolbar ───────────────────────────────────────────────────────────────────
 .toolbar {
   display: flex;
   align-items: center;
@@ -160,7 +157,6 @@ $ink:  #0f1117;
   &.active { background: var(--color-bg-surface); color: $ink; box-shadow: var(--shadow-xs); }
 }
 
-// ── Panel / tabla ─────────────────────────────────────────────────────────────
 .panel {
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
@@ -221,7 +217,6 @@ $ink:  #0f1117;
 
 .td-secondary { color: var(--color-text-secondary); }
 
-// ── Avatar ────────────────────────────────────────────────────────────────────
 .avatar {
   width: 36px;
   height: 36px;
@@ -243,7 +238,6 @@ $ink:  #0f1117;
 .cell-patient__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .cell-patient__name { font-size: var(--text-sm); font-weight: var(--font-medium); color: var(--color-text-primary); }
 
-// ── Segmented filter ──────────────────────────────────────────────────────────
 .segmented {
   display: inline-flex;
   background: var(--color-bg-subtle);
@@ -269,7 +263,6 @@ $ink:  #0f1117;
   &.active { background: var(--color-bg-surface); color: var(--color-text-primary); font-weight: var(--font-semibold); box-shadow: var(--shadow-xs); }
 }
 
-// ── Status dot ────────────────────────────────────────────────────────────────
 .status {
   display: inline-flex;
   align-items: center;
@@ -292,7 +285,6 @@ $ink:  #0f1117;
   margin-top: -4px;
 }
 
-// ── Badge consultas ───────────────────────────────────────────────────────────
 .notas-badge {
   display: inline-flex;
   align-items: center;
@@ -304,7 +296,6 @@ $ink:  #0f1117;
   ng-component { display: inline-flex; }
 }
 
-// ── Tarjetas ──────────────────────────────────────────────────────────────────
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -366,7 +357,6 @@ $ink:  #0f1117;
 
 .pcard__meta { font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; }
 
-// ── Estado vacío ──────────────────────────────────────────────────────────────
 .empty-state {
   display: flex;
   flex-direction: column;

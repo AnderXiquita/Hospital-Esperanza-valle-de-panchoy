@@ -120,10 +120,8 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     (_, i) => this._horario.start + i
   );
 
-  // ── Desktop week state ────────────────────────────────────────────────────────
   weekStart = signal(this.mondayOf(new Date()));
 
-  // ── Mobile month state ────────────────────────────────────────────────────────
   isMobile = signal(typeof window !== 'undefined' && window.innerWidth <= 960);
   mobileMes = signal(this.primerDiaMes(new Date()));
   mobileDiaSeleccionado = signal<string | null>(isoLocal(new Date()));
@@ -141,7 +139,6 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     }, 150);
   };
 
-  // ── Shared data ───────────────────────────────────────────────────────────────
   citas = signal<Cita[]>([]);
   cargando = signal(false);
   error = signal('');
@@ -149,7 +146,6 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
   estadoFiltro = signal('');
   medicoOptions = signal<DropdownOption[]>([{ value: '', label: '' }]);
 
-  // ── Desktop computed ──────────────────────────────────────────────────────────
   readonly dias = computed<DiaCol[]>(() => {
     this.locale.locale();
     const start = this.weekStart();
@@ -185,7 +181,6 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     });
   });
 
-  // ── Mobile computed ───────────────────────────────────────────────────────────
   readonly diasMesGrid = computed<DiaMes[]>(() => {
     const mes = this.mobileMes();
     const primerDia = new Date(mes.getFullYear(), mes.getMonth(), 1);
@@ -385,7 +380,6 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ── Desktop navigation ────────────────────────────────────────────────────────
   async semanaAnterior(): Promise<void> {
     this.weekStart.set(this.addDays(this.weekStart(), -7));
     await this.cargar();
@@ -405,7 +399,6 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
     await this.cargar();
   }
 
-  // ── Mobile navigation ─────────────────────────────────────────────────────────
   async mesAnterior(): Promise<void> {
     const mes = this.mobileMes();
     this.mobileMes.set(new Date(mes.getFullYear(), mes.getMonth() - 1, 1));

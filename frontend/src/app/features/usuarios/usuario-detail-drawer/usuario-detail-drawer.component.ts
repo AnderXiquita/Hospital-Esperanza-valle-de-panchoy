@@ -60,12 +60,10 @@ export class UsuarioDetailDrawerComponent implements OnInit {
   u = signal<Usuario | null>(null);
   cerrando = signal(false);
 
-  // toggle
   confirmToggle = signal(false);
   toggleSaving = signal(false);
   toggleError = signal('');
 
-  // reset password
   resetOpen = signal(false);
   resetPwd = signal('');
   resetSubmitted = signal(false);
@@ -90,7 +88,6 @@ export class UsuarioDetailDrawerComponent implements OnInit {
     return ((u.nombre[0] ?? '') + (u.apellido[0] ?? '')).toUpperCase();
   }
 
-  // No puedes desactivar tu propia cuenta
   get esPropia(): boolean {
     return this.u()?.id === this.auth.user()?.id;
   }
@@ -106,7 +103,6 @@ export class UsuarioDetailDrawerComponent implements OnInit {
     if (u) this.editar.emit(u);
   }
 
-  // --- toggle ---
   pedirToggle(): void {
     this.toggleError.set('');
     this.confirmToggle.set(true);
@@ -139,7 +135,6 @@ export class UsuarioDetailDrawerComponent implements OnInit {
     }
   }
 
-  // --- reset password ---
   abrirReset(): void {
     this.resetPwd.set('');
     this.resetSubmitted.set(false);

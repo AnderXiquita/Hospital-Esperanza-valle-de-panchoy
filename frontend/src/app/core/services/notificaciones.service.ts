@@ -55,7 +55,7 @@ export class NotificacionesService implements OnDestroy {
     this.http.get<{ count: number }>(`${this.api}/unread-count`).subscribe({
       next: ({ count }) => {
         if (!this.initialized) {
-          // Primera llamada al entrar: registrar IDs existentes sin mostrar toasts
+          // First poll after login: just remember what's there, don't toast old notifications.
           this.initialized = true;
           this.unreadCount.set(count);
           if (count > 0) this.registrarExistentes();
@@ -107,7 +107,6 @@ export class NotificacionesService implements OnDestroy {
   }
 
   removeToast(id: number): void {
-    // Inicia animación de salida, luego elimina del DOM tras 220ms
     this.exitingIds.update(s => new Set([...s, id]));
     setTimeout(() => {
       this.toasts.update(curr => curr.filter(t => t.id !== id));

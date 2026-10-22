@@ -36,7 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
         if (!isTopLevel) return;
         clearTimeout(this.fadeTimer);
         this.navStartMs = Date.now();
-        // Manipulación directa del DOM: bypasa change detection y actualiza inmediatamente
+        // Set the style directly so the fade starts right away instead of waiting for
+        // change detection.
         this.host.style.opacity = '0';
       } else if (event instanceof NavigationEnd) {
         if (this.host.style.opacity !== '0') return;

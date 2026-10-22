@@ -71,7 +71,6 @@ export class PacientesListComponent implements OnInit {
 
   stats = signal<PacienteStats | null>(null);
 
-  // --- drawers ---
   formOpen = signal(false);
   formPaciente = signal<Paciente | null>(null);
   detailOpen = signal(false);
@@ -144,7 +143,6 @@ export class PacientesListComponent implements OnInit {
     this.vista.set(v);
   }
 
-  // --- detalle ---
   abrirDetalle(p: Paciente): void {
     this.detailPaciente.set(p);
     this.detailOpen.set(true);
@@ -165,7 +163,6 @@ export class PacientesListComponent implements OnInit {
     await Promise.all([this.cargar(), this.cargarStats()]);
   }
 
-  // --- crear / editar ---
   abrirCrear(): void {
     this.formPaciente.set(null);
     this.formOpen.set(true);
@@ -186,7 +183,6 @@ export class PacientesListComponent implements OnInit {
     await Promise.all([this.cargar(), this.cargarStats()]);
   }
 
-  // --- helpers ---
   iniciales(p: Paciente): string {
     return ((p.nombre[0] ?? '') + (p.apellido[0] ?? '')).toUpperCase();
   }

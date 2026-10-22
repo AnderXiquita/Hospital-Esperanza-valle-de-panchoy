@@ -36,7 +36,6 @@ export interface NotaClinica {
   created_at: string;
   updated_at: string;
 
-  // Datos de contexto (joins)
   medico_nombre?: string;
   medico_apellido?: string;
   medico_especialidad?: string;

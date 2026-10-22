@@ -14,7 +14,6 @@
 
   <div class="drawer__body">
 
-    <!-- Paciente (autocompletado) -->
     <div class="field">
       <label>{{ 'citas.label_patient' | translate }} <span>*</span></label>
       @if (pacienteSel(); as p) {
@@ -59,7 +58,7 @@
       }
     </div>
 
-    <!-- Fecha — primero para filtrar médicos por día -->
+    <!-- Date goes first because it decides which doctors show up. -->
     <div class="field">
       <label>{{ 'citas.label_date' | translate }} <span>*</span></label>
       <app-date-field
@@ -72,7 +71,6 @@
       @if (submitted() && !fecha()) { <span class="field__err">{{ 'citas.err_required' | translate }}</span> }
     </div>
 
-    <!-- Médico — filtrado por día seleccionado -->
     <div class="field">
       <label>{{ 'citas.label_doctor' | translate }} <span>*</span></label>
       <app-dropdown
@@ -85,7 +83,6 @@
       @if (submitted() && !medicoId()) { <span class="field__err">{{ 'citas.err_required' | translate }}</span> }
     </div>
 
-    <!-- Servicio -->
     <div class="field">
       <label>{{ 'citas.label_service' | translate }} <span>*</span></label>
       <app-dropdown [options]="servicioOptions()" [ngModel]="servicioId()" (ngModelChange)="onServicioChange($event)"
@@ -93,7 +90,6 @@
       @if (submitted() && !servicioId()) { <span class="field__err">{{ 'citas.err_required' | translate }}</span> }
     </div>
 
-    <!-- Hora — slots disponibles -->
     <div class="field">
       <label>{{ 'citas.label_time' | translate }} <span>*</span></label>
       <app-dropdown
@@ -116,7 +112,6 @@
       </div>
     }
 
-    <!-- Motivo -->
     <div class="field">
       <label>{{ 'citas.label_reason' | translate }}</label>
       <textarea [ngModel]="motivo()" (ngModelChange)="motivo.set($event)" rows="3" [placeholder]="'citas.ph_reason' | translate"></textarea>

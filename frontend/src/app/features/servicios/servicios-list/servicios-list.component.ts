@@ -70,7 +70,6 @@ export class ServiciosListComponent implements OnInit {
 
   stats = signal<ServicioStats | null>(null);
 
-  // --- drawers ---
   formOpen = signal(false);
   formServicio = signal<Servicio | null>(null);
   detailOpen = signal(false);
@@ -153,7 +152,6 @@ export class ServiciosListComponent implements OnInit {
     this.vista.set(v);
   }
 
-  // --- detalle ---
   abrirDetalle(s: Servicio): void {
     this.detailServicio.set(s);
     this.detailOpen.set(true);
@@ -174,7 +172,6 @@ export class ServiciosListComponent implements OnInit {
     await Promise.all([this.cargar(), this.cargarStats()]);
   }
 
-  // --- crear / editar ---
   abrirCrear(): void {
     this.formServicio.set(null);
     this.formOpen.set(true);
@@ -195,7 +192,6 @@ export class ServiciosListComponent implements OnInit {
     await Promise.all([this.cargar(), this.cargarStats()]);
   }
 
-  // --- helpers ---
   money(value: string | number): string {
     const n = typeof value === 'number' ? value : Number(value);
     if (isNaN(n)) return '0.00';

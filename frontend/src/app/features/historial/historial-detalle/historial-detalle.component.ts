@@ -63,7 +63,6 @@ export class HistorialDetalleComponent implements OnInit {
         this.notasSvc.obtenerPorPaciente(pid),
         this.pacientesSvc.obtener(pid),
       ]);
-      // All entries start collapsed — user chooses what to expand
       this.notas.set(notas.map((n) => ({ ...n, expanded: false })));
       this.pacienteNom.set(`${paciente.nombre} ${paciente.apellido}`);
       const edad = this.calcEdad(paciente.fecha_nacimiento);
@@ -142,7 +141,6 @@ export class HistorialDetalleComponent implements OnInit {
         doc.setTextColor(30);
       };
 
-      // ── Header ──────────────────────────────────────────────────────────────
       doc.setFontSize(13);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(20, 76, 86);
@@ -154,7 +152,6 @@ export class HistorialDetalleComponent implements OnInit {
       doc.text('NOTA CLÍNICA', W / 2, y, { align: 'center' });
       rule(4);
 
-      // ── Paciente ────────────────────────────────────────────────────────────
       addLine(this.pacienteNom(), 12, true);
       if (this.pacienteMeta()) addLine(this.pacienteMeta(), 9, false, 100);
       y += 2;
@@ -170,7 +167,6 @@ export class HistorialDetalleComponent implements OnInit {
       if (nota.servicio_nombre) addLine(`Servicio: ${nota.servicio_nombre}`, 9, false, 80);
       rule();
 
-      // ── Signos vitales ──────────────────────────────────────────────────────
       if (this.tieneSignos(nota)) {
         section('Signos Vitales');
         const vitales: string[] = [];
@@ -184,7 +180,6 @@ export class HistorialDetalleComponent implements OnInit {
         y += 2;
       }
 
-      // ── SOAP ────────────────────────────────────────────────────────────────
       const campos: Array<[string, string | null]> = [
         ['Motivo de Consulta', nota.motivo_consulta],
         ['Anamnesis / Historia Actual', nota.anamnesis],
@@ -201,7 +196,6 @@ export class HistorialDetalleComponent implements OnInit {
         y += lines.length * 5 + 4;
       }
 
-      // ── Diagnóstico ─────────────────────────────────────────────────────────
       if (nota.diagnostico_principal || nota.diagnosticos_secundarios.length) {
         section('Diagnóstico');
         if (nota.diagnostico_principal) addLine(nota.diagnostico_principal, 10, true);
@@ -209,14 +203,12 @@ export class HistorialDetalleComponent implements OnInit {
         y += 2;
       }
 
-      // ── Medicamentos ────────────────────────────────────────────────────────
       if (nota.medicamentos.length) {
         section('Medicamentos Recetados');
         for (const m of nota.medicamentos) addLine(this.medLabel(m), 9);
         y += 2;
       }
 
-      // ── Indicaciones y seguimiento ──────────────────────────────────────────
       if (nota.indicaciones) {
         section('Indicaciones Generales');
         const lines = doc.splitTextToSize(nota.indicaciones, W - M * 2) as string[];
@@ -234,7 +226,6 @@ export class HistorialDetalleComponent implements OnInit {
         addLine(nota.notas_adicionales, 9, false, 100);
       }
 
-      // ── Footer ──────────────────────────────────────────────────────────────
       const total = doc.internal.pages.length - 1;
       for (let p = 1; p <= total; p++) {
         doc.setPage(p);

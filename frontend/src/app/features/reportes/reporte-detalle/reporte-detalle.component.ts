@@ -106,7 +106,6 @@ export class ReporteDetalleComponent implements OnInit {
   private _hasta = signal(localIsoDate());
   loading        = signal(false);
 
-  // Puentes signal ↔ ngModel para DateFieldComponent
   get desdeModel(): string | null { return this._desde(); }
   set desdeModel(v: string | null) { if (v) this._desde.set(v); }
 

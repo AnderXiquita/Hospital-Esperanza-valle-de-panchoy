@@ -11,7 +11,6 @@ import {
 
 const router: Router = Router();
 
-// Todos los endpoints solo accesibles por admin
 router.get('/resumen',   authenticate, authorize('admin'), getResumen);
 router.get('/citas',     authenticate, authorize('admin'), getReporteCitas);
 router.get('/ingresos',  authenticate, authorize('admin'), getReporteIngresos);

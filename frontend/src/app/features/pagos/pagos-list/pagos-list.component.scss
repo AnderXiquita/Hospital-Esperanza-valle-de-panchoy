@@ -3,7 +3,6 @@ $ink:  #0f1117;
 
 .pagos { display: flex; flex-direction: column; gap: var(--space-5); @media (max-width: 600px) { gap: var(--space-4); } }
 
-// Header
 .pagos__header { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); }
 .pagos__heading { display: flex; flex-direction: column; gap: var(--space-1); }
 .pagos__eyebrow {
@@ -23,7 +22,6 @@ $ink:  #0f1117;
   &:active { background: #000; }
 }
 
-// Métricas
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -54,7 +52,6 @@ $ink:  #0f1117;
 }
 .metric__label { font-size: var(--text-xs); color: rgba(255, 255, 255, 0.5); }
 
-// Toolbar
 .toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .toolbar__filters { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .estado-dropdown { width: 200px; max-width: 200px; }
@@ -89,7 +86,6 @@ $ink:  #0f1117;
   &.active { background: var(--color-bg-surface); color: $ink; box-shadow: var(--shadow-xs); }
 }
 
-// Panel / tabla
 .panel {
   background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg);
   padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-3);
@@ -118,14 +114,12 @@ $ink:  #0f1117;
 .td-secondary { color: var(--color-text-secondary); }
 .td-amount { font-weight: var(--font-semibold); color: var(--color-text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-// Estado chip (dot + texto, sin pill de color)
 .estado-chip { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); color: var(--color-text-secondary); white-space: nowrap; }
 .estado-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-disabled); flex-shrink: 0; }
 .estado--pagado { color: var(--color-text-primary); .estado-dot { background: #2D9E6B; } }
 .estado--pendiente { color: var(--color-text-primary); .estado-dot { background: #D4A017; } }
 .estado--anulado { color: var(--color-text-tertiary); .estado-dot { background: var(--color-text-disabled); } }
 
-// Estados de carga / vacío
 .state {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2);
   padding: var(--space-12) var(--space-4); text-align: center; color: var(--color-text-secondary); font-size: var(--text-sm);
@@ -140,7 +134,6 @@ $ink:  #0f1117;
 .spinner { width: 16px; height: 16px; border: 2px solid var(--color-border-strong); border-top-color: $teal; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// Paginación
 .pagination {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
   padding-top: var(--space-3); border-top: 1px solid var(--color-border); flex-wrap: wrap;
@@ -158,7 +151,6 @@ $ink:  #0f1117;
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-// Tarjetas
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4); }
 .pcard {
   display: flex; flex-direction: column; gap: var(--space-3);

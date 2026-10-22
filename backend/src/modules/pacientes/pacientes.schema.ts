@@ -5,7 +5,6 @@ const generoEnum = z.enum(['masculino', 'femenino', 'otro']);
 const estadoCivilEnum = z.enum(['soltero', 'casado', 'union_libre', 'divorciado', 'viudo']);
 const tipoSangreEnum = z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
 
-// Campos opcionales del expediente, reutilizados en crear y actualizar
 const expedienteFields = {
   genero: generoEnum.optional(),
   estado_civil: estadoCivilEnum.optional(),

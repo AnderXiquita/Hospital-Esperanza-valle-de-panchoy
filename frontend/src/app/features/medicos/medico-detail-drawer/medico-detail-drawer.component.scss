@@ -46,7 +46,6 @@ $ink:  #0f1117;
   to   { transform: translateX(100%); }
 }
 
-// ── Top bar ───────────────────────────────────────────────────────────────────
 .topbar {
   display: flex;
   align-items: center;
@@ -79,7 +78,6 @@ $ink:  #0f1117;
   &:hover { color: var(--color-text-primary); background: var(--color-bg-subtle); }
 }
 
-// ── Estado de carga ───────────────────────────────────────────────────────────
 .state {
   flex: 1;
   display: flex;
@@ -104,7 +102,6 @@ $ink:  #0f1117;
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ── Body ──────────────────────────────────────────────────────────────────────
 .drawer__body {
   flex: 1;
   overflow-y: auto;
@@ -114,7 +111,6 @@ $ink:  #0f1117;
   gap: var(--space-8);
 }
 
-// Hero
 .hero {
   display: flex;
   flex-direction: column;
@@ -175,7 +171,6 @@ $ink:  #0f1117;
   }
 }
 
-// Quick stats
 .quickstats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -211,7 +206,6 @@ $ink:  #0f1117;
   text-overflow: ellipsis;
 }
 
-// ── Bloques ───────────────────────────────────────────────────────────────────
 .block {
   display: flex;
   flex-direction: column;
@@ -227,7 +221,6 @@ $ink:  #0f1117;
   margin: 0;
 }
 
-// Contacto
 .info-list {
   display: flex;
   flex-direction: column;
@@ -259,7 +252,6 @@ $ink:  #0f1117;
   margin-left: auto;
 }
 
-// Data grid
 .data-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -284,7 +276,6 @@ $ink:  #0f1117;
   font-weight: var(--font-medium);
 }
 
-// Biografía
 .bio {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
@@ -292,7 +283,6 @@ $ink:  #0f1117;
   margin: 0;
 }
 
-// ── Horarios ──────────────────────────────────────────────────────────────────
 .schedule {
   display: flex;
   flex-direction: column;
@@ -343,7 +333,6 @@ $ink:  #0f1117;
   white-space: nowrap;
 }
 
-// ── Acciones ──────────────────────────────────────────────────────────────────
 .actions { display: flex; flex-direction: column; gap: var(--space-2); }
 
 .action {

@@ -3,7 +3,6 @@ $teal:    #154C56;
 $teal-dk: #0c3740;
 $teal-md: #1a5c6b;
 
-// ── Shell ─────────────────────────────────────────────────────────────────────
 .det {
   display: flex;
   flex-direction: column;
@@ -11,7 +10,6 @@ $teal-md: #1a5c6b;
   max-width: 760px;
 }
 
-// ── Volver ────────────────────────────────────────────────────────────────────
 .det__nav { display: flex; }
 
 .back-btn {
@@ -27,7 +25,6 @@ $teal-md: #1a5c6b;
   &:hover { color: var(--color-text-primary); }
 }
 
-// ── Hero ──────────────────────────────────────────────────────────────────────
 .det__hero {
   display: flex;
   gap: var(--space-5);
@@ -87,7 +84,6 @@ $teal-md: #1a5c6b;
   margin-top: var(--space-1);
 }
 
-// ── Paneles ───────────────────────────────────────────────────────────────────
 .det__panels {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -125,7 +121,6 @@ $teal-md: #1a5c6b;
   margin: 0;
 }
 
-// ── Dates ─────────────────────────────────────────────────────────────────────
 .det__dates {
   display: flex;
   flex-direction: column;
@@ -149,7 +144,6 @@ $teal-md: #1a5c6b;
   text-align: right;
 }
 
-// ── Lista de contenido ────────────────────────────────────────────────────────
 .det__items {
   list-style: none;
   margin: 0;
@@ -181,7 +175,6 @@ $teal-md: #1a5c6b;
   &--teal-md { background: $teal-md; }
 }
 
-// ── Botón ─────────────────────────────────────────────────────────────────────
 .det__action { display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; }
 
 .gen-btn {
@@ -220,7 +213,6 @@ $teal-md: #1a5c6b;
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 520px) {
   .det__hero { flex-direction: column; gap: var(--space-3); }
   .det__hero-icon { width: 48px; height: 48px; }

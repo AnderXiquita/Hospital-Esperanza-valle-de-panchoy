@@ -1,4 +1,3 @@
-// Mostly ink and grays, like the rest of the system; color comes only from the photo
 .inicio {
   display: flex;
   flex-direction: column;
@@ -11,7 +10,6 @@
   }
 }
 
-// ── Shared pieces ─────────────────────────────────────────────────────────────
 .eyebrow {
   font-size: var(--text-xs);
   font-weight: var(--font-medium);
@@ -39,7 +37,6 @@
   to   { background-position: -200% 0; }
 }
 
-// ── 1. Hero ───────────────────────────────────────────────────────────────────
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
@@ -163,7 +160,6 @@
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
 }
 
-// ── 2. Cifras ─────────────────────────────────────────────────────────────────
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -202,8 +198,6 @@
   color: var(--color-text-tertiary);
 }
 
-// ── Blocks: title column on the left, content on the right ────────────────────
-// Every section reads the same way: heading first (left), then its content
 .block {
   display: grid;
   grid-template-columns: minmax(240px, 0.8fr) minmax(0, 2.2fr);
@@ -264,7 +258,6 @@
   color: var(--color-text-primary);
 }
 
-// ── 3. Misión y visión ────────────────────────────────────────────────────────
 .mv {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -306,12 +299,12 @@
   color: var(--color-text-secondary);
 }
 
-// ── 4. Valores ────────────────────────────────────────────────────────────────
 .valores-wrap {
   container: valores / inline-size;
 }
 
-// Five values never split evenly into rows, so: one row when wide, a plain list otherwise
+// Five items never split into even rows, so it's one row when there's room and a plain
+// list otherwise.
 .valores {
   list-style: none;
   margin: 0;
@@ -366,7 +359,6 @@
   color: var(--color-text-secondary);
 }
 
-// ── 5. Emergencias (bloque destacado, mismo negro que la tarjeta principal del tablero) ──
 .emergency {
   display: flex;
   flex-direction: column;
@@ -441,8 +433,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-// ── 5. Catálogo de servicios por categoría ────────────────────────────────────
-// Container queries: columns follow the real width of the block, which changes with the sidebar state
+// Container queries because the available width depends on the sidebar state, not just the window.
 .catalog {
   container: catalog / inline-size;
   display: grid;
@@ -545,8 +536,6 @@
   overflow: hidden;
 }
 
-// ── 5. Equipo médico ──────────────────────────────────────────────────────────
-// Soft full-width panel so this section reads as a feature, not one more list
 .team {
   container: team / inline-size;
   display: flex;
@@ -613,7 +602,6 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-// Half-body portrait slot; falls back to large initials until foto_url is set
 .portrait {
   position: relative;
   margin: 0;
@@ -686,11 +674,10 @@
   margin: var(--space-5) 0 0;
   max-width: 560px;
 
-  // The hero facts indent values to clear an icon; these rows have none
+  // The hero rows indent the value to make room for an icon; these rows have no icon.
   .fact__value { padding-left: 0; }
 }
 
-// Roster of portraits: picking one moves it to the spotlight
 .roster {
   list-style: none;
   margin: 0;
@@ -712,7 +699,6 @@
 @container team (min-width: 900px) {
   .roster {
     display: grid;
-    // Fixed-size thumbnails: the roster is a picker, it should not compete with the spotlight
     grid-template-columns: repeat(6, minmax(0, 148px));
     overflow: visible;
   }
@@ -734,7 +720,7 @@
 
   &:hover { opacity: 0.8; }
 
-  // Rings are drawn inside the photo (negative offset) so the scrolling row can never clip them
+  // Ring goes inside the photo so the scrolling row can't cut it off.
   &:focus-visible {
     outline: none;
 

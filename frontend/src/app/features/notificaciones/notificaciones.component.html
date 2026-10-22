@@ -1,6 +1,5 @@
 <div class="notif">
 
-  <!-- Header -->
   <div class="notif__header">
     <div class="notif__header-icon">
       <ng-container *ngComponentOutlet="IconBell; inputs: iconHeader" />
@@ -16,7 +15,6 @@
     </div>
   </div>
 
-  <!-- Pills de categoría -->
   <div class="notif__pills">
     @for (cat of CATEGORIAS; track cat.key) {
       <button
@@ -28,7 +26,6 @@
     }
   </div>
 
-  <!-- Fila de controles -->
   <div class="notif__controls">
     <div class="notif__seg">
       <button
@@ -64,7 +61,6 @@
     </div>
   </div>
 
-  <!-- Lista agrupada por tiempo -->
   <div class="notif__list">
 
     @if (loading()) {

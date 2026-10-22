@@ -11,7 +11,7 @@ export interface PagoPublico {
   paciente_nombre: string;
   paciente_apellido: string;
   servicio_nombre: string;
-  fecha: string; // fecha de la cita (YYYY-MM-DD)
+  fecha: string; // YYYY-MM-DD
 }
 
 export interface ListaPagosResponse {

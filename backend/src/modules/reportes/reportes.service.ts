@@ -34,8 +34,6 @@ function dateToISO(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-// ── Resumen (métricas generales) ──────────────────────────────────────────────
-
 export async function obtenerResumen(desde: string, hasta: string): Promise<ResumenReporte> {
   const fechaDesde = parseFecha(desde);
   const fechaHasta = addDay(hasta);
@@ -139,8 +137,6 @@ export async function obtenerResumen(desde: string, hasta: string): Promise<Resu
   return { kpis, citas_por_estado: citasPorEstado, ingresos_por_metodo: ingresosPorMetodo, medicos_activos: medicosActivos, evolucion, periodo: { desde, hasta } };
 }
 
-// ── Reporte de Citas (detalle para PDF) ───────────────────────────────────────
-
 export async function reporteCitas(desde: string, hasta: string): Promise<CitaDetalle[]> {
   const fechaDesde = parseFecha(desde);
   const fechaHasta = addDay(hasta);
@@ -173,8 +169,6 @@ export async function reporteCitas(desde: string, hasta: string): Promise<CitaDe
   }));
 }
 
-// ── Reporte de Ingresos (detalle para PDF) ────────────────────────────────────
-
 export async function reporteIngresos(desde: string, hasta: string): Promise<IngresoDetalle[]> {
   const fechaDesde = parseFecha(desde);
   const fechaHasta = addDay(hasta);
@@ -201,8 +195,6 @@ export async function reporteIngresos(desde: string, hasta: string): Promise<Ing
     monto: p.monto ? Number(p.monto) : 0,
   }));
 }
-
-// ── Reporte de Médicos (detalle para PDF) ─────────────────────────────────────
 
 export async function reporteMedicos(desde: string, hasta: string): Promise<MedicoDetalleReporte[]> {
   const fechaDesde = parseFecha(desde);
@@ -251,8 +243,6 @@ export async function reporteMedicos(desde: string, hasta: string): Promise<Medi
     })
     .sort((a, b) => b.total_citas - a.total_citas);
 }
-
-// ── Reporte de Pacientes nuevos (detalle para PDF) ────────────────────────────
 
 export async function reportePacientes(desde: string, hasta: string): Promise<PacienteDetalle[]> {
   const fechaDesde = parseFecha(desde);

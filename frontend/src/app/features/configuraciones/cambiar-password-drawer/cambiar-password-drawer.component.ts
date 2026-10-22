@@ -35,7 +35,6 @@ export class CambiarPasswordDrawerComponent {
   error   = signal<string | null>(null);
   success = signal(false);
 
-  // Getters/setters para ngModel ↔ signal
   get currentModel()  { return this.current(); }
   set currentModel(v) { this.current.set(v);  this.error.set(null); }
   get newModel()      { return this.newPwd(); }

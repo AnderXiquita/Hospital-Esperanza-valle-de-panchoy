@@ -1,6 +1,5 @@
 <div class="pacientes">
 
-  <!-- Header -->
   <div class="pacientes__header">
     <div class="pacientes__heading">
       <p class="pacientes__eyebrow">{{ 'pacientes.eyebrow' | translate }}</p>
@@ -15,7 +14,6 @@
     </button>
   </div>
 
-  <!-- Banda de métricas -->
   <div class="metrics">
     <div class="metric">
       <div class="metric__icon">
@@ -55,7 +53,6 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-box">
       <ng-container *ngComponentOutlet="icon('search'); inputs: iconInputs" />
@@ -92,7 +89,6 @@
     </div>
   </div>
 
-  <!-- Estados -->
   @if (cargando()) {
     <div class="panel">
       <div class="state"><span class="spinner"></span><span>{{ 'pacientes.loading' | translate }}</span></div>
@@ -112,8 +108,6 @@
       </div>
     </div>
   } @else {
-
-    <!-- Vista TABLA -->
     @if (vista() === 'tabla') {
       <div class="panel">
         <div class="table-scroll-wrap">
@@ -176,7 +170,6 @@
       </div>
     }
 
-    <!-- Vista TARJETAS -->
     @if (vista() === 'tarjetas') {
       <div class="cards">
         @for (p of pacientes(); track p.id) {
@@ -222,7 +215,6 @@
   }
 </div>
 
-<!-- Drawer: detalle -->
 @if (detailOpen() && detailPaciente(); as dp) {
   <app-paciente-detail-drawer
     [paciente]="dp"
@@ -232,7 +224,6 @@
   />
 }
 
-<!-- Drawer: crear / editar -->
 @if (formOpen()) {
   <app-paciente-form-drawer
     [paciente]="formPaciente()"

@@ -68,7 +68,6 @@ export class MedicosListComponent implements OnInit {
     return DIAS_ORDEN.map((d) => ({ label: this.locale.weekdayInitial(d), active: set.has(d) }));
   }
 
-  // --- list state ---
   medicos = signal<Medico[]>([]);
   total = signal(0);
   pagina = signal(1);
@@ -85,7 +84,7 @@ export class MedicosListComponent implements OnInit {
   readonly totalPaginas = computed(() => Math.ceil(this.total() / this.limite) || 1);
 
   readonly espOptions = computed<DropdownOption[]>(() => {
-    this.locale.locale(); // re-evaluar al cambiar de idioma
+    this.locale.locale();
     const esp = this.stats()?.especialidades ?? [];
     return [
       { value: '', label: this.translate.instant('medicos.all_specialties') },
@@ -93,14 +92,12 @@ export class MedicosListComponent implements OnInit {
     ];
   });
 
-  // --- drawers ---
   formOpen = signal(false);
   formMedico = signal<MedicoConHorarios | null>(null);
   detailOpen = signal(false);
   detailId = signal<number | null>(null);
   abriendoEdicion = signal<number | null>(null);
 
-  // --- toggle confirm ---
   confirmToggleId = signal<number | null>(null);
   toggleError = signal('');
 
@@ -176,7 +173,6 @@ export class MedicosListComponent implements OnInit {
     this.vista.set(v);
   }
 
-  // --- detalle ---
   abrirDetalle(m: Medico): void {
     this.detailId.set(m.id);
     this.detailOpen.set(true);
@@ -187,7 +183,6 @@ export class MedicosListComponent implements OnInit {
     this.detailId.set(null);
   }
 
-  // --- crear / editar ---
   abrirCrear(): void {
     this.formMedico.set(null);
     this.formOpen.set(true);
@@ -222,7 +217,6 @@ export class MedicosListComponent implements OnInit {
     await Promise.all([this.cargar(), this.cargarStats()]);
   }
 
-  // --- toggle activo ---
   pedirConfirmToggle(id: number): void {
     this.confirmToggleId.set(id);
   }
@@ -251,7 +245,6 @@ export class MedicosListComponent implements OnInit {
     }
   }
 
-  // --- helpers ---
   iniciales(m: Medico): string {
     return ((m.nombre[0] ?? '') + (m.apellido[0] ?? '')).toUpperCase();
   }

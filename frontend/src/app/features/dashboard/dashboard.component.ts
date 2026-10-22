@@ -78,24 +78,19 @@ export class DashboardComponent implements OnInit {
     return 'dashboard.buenas_noches';
   }
 
-  // --- roles ---
   readonly esMedico = computed(() => this.auth.user()?.rol === 'medico');
 
-  // --- estado común ---
   cargando      = signal(true);
   citasHoy      = signal<Cita[]>([]);
   citasSemana   = signal<Cita[]>([]);
 
-  // --- estado admin/recep ---
   medicos       = signal<Medico[]>([]);
   pagoStats     = signal<PagoStats | null>(null);
   pacienteStats = signal<PacienteStats | null>(null);
 
-  // --- estado médico ---
   medicoId           = signal<number | null>(null);
   medicoEspecialidad = signal<string>('');
 
-  // ── Métricas comunes ──────────────────────────────────────────────────────────
   readonly totalHoy      = computed(() => this.citasHoy().length);
   readonly pendientesHoy = computed(() =>
     this.citasHoy().filter((c) => c.estado === 'agendada' || c.estado === 'reprogramada').length
@@ -107,7 +102,6 @@ export class DashboardComponent implements OnInit {
     this.citasHoy().filter((c) => c.estado === 'atendida').length
   );
 
-  // ── Métricas admin/recep ──────────────────────────────────────────────────────
   readonly ingresosMes = computed(() => {
     const s = this.pagoStats();
     if (!s) return '—';
@@ -133,7 +127,6 @@ export class DashboardComponent implements OnInit {
       .slice(0, 4);
   });
 
-  // ── Métricas médico ───────────────────────────────────────────────────────────
   readonly atendidasSemana = computed(() =>
     this.citasSemana().filter((c) => c.estado === 'atendida').length
   );
@@ -147,7 +140,6 @@ export class DashboardComponent implements OnInit {
     );
   });
 
-  // ── Compartidos ───────────────────────────────────────────────────────────────
   readonly proximasCitas = computed(() => {
     const now = `${pad(new Date().getHours())}:${pad(new Date().getMinutes())}`;
     return this.citasHoy()

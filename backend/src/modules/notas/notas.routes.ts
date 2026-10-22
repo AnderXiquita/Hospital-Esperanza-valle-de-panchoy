@@ -5,7 +5,7 @@ import * as ctrl from './notas.controller';
 
 const router: ReturnType<typeof Router> = Router();
 
-// Rutas estáticas ANTES de /:id
+// Keep these above /:id, otherwise Express reads "mis-pacientes" as an id.
 router.get('/mis-pacientes', authenticate, authorize('medico'), ctrl.misPacientes);
 router.get('/paciente/:pacienteId', authenticate, authorize('admin', 'recepcionista', 'medico'), ctrl.porPaciente);
 router.get('/', authenticate, authorize('admin', 'recepcionista', 'medico'), ctrl.porCita);

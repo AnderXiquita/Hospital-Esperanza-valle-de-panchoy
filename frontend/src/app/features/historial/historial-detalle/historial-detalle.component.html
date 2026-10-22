@@ -1,6 +1,5 @@
 <div class="hd">
 
-  <!-- Loading -->
   @if (cargando()) {
     <div class="hd__loading">
       <div class="skeleton skeleton--hero"></div>
@@ -10,14 +9,11 @@
   }
 
   @if (!cargando()) {
-
-    <!-- Back -->
     <button class="hd__back" (click)="volver()">
       <ng-container [ngComponentOutlet]="icons['back']" [ngComponentOutletInputs]="iconMd" />
       {{ 'historial.volver' | translate }}
     </button>
 
-    <!-- Hero paciente -->
     <div class="hd__hero">
       <div class="hd__hero-avatar">{{ pacienteNom()[0] }}</div>
       <div class="hd__hero-info">
@@ -31,14 +27,12 @@
       </div>
     </div>
 
-    <!-- Sin notas -->
     @if (notas().length === 0) {
       <div class="hd__empty">
         <p>{{ 'historial.sin_consultas' | translate }}</p>
       </div>
     }
 
-    <!-- Barra de acciones del timeline -->
     @if (notas().length > 1) {
       <div class="hd__timeline-bar">
         <button class="hd__expand-all" (click)="toggleAll()">
@@ -47,17 +41,13 @@
       </div>
     }
 
-    <!-- Timeline de notas -->
     <div class="hd__timeline">
       @for (n of notas(); track n.id; let i = $index) {
         <div class="hd__entry">
-          <!-- Dot del timeline -->
           <div class="hd__dot"></div>
 
-          <!-- Tarjeta de nota -->
           <div class="hd__nota">
 
-            <!-- Cabecera colapsable -->
             <button class="hd__nota-head" (click)="toggle(i)">
               <div class="hd__nota-meta">
                 <span class="hd__nota-fecha">
@@ -85,12 +75,10 @@
               </div>
             </button>
 
-            <!-- Contenido animado -->
             <div class="hd__collapse" [class.hd__collapse--open]="n.expanded">
               <div class="hd__collapse-inner">
               <div class="hd__nota-body">
 
-                <!-- Signos vitales -->
                 @if (tieneSignos(n)) {
                   <div class="hd__bloque">
                     <p class="hd__bloque-title">
@@ -144,7 +132,6 @@
                   </div>
                 }
 
-                <!-- Consulta SOAP -->
                 @if (n.motivo_consulta) {
                   <div class="hd__bloque">
                     <p class="hd__bloque-title">{{ 'notas.motivo' | translate }}</p>
@@ -164,7 +151,6 @@
                   </div>
                 }
 
-                <!-- Diagnóstico -->
                 @if (n.diagnostico_principal || n.diagnosticos_secundarios.length) {
                   <div class="hd__bloque hd__bloque--dx">
                     <p class="hd__bloque-title">
@@ -180,7 +166,6 @@
                   </div>
                 }
 
-                <!-- Medicamentos -->
                 @if (n.medicamentos.length) {
                   <div class="hd__bloque">
                     <p class="hd__bloque-title">
@@ -195,7 +180,6 @@
                   </div>
                 }
 
-                <!-- Indicaciones y seguimiento -->
                 @if (n.indicaciones) {
                   <div class="hd__bloque">
                     <p class="hd__bloque-title">{{ 'notas.indicaciones' | translate }}</p>
@@ -215,7 +199,6 @@
                   </div>
                 }
 
-                <!-- Acciones de la nota -->
                 <div class="hd__nota-actions">
                   <button class="hd__action" (click)="exportarPdf(n)"
                     [disabled]="exportandoPdfId() === n.id">

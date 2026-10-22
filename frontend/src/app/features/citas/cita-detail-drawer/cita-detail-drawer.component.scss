@@ -73,7 +73,6 @@ $ink:  #0f1117;
   gap: var(--space-6);
 }
 
-// Banda de estado (colores de diseño.md)
 .estado-band {
   display: flex;
   align-items: center;
@@ -93,7 +92,6 @@ $ink:  #0f1117;
 .estado--cancelada    { background: #FFF0F0; border-left-color: #E05252; color: #E05252; }
 .estado--no_presentado{ background: #FFF4EC; border-left-color: #D47A2A; color: #D47A2A; }
 
-// Info
 .block { display: flex; flex-direction: column; gap: var(--space-3); }
 .block__title {
   font-size: var(--text-xs);
@@ -129,7 +127,6 @@ $ink:  #0f1117;
   padding: var(--space-3) var(--space-4);
 }
 
-// Nota clínica CTA
 .nota-cta { margin-bottom: 4px; }
 
 .nota-btn {
@@ -153,7 +150,6 @@ $ink:  #0f1117;
   &:hover { background: rgba(21, 76, 86, 0.14); border-color: $teal; }
 }
 
-// Acciones
 .actions { display: flex; flex-direction: column; gap: var(--space-2); }
 .action {
   display: inline-flex;
@@ -188,7 +184,6 @@ $ink:  #0f1117;
   }
 }
 
-// Modales (reprogramar / cancelar)
 .overlay {
   position: fixed;
   inset: 0;

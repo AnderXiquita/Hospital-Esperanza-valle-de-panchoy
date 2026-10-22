@@ -54,7 +54,6 @@ export class NotaFormComponent implements OnInit {
   private citaId    = 0;
   private draftTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // ── Signos vitales ────────────────────────────────────────────────────────
   svSistolica   = signal<number | null>(null);
   svDiastolica  = signal<number | null>(null);
   svFC          = signal<number | null>(null);
@@ -81,17 +80,14 @@ export class NotaFormComponent implements OnInit {
     return this.translate.instant('notas.imc_obesidad');
   });
 
-  // ── Consulta ──────────────────────────────────────────────────────────────
   motivoConsulta = signal('');
   anamnesis      = signal('');
   examenFisico   = signal('');
 
-  // ── Diagnóstico ───────────────────────────────────────────────────────────
   diagnosticoPrincipal    = signal('');
   diagnosticosSecundarios = signal<string[]>([]);
   nuevoDx                 = signal('');
 
-  // ── Plan ──────────────────────────────────────────────────────────────────
   medicamentos     = signal<Medicamento[]>([]);
   indicaciones     = signal('');
   proximaConsulta  = signal('');
@@ -176,7 +172,6 @@ export class NotaFormComponent implements OnInit {
     this.programarDraft();
   }
 
-  // ── Borrador automático ───────────────────────────────────────────────────
   programarDraft(): void {
     if (this.draftTimer) clearTimeout(this.draftTimer);
     this.draftTimer = setTimeout(() => this.guardarDraft(), 4000);

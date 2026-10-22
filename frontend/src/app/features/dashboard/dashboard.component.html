@@ -1,6 +1,5 @@
 <div class="dashboard">
 
-  <!-- Header -->
   <div class="dashboard__header">
     <div class="dashboard__greeting">
       <p class="dashboard__greeting-text">{{ greetingKey | translate }}, {{ auth.user()?.nombre }}</p>
@@ -15,10 +14,7 @@
     }
   </div>
 
-  <!-- ═══════════════════════ VISTA ADMIN / RECEPCIONISTA ═══════════════════════ -->
   @if (!esMedico()) {
-
-    <!-- Zona 1 — Métricas bento -->
     <div class="metrics-bento">
 
       <div class="metric-card metric-card--hero">
@@ -78,7 +74,6 @@
 
     </div>
 
-    <!-- Zona 2 — Próximas citas | Médicos disponibles | Gráfico semanal -->
     <div class="lower-grid">
 
       <div class="panel panel--appointments">
@@ -161,7 +156,6 @@
 
     </div>
 
-    <!-- Zona 3 — Tabla completa de citas del día -->
     <div class="panel zone3">
       <div class="panel__head">
         <div>
@@ -213,10 +207,7 @@
 
   }
 
-  <!-- ═══════════════════════════ VISTA MÉDICO ══════════════════════════════════ -->
   @else {
-
-    <!-- Zona 1 — Bento métricas del médico -->
     <div class="metrics-bento">
 
       <div class="metric-card metric-card--hero">
@@ -285,7 +276,6 @@
 
     </div>
 
-    <!-- Zona 2 — Mis próximas citas + Gráfico semanal -->
     <div class="lower-grid lower-grid--medico">
 
       <div class="panel panel--appointments">
@@ -341,7 +331,6 @@
 
     </div>
 
-    <!-- Zona 3 — Tabla de mis citas del día (sin columna Médico) -->
     <div class="panel zone3">
       <div class="panel__head">
         <div>

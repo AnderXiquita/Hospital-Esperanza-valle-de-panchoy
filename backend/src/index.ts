@@ -1,6 +1,5 @@
 import 'dotenv/config';
 
-// Validate required env vars before anything else
 const REQUIRED_ENV = ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'DATABASE_URL'];
 for (const key of REQUIRED_ENV) {
   if (!process.env[key]) {

@@ -14,7 +14,6 @@
 
   <div class="drawer__body">
 
-    <!-- Selección de cita -->
     <div class="field">
       <label>{{ 'pagos.label_appointment' | translate }} <span>*</span></label>
       @if (seleccion(); as c) {
@@ -62,7 +61,6 @@
       }
     </div>
 
-    <!-- Monto -->
     <div class="field">
       <label>{{ 'pagos.label_amount' | translate }} <span>*</span></label>
       <input type="number" min="0" step="0.01" [ngModel]="monto()" (ngModelChange)="monto.set($event)"
@@ -70,7 +68,6 @@
       @if (submitted() && monto() === '') { <span class="field__err">{{ 'pagos.err_amount' | translate }}</span> }
     </div>
 
-    <!-- Método de pago -->
     <div class="field">
       <label>{{ 'pagos.label_method' | translate }} <span>*</span></label>
       <div class="metodos">
@@ -84,7 +81,6 @@
       @if (submitted() && !metodo()) { <span class="field__err">{{ 'pagos.err_method' | translate }}</span> }
     </div>
 
-    <!-- Nota de simulación -->
     <div class="sim-note">
       <ng-container [ngComponentOutlet]="icons.shield" [ngComponentOutletInputs]="iconSm" />
       {{ 'pagos.simulated_note' | translate }}
@@ -104,7 +100,6 @@
     </button>
   </footer>
 
-  <!-- Overlay de procesamiento -->
   @if (procesando()) {
     <div class="processing">
       <div class="processing__card">

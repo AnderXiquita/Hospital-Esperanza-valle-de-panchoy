@@ -70,7 +70,6 @@ export class PagosListComponent implements OnInit {
 
   stats = signal<PagoStats | null>(null);
 
-  // drawers
   formOpen = signal(false);
   detailOpen = signal(false);
   detailPago = signal<Pago | null>(null);
@@ -157,7 +156,6 @@ export class PagosListComponent implements OnInit {
     this.vista.set(v);
   }
 
-  // --- drawers ---
   abrirRegistrar(): void {
     this.formOpen.set(true);
   }
@@ -185,7 +183,6 @@ export class PagosListComponent implements OnInit {
     await Promise.all([this.cargar(), this.cargarStats()]);
   }
 
-  // --- helpers ---
   money(value: string | number): string {
     const n = typeof value === 'number' ? value : Number(value);
     if (isNaN(n)) return '0.00';

@@ -69,7 +69,6 @@ export class UsuariosListComponent implements OnInit {
   icon(name: string): Icon | null { return ICON_MAP[name] ?? null; }
   rolIcon(rol: Rol): Icon | null { return ICON_MAP[ROL_ICON[rol]] ?? null; }
 
-  // --- list state ---
   usuarios = signal<Usuario[]>([]);
   total = signal(0);
   pagina = signal(1);
@@ -83,11 +82,9 @@ export class UsuariosListComponent implements OnInit {
 
   stats = signal<UsuarioStats | null>(null);
 
-  // --- drawer crear/editar ---
   formOpen = signal(false);
-  formUsuario = signal<Usuario | null>(null); // null => crear
+  formUsuario = signal<Usuario | null>(null);
 
-  // --- drawer detalle ---
   detailOpen = signal(false);
   detailUsuario = signal<Usuario | null>(null);
 
@@ -176,7 +173,6 @@ export class UsuariosListComponent implements OnInit {
     this.vista.set(v);
   }
 
-  // --- detalle ---
   abrirDetalle(u: Usuario): void {
     this.detailUsuario.set(u);
     this.detailOpen.set(true);
@@ -197,7 +193,6 @@ export class UsuariosListComponent implements OnInit {
     await Promise.all([this.cargar(), this.cargarStats()]);
   }
 
-  // --- crear / editar ---
   abrirCrear(): void {
     this.formUsuario.set(null);
     this.formOpen.set(true);
@@ -218,7 +213,6 @@ export class UsuariosListComponent implements OnInit {
     await Promise.all([this.cargar(), this.cargarStats()]);
   }
 
-  // --- helpers ---
   iniciales(u: Usuario): string {
     return ((u.nombre[0] ?? '') + (u.apellido[0] ?? '')).toUpperCase();
   }

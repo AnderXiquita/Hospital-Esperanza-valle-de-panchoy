@@ -12,13 +12,11 @@
   @if (u(); as c) {
     <div class="drawer__body">
 
-      <!-- Estado -->
       <div class="estado-band estado--{{ c.estado }}">
         <span class="estado-dot"></span>
         {{ estadoLabel(c.estado) }}
       </div>
 
-      <!-- Datos -->
       <section class="block">
         <div class="info-row">
           <ng-container [ngComponentOutlet]="icons.user" [ngComponentOutletInputs]="iconField" />
@@ -47,13 +45,11 @@
         </div>
       </section>
 
-      <!-- Motivo -->
       <section class="block">
         <p class="block__title">{{ 'citas.field_reason' | translate }}</p>
         <p class="bio">{{ c.motivo_consulta || ('citas.no_reason' | translate) }}</p>
       </section>
 
-      <!-- Nota clínica (solo médico, cita confirmada/atendida) -->
       @if (puedeNota) {
         <section class="nota-cta">
           <button class="nota-btn" type="button" (click)="irANota()">
@@ -65,7 +61,6 @@
 
       @if (errorMsg()) { <div class="form-error">{{ errorMsg() }}</div> }
 
-      <!-- Acciones -->
       @if (!esTerminal) {
         <section class="actions">
           @if (puedeConfirmar) {
@@ -104,7 +99,6 @@
   }
 </aside>
 
-<!-- Reprogramar -->
 @if (reprogOpen()) {
   <div class="overlay" (click)="cerrarReprog()">
     <div class="modal" (click)="$event.stopPropagation()">
@@ -146,7 +140,6 @@
   </div>
 }
 
-<!-- Confirmar cancelación -->
 @if (confirmCancel()) {
   <div class="overlay" (click)="cancelarConfirm()">
     <div class="modal" (click)="$event.stopPropagation()">

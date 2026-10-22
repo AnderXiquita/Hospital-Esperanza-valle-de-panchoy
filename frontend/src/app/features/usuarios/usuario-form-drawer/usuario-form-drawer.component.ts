@@ -40,7 +40,6 @@ export class UsuarioFormDrawerComponent implements OnInit {
   private translate = inject(TranslateService);
   private locale = inject(LocaleService);
 
-  // null => crear ; objeto => editar
   usuario = input<Usuario | null>(null);
   closed = output<void>();
   saved = output<void>();
@@ -69,7 +68,6 @@ export class UsuarioFormDrawerComponent implements OnInit {
     return this.usuario() !== null;
   }
 
-  // Un médico no cambia de rol aquí (se gestiona en Médicos)
   get rolBloqueado(): boolean {
     return this.usuario()?.rol === 'medico';
   }

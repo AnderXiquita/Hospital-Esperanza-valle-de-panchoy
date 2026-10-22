@@ -2,7 +2,6 @@
 
 <aside class="drawer" [class.is-closing]="cerrando()" role="dialog" aria-modal="true">
 
-  <!-- Header -->
   <header class="drawer__head">
     <div class="drawer__head-text">
       <p class="drawer__eyebrow">{{ (esEdicion ? 'medicos.form_edit_eyebrow' : 'medicos.form_new_eyebrow') | translate }}</p>
@@ -13,10 +12,8 @@
     </button>
   </header>
 
-  <!-- Body -->
   <div class="drawer__body">
 
-    <!-- Identidad -->
     <div class="identity">
       <div class="identity__avatar">{{ avatarIniciales }}</div>
       <div class="identity__meta">
@@ -29,7 +26,6 @@
       </div>
     </div>
 
-    <!-- Datos personales -->
     <section class="section">
       <p class="section__head">
         <span class="section__chip">
@@ -78,7 +74,6 @@
       </div>
     </section>
 
-    <!-- Cuenta de acceso (solo al crear) -->
     @if (!esEdicion) {
       <section class="section">
         <p class="section__head">
@@ -115,7 +110,6 @@
       </section>
     }
 
-    <!-- Datos profesionales -->
     <section class="section">
       <p class="section__head">
         <span class="section__chip">
@@ -178,7 +172,6 @@
       </div>
     </section>
 
-    <!-- Horarios -->
     <section class="section">
       <div class="section__row">
         <p class="section__head" style="margin:0">
@@ -217,7 +210,6 @@
     }
   </div>
 
-  <!-- Footer -->
   <footer class="drawer__foot">
     <button class="btn-secondary" type="button" (click)="cerrar()">{{ 'btn.cancel' | translate }}</button>
     <button class="btn-primary" type="button" [disabled]="guardando()" (click)="guardar()">

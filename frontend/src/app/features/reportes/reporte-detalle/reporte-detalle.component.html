@@ -1,6 +1,5 @@
 <div class="det">
 
-  <!-- Volver -->
   <div class="det__nav">
     <a routerLink="/reportes" class="back-btn">
       <ng-container *ngComponentOutlet="ChevronLeft; inputs: iconBack" />
@@ -9,8 +8,6 @@
   </div>
 
   @if (config) {
-
-    <!-- Hero -->
     <div [class]="'det__hero det__hero--' + config.color">
       <div class="det__hero-icon">
         <ng-container *ngComponentOutlet="config.icono; inputs: iconHero" />
@@ -22,10 +19,8 @@
       </div>
     </div>
 
-    <!-- Paneles -->
     <div class="det__panels">
 
-      <!-- Período -->
       <div class="det__panel">
         <div class="det__panel-head">
           <h2 class="det__panel-title">{{ 'reportes.period_title' | translate }}</h2>
@@ -50,7 +45,6 @@
         </div>
       </div>
 
-      <!-- Contenido -->
       <div class="det__panel">
         <div class="det__panel-head">
           <h2 class="det__panel-title">{{ 'reportes.content_title' | translate }}</h2>
@@ -68,7 +62,6 @@
 
     </div>
 
-    <!-- Acción -->
     <div class="det__action">
       <button
         [class]="'gen-btn gen-btn--' + config.color"

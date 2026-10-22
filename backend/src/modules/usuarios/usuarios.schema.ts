@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Roles que Usuarios puede asignar (los médicos se crean en su módulo)
+// Doctors are created from the Médicos module, not here.
 const rolAsignable = z.enum(['admin', 'recepcionista']);
 
 export const crearUsuarioSchema = z.object({

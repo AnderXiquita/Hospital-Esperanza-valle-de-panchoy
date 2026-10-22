@@ -1,6 +1,5 @@
 <div class="medicos">
 
-  <!-- Header -->
   <div class="medicos__header">
     <div class="medicos__heading">
       <p class="medicos__eyebrow">{{ 'medicos.eyebrow' | translate }}</p>
@@ -15,7 +14,6 @@
     </button>
   </div>
 
-  <!-- Banda de métricas -->
   <div class="metrics">
     <div class="metric">
       <div class="metric__icon">
@@ -55,7 +53,6 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-box">
       <ng-container *ngComponentOutlet="icon('search'); inputs: iconInputs" />
@@ -100,7 +97,6 @@
     </div>
   </div>
 
-  <!-- Estados compartidos -->
   @if (cargando()) {
     <div class="panel">
       <div class="state"><span class="spinner"></span><span>{{ 'medicos.loading' | translate }}</span></div>
@@ -122,8 +118,6 @@
       </div>
     </div>
   } @else {
-
-    <!-- Vista TABLA -->
     @if (vista() === 'tabla') {
       <div class="panel">
         <div class="table-scroll-wrap">
@@ -214,7 +208,6 @@
       </div>
     }
 
-    <!-- Vista TARJETAS -->
     @if (vista() === 'tarjetas') {
       <div class="cards">
         @for (m of medicos(); track m.id) {
@@ -289,7 +282,6 @@
   }
 </div>
 
-<!-- Drawer: detalle -->
 @if (detailOpen() && detailId() !== null) {
   <app-medico-detail-drawer
     [medicoId]="detailId()!"
@@ -299,7 +291,6 @@
   />
 }
 
-<!-- Drawer: crear / editar -->
 @if (formOpen()) {
   <app-medico-form-drawer
     [medico]="formMedico()"
@@ -308,7 +299,6 @@
   />
 }
 
-<!-- Confirm toggle -->
 @if (confirmToggleId() !== null) {
   <div class="overlay" (click)="cancelarToggle()">
     <div class="confirm" (click)="$event.stopPropagation()">

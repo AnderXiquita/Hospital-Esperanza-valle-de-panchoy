@@ -1,11 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-/**
- * Provee nombres de meses/días y formato de fecha localizados según el idioma
- * activo de @ngx-translate. Usa la API Intl, así que no requiere claves de
- * traducción para cada mes/día. Reacciona al cambio de idioma de forma reactiva.
- */
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
   private translate = inject(TranslateService);
@@ -24,7 +19,7 @@ export class LocaleService {
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
-  // Fecha cuyo getDay() es `day` (0=domingo .. 6=sábado). 2023-01-01 fue domingo.
+  // 2023-01-01 was a Sunday, so 2023-01-0(day+1) gives the weekday we want.
   private dateForDay(day: number): Date {
     return new Date(2023, 0, 1 + day);
   }
@@ -46,8 +41,7 @@ export class LocaleService {
       .toUpperCase();
   }
 
-  // Inicial de día para la tira semanal. En español usa X para miércoles
-  // (evita la ambigüedad M de martes/miércoles); en otros idiomas usa Intl.
+  // X for miércoles so it does not clash with the M of martes.
   private readonly esInitials = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
   weekdayInitial(day: number): string {
     return this.locale().startsWith('es') ? this.esInitials[day] : this.weekdayNarrow(day);

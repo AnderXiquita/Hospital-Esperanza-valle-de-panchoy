@@ -113,7 +113,6 @@ $ink:  #0f1117;
   &--active { color: var(--color-text-primary); &::before { background: $teal; } }
 }
 
-// Quick stats
 .quickstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
 
 .quickstat {
@@ -145,7 +144,6 @@ $ink:  #0f1117;
   text-overflow: ellipsis;
 }
 
-// Bloques
 .block { display: flex; flex-direction: column; gap: var(--space-3); }
 .block__title {
   font-size: var(--text-xs);
@@ -156,12 +154,10 @@ $ink:  #0f1117;
   margin: 0;
 }
 
-// Key/value clínico (label arriba, valor abajo)
 .kv { display: flex; flex-direction: column; gap: 2px; }
 .kv__label { font-size: var(--text-xs); color: var(--color-text-tertiary); }
 .kv__value { font-size: var(--text-sm); color: var(--color-text-primary); line-height: 1.5; overflow-wrap: anywhere; }
 
-// Contacto
 .info-list { display: flex; flex-direction: column; gap: var(--space-3); }
 .info-row {
   display: flex;
@@ -183,7 +179,6 @@ $ink:  #0f1117;
   margin-left: var(--space-2);
 }
 
-// Data grid
 .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5) var(--space-4); }
 .data-item { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .data-item__label { font-size: var(--text-xs); color: var(--color-text-tertiary); }
@@ -191,7 +186,6 @@ $ink:  #0f1117;
 
 .bio { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.6; margin: 0; overflow-wrap: anywhere; }
 
-// Acciones
 .actions { display: flex; flex-direction: column; gap: var(--space-2); }
 .action {
   display: inline-flex;
@@ -226,7 +220,6 @@ $ink:  #0f1117;
   }
 }
 
-// Modal toggle
 .overlay {
   position: fixed;
   inset: 0;

@@ -56,7 +56,7 @@ export class CitaFormDrawerComponent implements OnInit {
   private elementRef = inject(ElementRef<HTMLElement>);
 
   readonly esMedico = computed(() => this.auth.user()?.rol === 'medico');
-  medicoFijo = signal(false); // true cuando el médico está pre-fijado y no debe cambiarse
+  medicoFijo = signal(false);
 
   prefill = input<CitaPrefill | null>(null);
   closed = output<void>();
@@ -65,25 +65,21 @@ export class CitaFormDrawerComponent implements OnInit {
   readonly icons = { x: LucideX, search: LucideSearch, user: LucideUser, clock: LucideClock };
   readonly iconSm = { size: 16, strokeWidth: 1.5 };
 
-  // catálogos
   medicoOptions = signal<DropdownOption[]>([]);
   servicioOptions = signal<DropdownOption[]>([]);
   private servicioDuracion = new Map<number, number>();
   private medicoDias = new Map<number, number[]>();
 
-  // form
   medicoId = signal<number | ''>('');
   servicioId = signal<number | ''>('');
   fecha = signal('');
   horaInicio = signal<string>('');
   motivo = signal('');
 
-  // slots disponibles
   availableHoraOptions = signal<DropdownOption[]>([]);
   loadingSlots = signal(false);
   readonly minDate = localIsoDate();
 
-  // computed: médicos que trabajan el día seleccionado
   readonly filteredMedicoOptions = computed<DropdownOption[]>(() => {
     const fec = this.fecha();
     if (!fec) return this.medicoOptions();
@@ -94,7 +90,6 @@ export class CitaFormDrawerComponent implements OnInit {
     });
   });
 
-  // días que el médico seleccionado NO trabaja (para marcar en rojo en el calendario)
   readonly doctorUnavailableDays = computed<number[]>(() => {
     const mid = this.medicoId();
     if (!mid) return [];
@@ -109,7 +104,6 @@ export class CitaFormDrawerComponent implements OnInit {
     return !!(mid && fec && sid && !this.loadingSlots() && this.availableHoraOptions().length === 0);
   });
 
-  // autocompletado paciente
   pacienteQuery = signal('');
   pacienteResults = signal<Paciente[]>([]);
   pacienteOpen = signal(false);
@@ -158,11 +152,11 @@ export class CitaFormDrawerComponent implements OnInit {
     } catch { /* vacío */ }
   }
 
-  // Para médicos: obtiene su propio perfil sin necesitar acceso a /api/medicos
+  // Doctors can't call /api/medicos, so we load their own profile and let the slots
+  // endpoint check real availability.
   private async cargarMedicoPropio(): Promise<void> {
     try {
       const perfil = await this.medicosSvc.getMiPerfil();
-      // Registrar sus días como todos disponibles; el slot API valida la disponibilidad real
       this.medicoDias.set(perfil.id, [0, 1, 2, 3, 4, 5, 6]);
       this.medicoOptions.set([{ value: perfil.id, label: `${perfil.nombre} ${perfil.apellido}` }]);
       this.medicoId.set(perfil.id);
@@ -181,11 +175,8 @@ export class CitaFormDrawerComponent implements OnInit {
     } catch { /* vacío */ }
   }
 
-  // --- event handlers para campos con efecto en cascada ---
-
   onFechaChange(val: string): void {
     this.fecha.set(val);
-    // Si el médico actual no trabaja ese día, lo limpiamos
     const mid = this.medicoId();
     if (mid && val) {
       const dow = new Date(`${val}T12:00:00`).getDay();
@@ -224,12 +215,10 @@ export class CitaFormDrawerComponent implements OnInit {
     this.loadingSlots.set(true);
     try {
       const { slots } = await this.svc.getSlots({ medicoId: Number(mid), fecha: fec, duracion: dur });
-      // Filtrar horas pasadas si es hoy
       const filtered = fec === localIsoDate()
         ? slots.filter((s) => s > localTime())
         : slots;
       this.availableHoraOptions.set(filtered.map((s) => ({ value: s, label: s })));
-      // Si la hora pre-seleccionada ya no está disponible, la limpiamos
       if (this.horaInicio() && !filtered.includes(this.horaInicio())) {
         this.horaInicio.set('');
       }
@@ -240,7 +229,6 @@ export class CitaFormDrawerComponent implements OnInit {
     }
   }
 
-  // --- autocompletado paciente ---
   onPacienteInput(q: string): void {
     this.pacienteQuery.set(q);
     this.pacienteSel.set(null);

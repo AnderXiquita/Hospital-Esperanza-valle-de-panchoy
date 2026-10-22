@@ -1,6 +1,5 @@
 <div class="pagos">
 
-  <!-- Header -->
   <div class="pagos__header">
     <div class="pagos__heading">
       <p class="pagos__eyebrow">{{ 'pagos.eyebrow' | translate }}</p>
@@ -15,7 +14,6 @@
     </button>
   </div>
 
-  <!-- Banda de métricas -->
   <div class="metrics">
     <div class="metric">
       <div class="metric__icon"><ng-container *ngComponentOutlet="icon('wallet'); inputs: iconMetric" /></div>
@@ -47,7 +45,6 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-box">
       <ng-container *ngComponentOutlet="icon('search'); inputs: iconInputs" />
@@ -83,7 +80,6 @@
     </div>
   </div>
 
-  <!-- Estados -->
   @if (cargando()) {
     <div class="panel">
       <div class="state"><span class="spinner"></span><span>{{ 'pagos.loading' | translate }}</span></div>
@@ -103,8 +99,6 @@
       </div>
     </div>
   } @else {
-
-    <!-- Vista TABLA -->
     @if (vista() === 'tabla') {
       <div class="panel">
         <div class="table-scroll-wrap">
@@ -162,7 +156,6 @@
       </div>
     }
 
-    <!-- Vista TARJETAS -->
     @if (vista() === 'tarjetas') {
       <div class="cards">
         @for (p of pagos(); track p.id) {
@@ -205,7 +198,6 @@
   }
 </div>
 
-<!-- Drawer: detalle -->
 @if (detailOpen() && detailPago(); as dp) {
   <app-pago-detail-drawer
     [pago]="dp"
@@ -214,7 +206,6 @@
   />
 }
 
-<!-- Drawer: registrar pago -->
 @if (formOpen()) {
   <app-pago-form-drawer
     (closed)="cerrarForm()"

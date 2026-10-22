@@ -1,10 +1,6 @@
 import { Directive, ElementRef, OnDestroy, OnInit, inject } from '@angular/core';
 
-/**
- * Mueve el elemento anfitrión directamente al <body> al inicializarse.
- * Sirve para que drawers/modales escapen de contextos de apilamiento
- * (z-index) creados por ancestros y se rendericen por encima de todo.
- */
+// Moves the element to <body> so drawers and modals escape their parents' stacking contexts.
 @Directive({
   selector: '[appBodyPortal]',
   standalone: true,

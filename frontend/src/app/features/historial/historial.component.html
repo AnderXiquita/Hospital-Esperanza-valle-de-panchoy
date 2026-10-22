@@ -1,6 +1,5 @@
 <div class="hist">
 
-  <!-- Header -->
   <div class="hist__header">
     <div class="hist__heading">
       <p class="hist__eyebrow">{{ 'historial.eyebrow' | translate }}</p>
@@ -11,7 +10,6 @@
     </div>
   </div>
 
-  <!-- Métricas -->
   <div class="metrics">
     <div class="metric">
       <div class="metric__icon">
@@ -33,7 +31,6 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-box">
       <ng-container [ngComponentOutlet]="icons['search']" [ngComponentOutletInputs]="iconSm" />
@@ -64,7 +61,6 @@
     </div>
   </div>
 
-  <!-- Estados -->
   @if (cargando()) {
     <div class="panel">
       <div class="state"><span class="spinner"></span><span>{{ 'historial.cargando' | translate }}</span></div>
@@ -87,8 +83,6 @@
       }
     </div>
   } @else {
-
-    <!-- Vista TABLA -->
     @if (vista() === 'tabla') {
       <div class="panel">
         <div class="table-scroll-wrap">
@@ -138,7 +132,6 @@
       </div>
     }
 
-    <!-- Vista TARJETAS -->
     @if (vista() === 'tarjetas') {
       <div class="cards">
         @for (p of filtrados(); track p.id) {

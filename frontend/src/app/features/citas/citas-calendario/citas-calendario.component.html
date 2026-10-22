@@ -1,6 +1,5 @@
 <div class="cal">
 
-  <!-- Header -->
   <div class="cal__header">
     <div class="cal__heading">
       <p class="cal__eyebrow">{{ 'citas.eyebrow' | translate }}</p>
@@ -14,7 +13,6 @@
     }
   </div>
 
-  <!-- DESKTOP: Barra de semana (>960px) -->
   @if (!isMobile()) {
     <div class="cal__week-bar">
       <div class="cal__nav">
@@ -38,7 +36,6 @@
     </div>
   }
 
-  <!-- MOBILE: Barra de mes (≤960px) — solo en vista mes -->
   @if (isMobile() && mobileViewMode() === 'month') {
     <div class="cal__month-bar">
       <div class="cal__m-nav-row">
@@ -64,7 +61,6 @@
     </div>
   }
 
-  <!-- Pills de estado (ambas vistas) -->
   <div class="cal__pills">
     <button
       class="pill pill--todos"
@@ -80,7 +76,6 @@
     }
   </div>
 
-  <!-- MOBILE: Encabezado del día seleccionado (sticky, solo en vista día) -->
   @if (isMobile() && mobileViewMode() === 'day') {
     <div class="cal__m-dv-header">
       <button class="cal__m-dv-back" (click)="volverAlMes()">
@@ -90,7 +85,6 @@
     </div>
   }
 
-  <!-- DESKTOP: Calendario semanal (>960px) -->
   @if (!isMobile()) {
     <div class="cal__panel">
       @if (cargando()) {
@@ -108,7 +102,6 @@
         <div class="cal__scroll">
           <div class="cal__grid">
 
-            <!-- Encabezado de días -->
             <div class="cal__head-row">
               <div class="cal__gutter-head"></div>
               @for (d of dias(); track d.iso) {
@@ -119,17 +112,14 @@
               }
             </div>
 
-            <!-- Cuerpo -->
             <div class="cal__body">
 
-              <!-- Gutter de horas -->
               <div class="cal__gutter">
                 @for (h of horas; track h) {
                   <div class="cal__hour-label" [style.height.px]="hourPx">{{ horaLabel(h) }}</div>
                 }
               </div>
 
-              <!-- Columnas de días -->
               @for (d of dias(); track d.iso; let di = $index) {
                 <div
                   class="cal__col"
@@ -183,7 +173,6 @@
     </div>
   }
 
-  <!-- MOBILE: Vista mensual + vista de día (≤960px) -->
   @if (isMobile()) {
     <div class="cal__mobile-panel">
 
@@ -192,16 +181,12 @@
       } @else if (error()) {
         <div class="state state--error">{{ error() }}</div>
       } @else if (mobileViewMode() === 'month') {
-
-        <!-- ── VISTA MES ─────────────────────────────────────────────────────── -->
         <div class="cal__m-panel">
-          <!-- Encabezados de días de la semana -->
           <div class="cal__m-weekdays">
             @for (label of weekdayLabels(); track label) {
               <div class="cal__m-wd">{{ label }}</div>
             }
           </div>
-          <!-- Celdas del mes -->
           <div class="cal__m-grid">
             @let mapa = citasPorDia();
             @for (day of diasMesGrid(); track day.iso) {
@@ -229,9 +214,6 @@
         </div>
 
       } @else {
-
-        <!-- ── VISTA DÍA ──────────────────────────────────────────────────────── -->
-        <!-- Cabecera ya está fuera del panel (sticky sin margen negativo padre) -->
         <div class="cal__m-dv-body">
             <div class="cal__m-dv-gutter">
               @for (h of horas; track h) {
@@ -295,7 +277,6 @@
 
 </div>
 
-<!-- Tooltip de cita al hover (solo desktop) -->
 @if (!isMobile() && hoveredCita(); as h) {
   <div
     class="cal__tooltip estado--{{ h.cita.estado }}"
@@ -320,7 +301,6 @@
   </div>
 }
 
-<!-- Drawer: detalle -->
 @if (detailOpen() && detailCita(); as dc) {
   <app-cita-detail-drawer
     [cita]="dc"
@@ -329,7 +309,6 @@
   />
 }
 
-<!-- Drawer: agendar -->
 @if (formOpen()) {
   <app-cita-form-drawer
     [prefill]="formPrefill()"

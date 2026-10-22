@@ -77,8 +77,7 @@ export async function listarPorRango(
   return rows.map(mapCita);
 }
 
-// Valida servicio/médico/horario/cruces y devuelve la hora_fin calculada.
-// excludeId: ignora esa cita en la verificación de cruces (al reprogramar).
+// excludeId is the appointment being rescheduled, so it does not collide with itself.
 async function calcularYValidar(
   medicoId: number,
   servicioId: number,
@@ -97,13 +96,12 @@ async function calcularYValidar(
 
   const hora_fin = addMinutes(horaInicio, servicio.duracion);
 
-  // Dentro del horario del médico ese día de la semana (0=domingo..6=sábado)
+  // dia_semana follows getDay(): 0 is Sunday.
   const diaSemana = parseFecha(fecha).getUTCDay();
   const bloques = medico.horarios.filter((h) => h.dia_semana === diaSemana);
   const dentroHorario = bloques.some((b) => b.hora_inicio <= horaInicio && b.hora_fin >= hora_fin);
   if (!dentroHorario) throw new Error('OUT_OF_SCHEDULE');
 
-  // Sin cruce con otra cita del mismo médico ese día (ignorando canceladas y la propia)
   const delDia = await prisma.citas.findMany({
     where: {
       medico_id: medicoId,

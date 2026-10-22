@@ -1,6 +1,5 @@
 <div class="usuarios">
 
-  <!-- Header -->
   <div class="usuarios__header">
     <div class="usuarios__heading">
       <p class="usuarios__eyebrow">{{ 'usuarios.eyebrow' | translate }}</p>
@@ -15,7 +14,6 @@
     </button>
   </div>
 
-  <!-- Banda de métricas -->
   <div class="metrics">
     <div class="metric">
       <div class="metric__icon">
@@ -55,7 +53,6 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-box">
       <ng-container *ngComponentOutlet="icon('search'); inputs: iconInputs" />
@@ -98,7 +95,6 @@
     </div>
   </div>
 
-  <!-- Estados compartidos -->
   @if (cargando()) {
     <div class="panel">
       <div class="state"><span class="spinner"></span><span>{{ 'usuarios.loading' | translate }}</span></div>
@@ -118,8 +114,6 @@
       </div>
     </div>
   } @else {
-
-    <!-- Vista TABLA -->
     @if (vista() === 'tabla') {
       <div class="panel">
         <div class="table-scroll-wrap">
@@ -193,7 +187,6 @@
       </div>
     }
 
-    <!-- Vista TARJETAS -->
     @if (vista() === 'tarjetas') {
       <div class="cards">
         @for (u of usuarios(); track u.id) {
@@ -249,7 +242,6 @@
   }
 </div>
 
-<!-- Drawer: detalle -->
 @if (detailOpen() && detailUsuario(); as du) {
   <app-usuario-detail-drawer
     [usuario]="du"
@@ -259,7 +251,6 @@
   />
 }
 
-<!-- Drawer: crear / editar -->
 @if (formOpen()) {
   <app-usuario-form-drawer
     [usuario]="formUsuario()"

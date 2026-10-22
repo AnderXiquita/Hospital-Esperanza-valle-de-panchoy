@@ -6,7 +6,6 @@ $teal: #154C56;
   max-width: 700px;
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
 .notif__header {
   display: flex;
   align-items: center;
@@ -56,7 +55,6 @@ $teal: #154C56;
   line-height: 1.5;
 }
 
-// ── Pills de categoría ────────────────────────────────────────────────────────
 .notif__pills {
   display: flex;
   gap: 6px;
@@ -95,7 +93,6 @@ $teal: #154C56;
   }
 }
 
-// ── Fila de controles ─────────────────────────────────────────────────────────
 .notif__controls {
   display: flex;
   align-items: center;
@@ -145,7 +142,6 @@ $teal: #154C56;
   &:hover:not(:disabled) { border-color: #EF4444; color: #EF4444; background: #FEF2F2; }
 }
 
-// ── Segmented control ─────────────────────────────────────────────────────────
 .notif__seg {
   display: inline-flex;
   background: #F3F4F6;
@@ -184,7 +180,6 @@ $teal: #154C56;
   line-height: 1.4;
 }
 
-// ── Grupos temporales ─────────────────────────────────────────────────────────
 .notif__list {
   display: flex;
   flex-direction: column;
@@ -211,7 +206,6 @@ $teal: #154C56;
   display: block;
 }
 
-// ── Item ──────────────────────────────────────────────────────────────────────
 .notif__item {
   display: flex;
   align-items: flex-start;
@@ -296,7 +290,6 @@ $teal: #154C56;
   &:hover { color: #EF4444; background: #FEF2F2; }
 }
 
-// ── Empty ─────────────────────────────────────────────────────────────────────
 .notif__empty {
   display: flex;
   flex-direction: column;
@@ -313,7 +306,6 @@ $teal: #154C56;
   }
 }
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
 .notif__skeleton {
   height: 60px;
   border-radius: 10px;
@@ -328,7 +320,6 @@ $teal: #154C56;
   100% { background-position: -200% 0; }
 }
 
-// ── Mobile ────────────────────────────────────────────────────────────────────
 @media (max-width: 600px) {
   .notif {
     padding: 16px 0 32px;

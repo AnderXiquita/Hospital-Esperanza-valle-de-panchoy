@@ -12,7 +12,6 @@
   @if (u(); as user) {
     <div class="drawer__body">
 
-      <!-- Hero -->
       <div class="hero">
         <div class="hero__avatar">{{ iniciales }}</div>
         <h2 class="hero__name">{{ user.nombre }} {{ user.apellido }}</h2>
@@ -22,7 +21,6 @@
         </span>
       </div>
 
-      <!-- Datos -->
       <section class="block">
         <div class="info-row">
           <ng-container [ngComponentOutlet]="rolIcon(user.rol)" [ngComponentOutletInputs]="iconField" />
@@ -41,7 +39,6 @@
         </div>
       </section>
 
-      <!-- Acciones de seguridad -->
       <section class="actions">
         <button class="action" type="button" (click)="pedirEditar()">
           <ng-container [ngComponentOutlet]="icons.pencil" [ngComponentOutletInputs]="iconAction" />
@@ -76,7 +73,6 @@
   }
 </aside>
 
-<!-- Confirmación toggle -->
 @if (confirmToggle()) {
   <div class="overlay" (click)="cancelarToggle()">
     <div class="modal" (click)="$event.stopPropagation()">
@@ -101,7 +97,6 @@
   </div>
 }
 
-<!-- Restablecer contraseña -->
 @if (resetOpen()) {
   <div class="overlay" (click)="cancelarReset()">
     <div class="modal" (click)="$event.stopPropagation()">
